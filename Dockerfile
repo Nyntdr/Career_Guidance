@@ -53,6 +53,7 @@ RUN apk add --no-cache \
 
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-laravel.ini
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 WORKDIR /var/www/html
