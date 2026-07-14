@@ -3,12 +3,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: app
     restart: unless-stopped
     environment: &app-env
+      APP_KEY: base64:unu4s82yn9qVhO51gWUwk7reDRTxGfEKtKv8xf8nbOY=
       APP_NAME: CareerGuide
       APP_ENV: local
       APP_DEBUG: "true"
-      APP_URL: http://localhost:8000
+      APP_URL: http://localhost:8082
       DB_CONNECTION: mysql
       DB_HOST: mysql
       DB_PORT: 3306
@@ -50,7 +52,7 @@ services:
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: rootsecret
     ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:

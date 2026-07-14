@@ -20,16 +20,16 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci
-
-COPY --from=vendor /app/vendor ./vendor
 COPY vite.config.js postcss.config.js tailwind.config.js ./
 COPY resources ./resources
 COPY public ./public
+COPY --from=vendor /app/vendor ./vendor
 
+ENV NODE_ENV=production
 RUN npm run build
 
 
-FROM php:8.3-fpm-alpine AS app
+FROM php:8.4-fpm-alpine AS app
 
 RUN apk add --no-cache \
     freetype-dev \
