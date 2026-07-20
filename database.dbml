@@ -1,0 +1,443 @@
+Table "ats_matched_keywords" {
+  "id" char(36) [pk, not null]
+  "ats_scan_id" char(36) [not null]
+  "keyword" varchar(255) [not null]
+  "matched" tinyint(1) [not null, default: 0]
+  "frequency_in_resume" "int unsigned" [not null, default: 0]
+  "frequency_in_jd" "int unsigned" [not null, default: 0]
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "ats_scan_details" {
+  "id" char(36) [pk, not null]
+  "ats_scan_id" char(36) [not null]
+  "category" varchar(255) [not null]
+  "detail" text
+  "severity" varchar(255) [not null, default: 'low']
+  "suggestion" text
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "ats_scans" {
+  "id" char(36) [pk, not null]
+  "resume_id" char(36) [not null]
+  "job_posting_id" char(36)
+  "overall_score" decimal(5,2) [not null, default: 0.00]
+  "keyword_match_score" decimal(5,2)
+  "formatting_score" decimal(5,2)
+  "structure_score" decimal(5,2)
+  "readability_score" decimal(5,2)
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "cache" {
+  "key" varchar(255) [pk, not null]
+  "value" mediumtext [not null]
+  "expiration" bigint [not null]
+
+  Indexes {
+    expiration [type: btree, name: "cache_expiration_index"]
+  }
+}
+
+Table "cache_locks" {
+  "key" varchar(255) [pk, not null]
+  "owner" varchar(255) [not null]
+  "expiration" bigint [not null]
+
+  Indexes {
+    expiration [type: btree, name: "cache_locks_expiration_index"]
+  }
+}
+
+Table "career_paths" {
+  "id" char(36) [pk, not null]
+  "from_role_id" char(36) [not null]
+  "to_role_id" char(36) [not null]
+  "typical_years" "int unsigned"
+  "notes" text
+  "created_at" timestamp
+  "updated_at" timestamp
+
+  Indexes {
+    (from_role_id, to_role_id) [unique, name: "career_paths_from_role_id_to_role_id_unique"]
+  }
+}
+
+Table "career_recommendations" {
+  "id" char(36) [pk, not null]
+  "profile_id" char(36) [not null]
+  "career_role_id" char(36) [not null]
+  "match_score" decimal(5,2) [not null, default: 0.00]
+  "rationale" text
+  "generated_at" timestamp
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "career_role_skills" {
+  "id" char(36) [pk, not null]
+  "career_role_id" char(36) [not null]
+  "skill_id" char(36) [not null]
+  "importance" varchar(255) [not null, default: 'required']
+  "min_proficiency" "smallint unsigned" [not null, default: 1]
+  "created_at" timestamp
+  "updated_at" timestamp
+
+  Indexes {
+    (career_role_id, skill_id) [unique, name: "career_role_skills_career_role_id_skill_id_unique"]
+  }
+}
+
+Table "career_roles" {
+  "id" char(36) [pk, not null]
+  "title" varchar(255) [unique, not null]
+  "description" text
+  "typical_seniority" varchar(255)
+  "avg_salary_range" json
+  "growth_outlook" varchar(255)
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "education" {
+  "id" char(36) [pk, not null]
+  "profile_id" char(36) [not null]
+  "institution" varchar(255) [not null]
+  "degree" varchar(255)
+  "field_of_study" varchar(255)
+  "start_date" date
+  "end_date" date
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "failed_jobs" {
+  "id" "bigint unsigned" [pk, not null, increment]
+  "uuid" varchar(255) [unique, not null]
+  "connection" varchar(255) [not null]
+  "queue" varchar(255) [not null]
+  "payload" longtext [not null]
+  "exception" longtext [not null]
+  "failed_at" timestamp [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (connection, queue, failed_at) [type: btree, name: "failed_jobs_connection_queue_failed_at_index"]
+  }
+}
+
+Table "gap_assessment_items" {
+  "id" char(36) [pk, not null]
+  "gap_assessment_id" char(36) [not null]
+  "skill_id" char(36) [not null]
+  "required_level" "smallint unsigned" [not null, default: 1]
+  "current_level" "smallint unsigned" [not null, default: 0]
+  "gap_size" smallint [not null, default: 0]
+  "priority" varchar(255) [not null, default: 'moderate']
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "gap_assessments" {
+  "id" char(36) [pk, not null]
+  "profile_id" char(36) [not null]
+  "target_role_id" char(36)
+  "target_job_posting_id" char(36)
+  "overall_readiness_score" decimal(5,2) [not null, default: 0.00]
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "gap_recommendations" {
+  "id" char(36) [pk, not null]
+  "gap_assessment_item_id" char(36) [not null]
+  "learning_resource_id" char(36) [not null]
+  "rank" "int unsigned" [not null, default: 0]
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "job_batches" {
+  "id" varchar(255) [pk, not null]
+  "name" varchar(255) [not null]
+  "total_jobs" int [not null]
+  "pending_jobs" int [not null]
+  "failed_jobs" int [not null]
+  "failed_job_ids" longtext [not null]
+  "options" mediumtext
+  "cancelled_at" int
+  "created_at" int [not null]
+  "finished_at" int
+}
+
+Table "job_postings" {
+  "id" char(36) [pk, not null]
+  "source" varchar(255) [not null, default: 'internal']
+  "external_id" varchar(255)
+  "title" varchar(255) [not null]
+  "company" varchar(255)
+  "raw_description" text
+  "parsed_requirements" json
+  "seniority_level" varchar(255)
+  "location" varchar(255)
+  "embedding" json
+  "posted_at" timestamp
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "job_required_skills" {
+  "id" char(36) [pk, not null]
+  "job_posting_id" char(36) [not null]
+  "skill_id" char(36) [not null]
+  "importance" varchar(255) [not null, default: 'required']
+  "min_proficiency" "smallint unsigned" [not null, default: 1]
+  "created_at" timestamp
+  "updated_at" timestamp
+
+  Indexes {
+    (job_posting_id, skill_id) [unique, name: "job_required_skills_job_posting_id_skill_id_unique"]
+  }
+}
+
+Table "jobs" {
+  "id" "bigint unsigned" [pk, not null, increment]
+  "queue" varchar(255) [not null]
+  "payload" longtext [not null]
+  "attempts" "smallint unsigned" [not null]
+  "reserved_at" "int unsigned"
+  "available_at" "int unsigned" [not null]
+  "created_at" "int unsigned" [not null]
+
+  Indexes {
+    queue [type: btree, name: "jobs_queue_index"]
+  }
+}
+
+Table "learning_resource_skills" {
+  "id" char(36) [pk, not null]
+  "learning_resource_id" char(36) [not null]
+  "skill_id" char(36) [not null]
+  "created_at" timestamp
+  "updated_at" timestamp
+
+  Indexes {
+    (learning_resource_id, skill_id) [unique, name: "learning_resource_skills_learning_resource_id_skill_id_unique"]
+  }
+}
+
+Table "learning_resources" {
+  "id" char(36) [pk, not null]
+  "title" varchar(255) [not null]
+  "provider" varchar(255)
+  "url" varchar(255)
+  "resource_type" varchar(255) [not null, default: 'course']
+  "duration_hours" decimal(8,2)
+  "cost" decimal(10,2)
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "migrations" {
+  "id" "int unsigned" [pk, not null, increment]
+  "migration" varchar(255) [not null]
+  "batch" int [not null]
+}
+
+Table "password_reset_tokens" {
+  "email" varchar(255) [pk, not null]
+  "token" varchar(255) [not null]
+  "created_at" timestamp
+}
+
+Table "profiles" {
+  "id" char(36) [pk, not null]
+  "user_id" "bigint unsigned" [not null]
+  "headline" varchar(255)
+  "current_title" varchar(255)
+  "years_experience" "int unsigned"
+  "location" varchar(255)
+  "target_roles" json
+  "target_industries" json
+  "bio" text
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "progress_tracking" {
+  "id" char(36) [pk, not null]
+  "profile_id" char(36) [not null]
+  "gap_assessment_item_id" char(36) [not null]
+  "status" varchar(255) [not null, default: 'not_started']
+  "created_at" timestamp
+  "updated_at" timestamp
+
+  Indexes {
+    (profile_id, gap_assessment_item_id) [unique, name: "progress_tracking_profile_id_gap_assessment_item_id_unique"]
+  }
+}
+
+Table "resume_sections" {
+  "id" char(36) [pk, not null]
+  "resume_id" char(36) [not null]
+  "section_type" varchar(255) [not null]
+  "content" text
+  "order_index" "int unsigned" [not null, default: 0]
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "resumes" {
+  "id" char(36) [pk, not null]
+  "profile_id" char(36) [not null]
+  "file_url" varchar(255) [not null]
+  "file_type" varchar(255)
+  "raw_text" text
+  "parsed_json" json
+  "version" "int unsigned" [not null, default: 1]
+  "is_primary" tinyint(1) [not null, default: 0]
+  "uploaded_at" timestamp
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "sessions" {
+  "id" varchar(255) [pk, not null]
+  "user_id" "bigint unsigned"
+  "ip_address" varchar(45)
+  "user_agent" text
+  "payload" longtext [not null]
+  "last_activity" int [not null]
+
+  Indexes {
+    last_activity [type: btree, name: "sessions_last_activity_index"]
+    user_id [type: btree, name: "sessions_user_id_index"]
+  }
+}
+
+Table "skill_aliases" {
+  "id" char(36) [pk, not null]
+  "skill_id" char(36) [not null]
+  "alias" varchar(255) [not null]
+
+  Indexes {
+    (skill_id, alias) [unique, name: "skill_aliases_skill_id_alias_unique"]
+  }
+}
+
+Table "skills" {
+  "id" char(36) [pk, not null]
+  "name" varchar(255) [unique, not null]
+  "category" varchar(255)
+  "taxonomy_source" varchar(255)
+  "embedding" json
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "user_skills" {
+  "id" char(36) [pk, not null]
+  "profile_id" char(36) [not null]
+  "skill_id" char(36) [not null]
+  "proficiency_level" "smallint unsigned" [not null, default: 1]
+  "source" varchar(255) [not null, default: 'self_reported']
+  "evidence_ref" char(36)
+  "confidence_score" decimal(5,2)
+  "last_used_date" date
+  "created_at" timestamp
+  "updated_at" timestamp
+
+  Indexes {
+    (profile_id, skill_id) [unique, name: "user_skills_profile_id_skill_id_unique"]
+  }
+}
+
+Table "users" {
+  "id" "bigint unsigned" [pk, not null, increment]
+  "name" varchar(255) [not null]
+  "email" varchar(255) [unique, not null]
+  "email_verified_at" timestamp
+  "password" varchar(255) [not null]
+  "role" varchar(255) [not null, default: 'candidate']
+  "remember_token" varchar(100)
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Table "work_experience" {
+  "id" char(36) [pk, not null]
+  "profile_id" char(36) [not null]
+  "company" varchar(255) [not null]
+  "title" varchar(255) [not null]
+  "description" text
+  "start_date" date
+  "end_date" date
+  "is_current" tinyint(1) [not null, default: 0]
+  "created_at" timestamp
+  "updated_at" timestamp
+}
+
+Ref "ats_matched_keywords_ats_scan_id_foreign":"ats_scans"."id" < "ats_matched_keywords"."ats_scan_id" [delete: cascade]
+
+Ref "ats_scan_details_ats_scan_id_foreign":"ats_scans"."id" < "ats_scan_details"."ats_scan_id" [delete: cascade]
+
+Ref "ats_scans_job_posting_id_foreign":"job_postings"."id" < "ats_scans"."job_posting_id" [delete: set null]
+
+Ref "ats_scans_resume_id_foreign":"resumes"."id" < "ats_scans"."resume_id" [delete: cascade]
+
+Ref "career_paths_from_role_id_foreign":"career_roles"."id" < "career_paths"."from_role_id" [delete: cascade]
+
+Ref "career_paths_to_role_id_foreign":"career_roles"."id" < "career_paths"."to_role_id" [delete: cascade]
+
+Ref "career_recommendations_career_role_id_foreign":"career_roles"."id" < "career_recommendations"."career_role_id" [delete: cascade]
+
+Ref "career_recommendations_profile_id_foreign":"profiles"."id" < "career_recommendations"."profile_id" [delete: cascade]
+
+Ref "career_role_skills_career_role_id_foreign":"career_roles"."id" < "career_role_skills"."career_role_id" [delete: cascade]
+
+Ref "career_role_skills_skill_id_foreign":"skills"."id" < "career_role_skills"."skill_id" [delete: cascade]
+
+Ref "education_profile_id_foreign":"profiles"."id" < "education"."profile_id" [delete: cascade]
+
+Ref "gap_assessment_items_gap_assessment_id_foreign":"gap_assessments"."id" < "gap_assessment_items"."gap_assessment_id" [delete: cascade]
+
+Ref "gap_assessment_items_skill_id_foreign":"skills"."id" < "gap_assessment_items"."skill_id" [delete: cascade]
+
+Ref "gap_assessments_target_role_id_foreign":"career_roles"."id" < "gap_assessments"."target_role_id" [delete: set null]
+
+Ref "gap_assessments_profile_id_foreign":"profiles"."id" < "gap_assessments"."profile_id" [delete: cascade]
+
+Ref "gap_assessments_target_job_posting_id_foreign":"job_postings"."id" < "gap_assessments"."target_job_posting_id" [delete: set null]
+
+Ref "gap_recommendations_gap_assessment_item_id_foreign":"gap_assessment_items"."id" < "gap_recommendations"."gap_assessment_item_id" [delete: cascade]
+
+Ref "gap_recommendations_learning_resource_id_foreign":"learning_resources"."id" < "gap_recommendations"."learning_resource_id" [delete: cascade]
+
+Ref "job_required_skills_job_posting_id_foreign":"job_postings"."id" < "job_required_skills"."job_posting_id" [delete: cascade]
+
+Ref "job_required_skills_skill_id_foreign":"skills"."id" < "job_required_skills"."skill_id" [delete: cascade]
+
+Ref "learning_resource_skills_learning_resource_id_foreign":"learning_resources"."id" < "learning_resource_skills"."learning_resource_id" [delete: cascade]
+
+Ref "learning_resource_skills_skill_id_foreign":"skills"."id" < "learning_resource_skills"."skill_id" [delete: cascade]
+
+Ref "profiles_user_id_foreign":"users"."id" < "profiles"."user_id" [delete: cascade]
+
+Ref "progress_tracking_gap_assessment_item_id_foreign":"gap_assessment_items"."id" < "progress_tracking"."gap_assessment_item_id" [delete: cascade]
+
+Ref "progress_tracking_profile_id_foreign":"profiles"."id" < "progress_tracking"."profile_id" [delete: cascade]
+
+Ref "resume_sections_resume_id_foreign":"resumes"."id" < "resume_sections"."resume_id" [delete: cascade]
+
+Ref "resumes_profile_id_foreign":"profiles"."id" < "resumes"."profile_id" [delete: cascade]
+
+Ref "skill_aliases_skill_id_foreign":"skills"."id" < "skill_aliases"."skill_id" [delete: cascade]
+
+Ref "user_skills_profile_id_foreign":"profiles"."id" < "user_skills"."profile_id" [delete: cascade]
+
+Ref "user_skills_skill_id_foreign":"skills"."id" < "user_skills"."skill_id" [delete: cascade]
+
+Ref "work_experience_profile_id_foreign":"profiles"."id" < "work_experience"."profile_id" [delete: cascade]
