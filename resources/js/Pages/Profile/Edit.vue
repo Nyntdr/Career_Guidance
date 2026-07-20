@@ -1,8 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import CareerProfileForm from './Partials/CareerProfileForm.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
+import EducationForm from './Partials/EducationForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import UserSkillsForm from './Partials/UserSkillsForm.vue';
+import WorkExperienceForm from './Partials/WorkExperienceForm.vue';
 import { Head } from '@inertiajs/vue3';
 
 defineProps({
@@ -11,6 +15,9 @@ defineProps({
     },
     status: {
         type: String,
+    },
+    profile: {
+        type: Object,
     },
 });
 </script>
@@ -43,6 +50,30 @@ defineProps({
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
+                </div>
+
+                <div
+                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                >
+                    <CareerProfileForm :profile="profile" />
+                </div>
+
+                <div
+                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                >
+                    <EducationForm :profile="profile" />
+                </div>
+
+                <div
+                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                >
+                    <WorkExperienceForm :profile="profile" />
+                </div>
+
+                <div
+                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                >
+                    <UserSkillsForm :profile="profile" />
                 </div>
 
                 <div

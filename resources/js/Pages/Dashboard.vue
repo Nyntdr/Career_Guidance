@@ -1,7 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Modal from '@/Components/Modal.vue';
+import OnboardingWizard from './Dashboard/Partials/OnboardingWizard.vue';
 import { Head, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     stats: Object,
@@ -13,25 +15,35 @@ const props = defineProps({
 });
 
 const userName = computed(() => usePage().props.auth.user?.name ?? 'there');
+const onboarding = computed(() => usePage().props.onboarding ?? false);
+const showOnboarding = ref(onboarding.value);
 
 const priorityColors = {
     High: 'bg-red-100 text-red-700',
     Medium: 'bg-amber-100 text-amber-700',
     Low: 'bg-emerald-100 text-emerald-700',
 };
+
+const closeOnboarding = () => {
+    showOnboarding.value = false;
+};
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Home Dashboard" />
 
     <AuthenticatedLayout>
+        <Modal :show="showOnboarding" max-width="2xl" :closeable="false">
+            <OnboardingWizard @complete="closeOnboarding" />
+        </Modal>
+
         <template #header>
             <div>
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
                     Dashboard
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
-                    Welcome back, {{ userName }} — here's your career guidance overview.
+                    Welcome back, {{ userName }} — here's your career guidance overview
                 </p>
             </div>
         </template>
@@ -41,7 +53,7 @@ const priorityColors = {
                 <!-- Stats -->
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div class="rounded-2xl border border-indigo-100 bg-white p-5 shadow-sm">
-                        <p class="text-sm font-medium text-indigo-600">Career paths</p>
+                        <p class="text-sm font-medium text-indigo-600">Career pathssss</p>
                         <p class="mt-2 text-3xl font-bold text-gray-900">{{ stats.careerPaths }}+</p>
                         <p class="mt-1 text-xs text-gray-500">Matched to your profile</p>
                     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdateCareerProfileRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,20 +14,18 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+        $user->load('profile.education', 'profile.workExperience', 'profile.userSkills.skill');
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'profile' => $user->profile ?? null,
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
@@ -40,9 +39,19 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit');
     }
 
-    /**
-     * Delete the user's account.
-     */
+    public function updateCareer(UpdateCareerProfileRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        $profile = $user->profile()->firstOrCreate([]);
+
+        $profile->update($request->validated());
+
+        return $request->boolean('_onboarding')
+            ? Redirect::route('dashboard')
+            : Redirect::route('profile.edit');
+    }
+
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([

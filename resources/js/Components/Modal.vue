@@ -37,7 +37,14 @@ watch(
             }, 200);
         }
     },
+    { immediate: true },
 );
+
+onMounted(() => {
+    if (props.show) {
+        dialog.value?.showModal();
+    }
+});
 
 const close = () => {
     if (props.closeable) {
@@ -55,7 +62,13 @@ const closeOnEscape = (e) => {
     }
 };
 
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
+onMounted(() => {
+    document.addEventListener('keydown', closeOnEscape);
+
+    if (props.show) {
+        dialog.value?.showModal();
+    }
+});
 
 onUnmounted(() => {
     document.removeEventListener('keydown', closeOnEscape);

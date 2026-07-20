@@ -29,11 +29,23 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $onboarding = false;
+
+        if ($request->user() && !$request->session()->get('onboarding_skipped')) {
+            $user = $request->user()->load('profile.education', 'profile.workExperience', 'profile.userSkills');
+            $profile = $user->profile;
+
+            if (! $profile || ($profile->education->isEmpty() && $profile->workExperience->isEmpty() && $profile->userSkills->isEmpty())) {
+                $onboarding = true;
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
+            'onboarding' => $onboarding,
         ];
     }
 }

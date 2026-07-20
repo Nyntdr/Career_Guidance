@@ -12,13 +12,13 @@ class DashboardController extends Controller
     {
         return Inertia::render('Dashboard', [
             'stats' => [
-                'careerPaths' => 12,
+                'careerPaths' => 10,
                 'avgCompatibility' => 84,
                 'skillsAssessed' => 18,
-                'roadmapSteps' => 6,
+                'roadmapSteps' => 5,
             ],
             'topMatch' => [
-                'title' => 'Data Scientist',
+                'title' => 'Data Scientists',
                 'compatibility' => 87,
                 'description' => 'Strong fit based on your analytical skills, interest in technology, and problem-solving aptitude.',
                 'salaryRange' => '$95,000 – $145,000',
