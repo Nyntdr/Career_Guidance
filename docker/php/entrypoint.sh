@@ -3,6 +3,11 @@ set -e
 
 cd /var/www/html
 
+# Fix permissions on the mounted volume (named volumes reset ownership to root on mount)
+mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+
 if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "base64:" ]; then
     php artisan key:generate --force --no-interaction
 fi
