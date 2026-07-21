@@ -43,11 +43,6 @@ defineProps({
         <main class="mx-auto max-w-6xl px-6 pb-20 pt-16">
             <div class="grid items-center gap-12 lg:grid-cols-2">
                 <div>
-                    <p
-                        class="mb-4 inline-flex rounded-full bg-indigo-500/20 px-4 py-1.5 text-sm font-medium text-indigo-200"
-                    >
-                        Powered by Artificial Intelligence
-                    </p>
                     <h1 class="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
                         Find your perfect
                         <span class="bg-gradient-to-r from-violet-300 to-indigo-200 bg-clip-text text-transparent">

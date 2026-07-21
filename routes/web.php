@@ -1,5 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\CareerRoleController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\JobPostingController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\LearningResourceController;
+use App\Http\Controllers\Admin\SkillCategoryController;
+use App\Http\Controllers\Admin\SkillController as AdminSkillController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Middleware\EnsureUserRole;
+use App\Http\Controllers\Counselor\DashboardController as CounselorDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EducationController;
 use App\Http\Controllers\ProfileController;
@@ -7,6 +18,8 @@ use App\Http\Controllers\UserSkillController;
 use App\Http\Controllers\WorkExperienceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::aliasMiddleware('role', EnsureUserRole::class);
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -17,6 +30,28 @@ Route::get('/', function () {
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+        Route::resource('users', UserController::class)->except(['create', 'edit', 'show']);
+        Route::resource('skills', AdminSkillController::class)->except(['create', 'edit', 'show']);
+        Route::get('skills/import-template', [AdminSkillController::class, 'importTemplate'])->name('skills.import-template');
+        Route::post('skills/import', [AdminSkillController::class, 'import'])->name('skills.import');
+        Route::resource('skill-categories', SkillCategoryController::class)->except(['create', 'edit', 'show']);
+        Route::resource('job-postings', JobPostingController::class)->except(['create', 'edit', 'show']);
+        Route::resource('learning-resources', LearningResourceController::class)->except(['create', 'edit', 'show']);
+        Route::get('/reports', ReportController::class)->name('reports');
+        Route::get('/users/{user}/profile', [AdminProfileController::class, 'show'])->name('users.profile');
+        Route::resource('career-roles', CareerRoleController::class)->except(['create', 'edit', 'show'])->parameters([
+            'career-roles' => 'career_role',
+        ]);
+    });
+
+    Route::get('/counselor/dashboard', CounselorDashboardController::class)
+        ->middleware('role:counselor')
+        ->name('counselor.dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::post('/onboarding/skip', function (\Illuminate\Http\Request $r) {

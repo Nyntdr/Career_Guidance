@@ -19,6 +19,11 @@ class Skill extends Model
         ];
     }
 
+    public function category()
+    {
+        return $this->belongsTo(SkillCategory::class, 'category_id');
+    }
+
     public function aliases()
     {
         return $this->hasMany(SkillAlias::class);

@@ -9,6 +9,8 @@ class ProgressTracking extends Model
 {
     use HasUuids;
 
+    protected $table = 'progress_tracking';
+
     protected $guarded = [];
 
     protected function casts(): array

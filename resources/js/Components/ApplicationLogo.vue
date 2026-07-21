@@ -1,5 +1,5 @@
 <template>
-    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" class="h-full w-full">
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" class="h-9 w-9">
         <defs>
             <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#6366f1" />

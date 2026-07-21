@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import OnboardingWizard from './Dashboard/Partials/OnboardingWizard.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -17,6 +17,7 @@ const props = defineProps({
 const userName = computed(() => usePage().props.auth.user?.name ?? 'there');
 const onboarding = computed(() => usePage().props.onboarding ?? false);
 const showOnboarding = ref(onboarding.value);
+const hasData = computed(() => props.stats?.skillsAssessed > 0 || props.stats?.careerPaths > 0);
 
 const priorityColors = {
     High: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
@@ -27,6 +28,13 @@ const priorityColors = {
 const closeOnboarding = () => {
     showOnboarding.value = false;
 };
+
+const interests = computed(() => {
+    if (!props.profileSummary?.interests) return [];
+    return Array.isArray(props.profileSummary.interests)
+        ? props.profileSummary.interests.filter(i => i !== 'Not specified')
+        : [];
+});
 </script>
 
 <template>
@@ -74,10 +82,31 @@ const closeOnboarding = () => {
                     </div>
                 </div>
 
-                <div class="grid gap-8 lg:grid-cols-3">
+                <!-- Empty State (no data at all) -->
+                <div v-if="!hasData" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-8 text-center shadow-sm">
+                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
+                        <svg class="h-8 w-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Start building your profile</h3>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Add your skills and career information to get personalized career matches and recommendations.
+                    </p>
+                    <div class="mt-6 flex items-center justify-center gap-3">
+                        <Link :href="route('profile.edit')" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors">
+                            Go to Profile
+                        </Link>
+                        <button @click="showOnboarding = true" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            Start Onboarding
+                        </button>
+                    </div>
+                </div>
+
+                <div v-if="hasData" class="grid gap-8 lg:grid-cols-3">
                     <!-- Top Match -->
                     <div class="lg:col-span-2">
-                        <div class="overflow-hidden rounded-2xl border border-indigo-100 dark:border-indigo-800 bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white shadow-lg">
+                        <div v-if="topMatch" class="overflow-hidden rounded-2xl border border-indigo-100 dark:border-indigo-800 bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white shadow-lg">
                             <p class="text-sm font-medium text-indigo-200">Top career match</p>
                             <h3 class="mt-2 text-3xl font-bold">{{ topMatch.title }}</h3>
                             <p class="mt-3 text-sm leading-relaxed text-indigo-100">
@@ -109,12 +138,19 @@ const closeOnboarding = () => {
                             </div>
                         </div>
 
+                        <div v-else class="overflow-hidden rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center">
+                            <p class="text-gray-500 dark:text-gray-400">Add more skills to see your top career match here.</p>
+                            <Link :href="route('profile.edit')" class="mt-2 inline-block text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                                Update your skills
+                            </Link>
+                        </div>
+
                         <!-- Career Matches -->
                         <div class="mt-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">All career matches</h3>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Ranked by AI compatibility score</p>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Ranked by skill compatibility score</p>
 
-                            <div class="mt-5 space-y-4">
+                            <div v-if="careerMatches?.length" class="mt-5 space-y-4">
                                 <div
                                     v-for="match in careerMatches"
                                     :key="match.title"
@@ -139,6 +175,10 @@ const closeOnboarding = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            <div v-else class="mt-5 py-6 text-center">
+                                <p class="text-sm text-gray-400 dark:text-gray-500">No career matches yet. Add skills to get started.</p>
+                            </div>
                         </div>
                     </div>
 
@@ -149,14 +189,14 @@ const closeOnboarding = () => {
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Your profile</h3>
                             <div class="mt-4 space-y-4">
                                 <div>
-                                    <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Education</p>
-                                    <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ profileSummary.education }}</p>
+                                    <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Headline</p>
+                                    <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ profileSummary?.goals ?? 'Not set' }}</p>
                                 </div>
-                                <div>
+                                <div v-if="interests.length">
                                     <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Interests</p>
                                     <div class="mt-2 flex flex-wrap gap-2">
                                         <span
-                                            v-for="interest in profileSummary.interests"
+                                            v-for="interest in interests"
                                             :key="interest"
                                             class="rounded-full bg-indigo-50 dark:bg-indigo-900/40 px-3 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300"
                                         >
@@ -165,8 +205,8 @@ const closeOnboarding = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Career goal</p>
-                                    <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ profileSummary.goals }}</p>
+                                    <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Education</p>
+                                    <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ profileSummary?.education ?? 'Not specified' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -176,7 +216,7 @@ const closeOnboarding = () => {
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Skills to develop</h3>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Priority gaps for your top match</p>
 
-                            <div class="mt-4 space-y-4">
+                            <div v-if="skillsToDevelop?.length" class="mt-4 space-y-4">
                                 <div
                                     v-for="skill in skillsToDevelop"
                                     :key="skill.name"
@@ -194,19 +234,23 @@ const closeOnboarding = () => {
                                         <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
                                             <div
                                                 class="h-full rounded-full bg-indigo-500"
-                                                :style="{ width: `${skill.current}%` }"
+                                                :style="{ width: `${Math.min(skill.current, 100)}%` }"
                                             />
                                         </div>
-                                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ skill.current }}%</span>
+                                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ Math.round(skill.current) }}%</span>
                                     </div>
                                 </div>
                             </div>
+
+                            <p v-else class="mt-4 text-sm text-gray-400 dark:text-gray-500">
+                                No skill gaps identified. Great job!
+                            </p>
                         </div>
 
                         <!-- Recent Activity -->
                         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent activity</h3>
-                            <ul class="mt-4 space-y-3">
+                            <ul v-if="recentActivity?.length" class="mt-4 space-y-3">
                                 <li
                                     v-for="(item, index) in recentActivity"
                                     :key="index"
@@ -219,6 +263,9 @@ const closeOnboarding = () => {
                                     </div>
                                 </li>
                             </ul>
+                            <p v-else class="mt-4 text-sm text-gray-400 dark:text-gray-500">
+                                No recent activity.
+                            </p>
                         </div>
                     </div>
                 </div>

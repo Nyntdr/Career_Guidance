@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Enums\UserRole;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureUserRole
+{
+    public function handle(Request $request, Closure $next, string $role): Response
+    {
+        $userRole = $request->user()?->role;
+
+        if ($userRole?->value !== $role) {
+            $dashboard = $userRole
+                ? route(match ($userRole) {
+                    UserRole::Admin => 'admin.dashboard',
+                    UserRole::Counselor => 'counselor.dashboard',
+                    default => 'dashboard',
+                })
+                : route('dashboard');
+
+            return redirect($dashboard);
+        }
+
+        return $next($request);
+    }
+}

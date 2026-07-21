@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { useDarkMode } from '@/composables/useDarkMode';
 
 const { isDark, toggleDark } = useDarkMode();
@@ -13,12 +13,41 @@ const { isDark, toggleDark } = useDarkMode();
 const showingNavigationDropdown = ref(false);
 const showSearch = ref(false);
 
-const navLinks = [
-    { route: 'dashboard', label: 'Dashboard' },
-    { route: 'dashboard', label: 'Careers' },
-    { route: 'dashboard', label: 'Skills' },
-    { route: 'dashboard', label: 'Learning' },
-];
+const user = computed(() => usePage().props.auth.user);
+const role = computed(() => user.value?.role ?? 'candidate');
+
+const navLinks = computed(() => {
+    if (role.value === 'admin') {
+        return [
+            { route: 'admin.dashboard', label: 'Dashboard' },
+            { route: 'admin.users.index', label: 'Users' },
+            { route: 'admin.job-postings.index', label: 'Jobs' },
+            { route: 'admin.learning-resources.index', label: 'Learning' },
+            { route: 'admin.skills.index', label: 'Skills' },
+            { route: 'admin.skill-categories.index', label: 'Categories' },
+            { route: 'admin.career-roles.index', label: 'Career Roles' },
+            { route: 'admin.reports', label: 'Reports' },
+        ];
+    }
+    if (role.value === 'counselor') {
+        return [
+            { route: 'counselor.dashboard', label: 'Dashboard' },
+            { route: 'counselor.dashboard', label: 'Candidates' },
+        ];
+    }
+    return [
+        { route: 'dashboard', label: 'Dashboard' },
+        { route: 'dashboard', label: 'Careers' },
+        { route: 'dashboard', label: 'Skills' },
+        { route: 'dashboard', label: 'Learning' },
+    ];
+});
+
+const dashboardRoute = computed(() => {
+    if (role.value === 'admin') return route('admin.dashboard');
+    if (role.value === 'counselor') return route('counselor.dashboard');
+    return route('dashboard');
+});
 
 const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
 </script>
@@ -35,9 +64,9 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')" class="flex items-center gap-2">
+                                <Link :href="dashboardRoute" class="flex items-center gap-2">
                                     <ApplicationLogo
-                                        class="block h-8 w-auto fill-current text-gray-800 dark:text-gray-200"
+                                        class="block text-gray-800 dark:text-gray-200"
                                     />
                                     <span class="hidden text-lg font-bold text-gray-800 dark:text-gray-200 sm:block">CareerGuide</span>
                                 </Link>
@@ -59,8 +88,9 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center sm:gap-4">
-                            <!-- Search -->
+                            <!-- Search (candidate only) -->
                             <button
+                                v-if="role === 'candidate'"
                                 @click="showSearch = !showSearch"
                                 class="rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                                 title="Search"
@@ -84,8 +114,9 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                                 </svg>
                             </button>
 
-                            <!-- Notifications -->
+                            <!-- Notifications (candidate only) -->
                             <button
+                                v-if="role === 'candidate'"
                                 class="relative rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                                 title="Notifications"
                             >
