@@ -144,8 +144,8 @@ const skipAll = () => {
     <div class="p-6">
         <!-- Header -->
         <div class="mb-6 text-center">
-            <h2 class="text-2xl font-bold text-gray-900">Welcome! Let's set up your profile</h2>
-            <p class="mt-1 text-sm text-gray-500">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome! Let's set up your profile</h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Help us personalize your career recommendations.
             </p>
         </div>
@@ -163,12 +163,12 @@ const skipAll = () => {
                         class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors"
                         :class="s.num <= step.value
                             ? 'bg-indigo-600 text-white'
-                            : 'bg-gray-200 text-gray-500'"
+                            : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400'"
                     >
                         <span v-if="completed.has(s.num) && s.num < totalSteps">&#10003;</span>
                         <span v-else>{{ s.num }}</span>
                     </div>
-                    <span class="mt-1 text-xs text-gray-500" :class="{ 'font-medium text-indigo-600': s.num === step.value }">
+                    <span class="mt-1 text-xs text-gray-500 dark:text-gray-400" :class="{ 'font-medium text-indigo-600 dark:text-indigo-400': s.num === step.value }">
                         {{ s.label }}
                     </span>
                 </div>
@@ -178,7 +178,7 @@ const skipAll = () => {
                     v-for="s in steps.slice(0, -1)"
                     :key="s.num"
                     class="h-1 flex-1 rounded-full transition-colors"
-                    :class="s.num <= step.value ? 'bg-indigo-600' : 'bg-gray-200'"
+                    :class="s.num <= step.value ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-600'"
                 />
             </div>
         </div>
@@ -210,11 +210,11 @@ const skipAll = () => {
                 </div>
                 <div>
                     <InputLabel for="oh-bio" value="Bio" />
-                    <textarea id="oh-bio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="profileForm.bio" rows="3" placeholder="Tell us about yourself..." />
+                    <textarea id="oh-bio" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="profileForm.bio" rows="3" placeholder="Tell us about yourself..." />
                     <InputError :message="profileForm.errors.bio" />
                 </div>
                 <div class="flex items-center justify-between pt-2">
-                    <button type="button" @click="skipAll" class="text-sm text-gray-500 hover:text-gray-700">Skip all for now</button>
+                    <button type="button" @click="skipAll" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Skip all for now</button>
                     <PrimaryButton :disabled="profileForm.processing">Save &amp; Continue</PrimaryButton>
                 </div>
             </form>
@@ -222,7 +222,7 @@ const skipAll = () => {
 
         <!-- Step 2: Skills -->
         <div v-if="step === 2">
-            <p class="mb-4 text-sm text-gray-600">Add your key skills and rate your proficiency.</p>
+            <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">Add your key skills and rate your proficiency.</p>
             <form @submit.prevent="addSkill" class="flex items-end gap-3">
                 <div class="flex-1">
                     <InputLabel for="oh-skill" value="Skill" />
@@ -231,7 +231,7 @@ const skipAll = () => {
                 </div>
                 <div class="w-36">
                     <InputLabel for="oh-proficiency" value="Proficiency" />
-                    <select id="oh-proficiency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="skillForm.proficiency_level">
+                    <select id="oh-proficiency" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="skillForm.proficiency_level">
                         <option v-for="i in 5" :key="i" :value="i">{{ proficiencyLabels[i] }}</option>
                     </select>
                     <InputError :message="skillForm.errors.proficiency_level" />
@@ -240,18 +240,18 @@ const skipAll = () => {
             </form>
 
             <div v-if="addedSkills.length" class="mt-4 flex flex-wrap gap-2">
-                <span v-for="s in addedSkills" :key="s" class="rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-700">{{ s }}</span>
+                <span v-for="s in addedSkills" :key="s" class="rounded-full bg-indigo-50 dark:bg-indigo-900/40 px-3 py-1 text-sm text-indigo-700 dark:text-indigo-300">{{ s }}</span>
             </div>
 
             <div class="mt-6 flex items-center justify-between">
-                <button type="button" @click="skipSkills" class="text-sm text-gray-500 hover:text-gray-700">Skip this step</button>
+                <button type="button" @click="skipSkills" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Skip this step</button>
                 <PrimaryButton @click="submitSkills">Continue</PrimaryButton>
             </div>
         </div>
 
         <!-- Step 3: Education -->
         <div v-if="step === 3">
-            <p class="mb-4 text-sm text-gray-600">Add your highest or most recent education.</p>
+            <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">Add your highest or most recent education.</p>
             <form @submit.prevent="submitEducation" class="space-y-4">
                 <div>
                     <InputLabel for="oh-inst" value="Institution" />
@@ -283,7 +283,7 @@ const skipAll = () => {
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-2">
-                    <button type="button" @click="skipEducation" class="text-sm text-gray-500 hover:text-gray-700">Skip this step</button>
+                    <button type="button" @click="skipEducation" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Skip this step</button>
                     <PrimaryButton :disabled="eduForm.processing">Save &amp; Continue</PrimaryButton>
                 </div>
             </form>
@@ -291,7 +291,7 @@ const skipAll = () => {
 
         <!-- Step 4: Work Experience -->
         <div v-if="step === 4">
-            <p class="mb-4 text-sm text-gray-600">Add your current or most recent role.</p>
+            <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">Add your current or most recent role.</p>
             <form @submit.prevent="submitWork" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -307,7 +307,7 @@ const skipAll = () => {
                 </div>
                 <div>
                     <InputLabel for="oh-work-desc" value="Description" />
-                    <textarea id="oh-work-desc" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="workForm.description" rows="3" />
+                    <textarea id="oh-work-desc" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="workForm.description" rows="3" />
                     <InputError :message="workForm.errors.description" />
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -323,11 +323,11 @@ const skipAll = () => {
                     </div>
                 </div>
                 <label class="flex items-center gap-2">
-                    <input type="checkbox" v-model="workForm.is_current" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" />
-                    <span class="text-sm text-gray-700">I currently work here</span>
+                    <input type="checkbox" v-model="workForm.is_current" class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500" />
+                    <span class="text-sm text-gray-700 dark:text-gray-300">I currently work here</span>
                 </label>
                 <div class="flex items-center justify-between pt-2">
-                    <button type="button" @click="skipWork" class="text-sm text-gray-500 hover:text-gray-700">Skip this step</button>
+                    <button type="button" @click="skipWork" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Skip this step</button>
                     <PrimaryButton :disabled="workForm.processing">Save &amp; Continue</PrimaryButton>
                 </div>
             </form>
@@ -335,11 +335,11 @@ const skipAll = () => {
 
         <!-- Step 5: Done -->
         <div v-if="step === 5" class="text-center py-8">
-            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 text-3xl">
+            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-3xl">
                 &#10003;
             </div>
-            <h3 class="mt-4 text-xl font-bold text-gray-900">You're all set!</h3>
-            <p class="mt-2 text-sm text-gray-500">
+            <h3 class="mt-4 text-xl font-bold text-gray-900 dark:text-gray-100">You're all set!</h3>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 Your profile is ready. We'll use this information to find the best career matches for you.
             </p>
             <div class="mt-8">

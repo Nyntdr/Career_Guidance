@@ -72,15 +72,15 @@ const destroy = (edu) => {
     <section>
         <header class="flex items-center justify-between">
             <div>
-                <h2 class="text-lg font-medium text-gray-900">Education</h2>
-                <p class="mt-1 text-sm text-gray-600">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Education</h2>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                     Add your educational background.
                 </p>
             </div>
             <button
                 v-if="!adding"
                 @click="startAdd"
-                class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                class="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
                 + Add
             </button>
@@ -155,7 +155,7 @@ const destroy = (edu) => {
                     <button
                         type="button"
                         @click="cancel"
-                        class="text-sm text-gray-600 hover:text-gray-900"
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                     >
                         Cancel
                     </button>
@@ -167,21 +167,21 @@ const destroy = (edu) => {
             <div
                 v-for="edu in profile.education"
                 :key="edu.id"
-                class="flex items-start justify-between rounded-lg border border-gray-200 p-4"
+                class="flex items-start justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-4"
             >
                 <div>
-                    <p class="font-medium text-gray-900">{{ edu.institution }}</p>
-                    <p v-if="edu.degree || edu.field_of_study" class="text-sm text-gray-600">
+                    <p class="font-medium text-gray-900 dark:text-gray-100">{{ edu.institution }}</p>
+                    <p v-if="edu.degree || edu.field_of_study" class="text-sm text-gray-600 dark:text-gray-400">
                         {{ [edu.degree, edu.field_of_study].filter(Boolean).join(' in ') }}
                     </p>
-                    <p v-if="edu.start_date" class="text-xs text-gray-400">
+                    <p v-if="edu.start_date" class="text-xs text-gray-400 dark:text-gray-500">
                         {{ edu.start_date }} – {{ edu.end_date ?? 'Present' }}
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button
                         @click="startEdit(edu)"
-                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
                     >
                         Edit
                     </button>
@@ -193,7 +193,7 @@ const destroy = (edu) => {
         </div>
         <p
             v-else-if="!adding && !editing"
-            class="mt-4 text-sm text-gray-400"
+            class="mt-4 text-sm text-gray-400 dark:text-gray-500"
         >
             No education entries yet.
         </p>

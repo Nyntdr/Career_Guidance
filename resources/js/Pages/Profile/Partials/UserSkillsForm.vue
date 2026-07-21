@@ -71,15 +71,15 @@ const destroy = (skill) => {
     <section>
         <header class="flex items-center justify-between">
             <div>
-                <h2 class="text-lg font-medium text-gray-900">Skills</h2>
-                <p class="mt-1 text-sm text-gray-600">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Skills</h2>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                     Add skills and rate your proficiency.
                 </p>
             </div>
             <button
                 v-if="!adding"
                 @click="startAdd"
-                class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                class="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
                 + Add
             </button>
@@ -103,7 +103,7 @@ const destroy = (skill) => {
                     <InputLabel for="proficiency_level" value="Proficiency" />
                     <select
                         id="proficiency_level"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         v-model="form.proficiency_level"
                     >
                         <option v-for="i in 5" :key="i" :value="i">
@@ -118,7 +118,7 @@ const destroy = (skill) => {
                     <button
                         type="button"
                         @click="cancel"
-                        class="text-sm text-gray-600 hover:text-gray-900"
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                     >
                         Cancel
                     </button>
@@ -130,15 +130,15 @@ const destroy = (skill) => {
             <div
                 v-for="skill in profile.user_skills"
                 :key="skill.id"
-                class="flex items-center justify-between rounded-lg border border-gray-200 p-4"
+                class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-4"
             >
                 <div class="flex-1">
-                    <p class="font-medium text-gray-900">{{ skill.skill?.name ?? 'Unknown' }}</p>
+                    <p class="font-medium text-gray-900 dark:text-gray-100">{{ skill.skill?.name ?? 'Unknown' }}</p>
                 </div>
 
                 <div v-if="editingId === skill.id" class="flex items-center gap-3">
                     <select
-                        class="rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="rounded-md border-gray-300 dark:border-gray-600 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         v-model="editValue"
                     >
                         <option v-for="i in 5" :key="i" :value="i">
@@ -147,25 +147,25 @@ const destroy = (skill) => {
                     </select>
                     <button
                         @click="updateLevel(skill)"
-                        class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                        class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
                     >
                         Save
                     </button>
                     <button
                         @click="editingId = null"
-                        class="text-sm text-gray-600 hover:text-gray-900"
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                     >
                         Cancel
                     </button>
                 </div>
 
                 <div v-else class="flex items-center gap-3">
-                    <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+                    <span class="rounded-full bg-indigo-50 dark:bg-indigo-900/40 px-3 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300">
                         {{ proficiencyLabels[skill.proficiency_level] ?? skill.proficiency_level }}
                     </span>
                     <button
                         @click="startEdit(skill)"
-                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
                     >
                         Edit
                     </button>
@@ -177,7 +177,7 @@ const destroy = (skill) => {
         </div>
         <p
             v-else-if="!adding"
-            class="mt-4 text-sm text-gray-400"
+            class="mt-4 text-sm text-gray-400 dark:text-gray-500"
         >
             No skills added yet.
         </p>

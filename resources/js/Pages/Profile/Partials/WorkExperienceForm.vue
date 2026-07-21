@@ -80,15 +80,15 @@ const formatDate = (date) => {
     <section>
         <header class="flex items-center justify-between">
             <div>
-                <h2 class="text-lg font-medium text-gray-900">Work Experience</h2>
-                <p class="mt-1 text-sm text-gray-600">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Work Experience</h2>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                     Add your work history.
                 </p>
             </div>
             <button
                 v-if="!adding"
                 @click="startAdd"
-                class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                class="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
                 + Add
             </button>
@@ -125,7 +125,7 @@ const formatDate = (date) => {
                     <InputLabel for="description" value="Description" />
                     <textarea
                         id="description"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         v-model="form.description"
                         rows="3"
                     />
@@ -160,9 +160,9 @@ const formatDate = (date) => {
                     <input
                         type="checkbox"
                         v-model="form.is_current"
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                        class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500"
                     />
-                    <span class="text-sm text-gray-700">I currently work here</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">I currently work here</span>
                 </label>
 
                 <div class="flex items-center gap-3">
@@ -172,7 +172,7 @@ const formatDate = (date) => {
                     <button
                         type="button"
                         @click="cancel"
-                        class="text-sm text-gray-600 hover:text-gray-900"
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                     >
                         Cancel
                     </button>
@@ -184,23 +184,23 @@ const formatDate = (date) => {
             <div
                 v-for="work in profile.work_experience"
                 :key="work.id"
-                class="flex items-start justify-between rounded-lg border border-gray-200 p-4"
+                class="flex items-start justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-4"
             >
                 <div>
-                    <p class="font-medium text-gray-900">{{ work.title }}</p>
-                    <p class="text-sm text-gray-600">{{ work.company }}</p>
-                    <p v-if="work.start_date" class="text-xs text-gray-400">
+                    <p class="font-medium text-gray-900 dark:text-gray-100">{{ work.title }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ work.company }}</p>
+                    <p v-if="work.start_date" class="text-xs text-gray-400 dark:text-gray-500">
                         {{ formatDate(work.start_date) }} –
                         {{ work.is_current ? 'Present' : formatDate(work.end_date) }}
                     </p>
-                    <p v-if="work.description" class="mt-1 text-sm text-gray-500">
+                    <p v-if="work.description" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         {{ work.description }}
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button
                         @click="startEdit(work)"
-                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
                     >
                         Edit
                     </button>
@@ -212,7 +212,7 @@ const formatDate = (date) => {
         </div>
         <p
             v-else-if="!adding && !editing"
-            class="mt-4 text-sm text-gray-400"
+            class="mt-4 text-sm text-gray-400 dark:text-gray-500"
         >
             No work experience entries yet.
         </p>

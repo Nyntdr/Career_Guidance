@@ -27,8 +27,8 @@ const submit = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Career Profile</h2>
-            <p class="mt-1 text-sm text-gray-600">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Career Profile</h2>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Tell us about your professional background and goals.
             </p>
         </header>
@@ -89,7 +89,7 @@ const submit = () => {
                 <InputLabel for="bio" value="Bio" />
                 <textarea
                     id="bio"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     v-model="form.bio"
                     rows="4"
                     placeholder="Tell us about yourself..."
@@ -105,7 +105,7 @@ const submit = () => {
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
                 </Transition>
             </div>
         </form>
