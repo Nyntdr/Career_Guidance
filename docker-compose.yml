@@ -34,7 +34,7 @@ services:
       - ./database:/var/www/html/database
       - ./resources/views:/var/www/html/resources/views
       - ./resources/css:/var/www/html/resources/css
-      - ./public:/var/www/html/public
+      # - ./public:/var/www/html/public
     depends_on:
       mysql:
         condition: service_healthy
