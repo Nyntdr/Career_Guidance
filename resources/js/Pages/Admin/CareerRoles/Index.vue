@@ -47,7 +47,8 @@ const filteredSkills = computed(() => {
 function defaultFormData() {
     return {
         title: '', description: '', typical_seniority: '',
-        avg_salary_range: '', growth_outlook: '',
+        salary_min: '', salary_max: '',
+        growth_outlook: '',
         skills: [],
     };
 }
@@ -80,6 +81,7 @@ function openCreate() {
 }
 
 function submitCreate() {
+    createForm.avg_salary_range = { min: parseInt(createForm.salary_min) || 0, max: parseInt(createForm.salary_max) || 0 };
     createForm.skills = createSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
     createForm.post(route('admin.career-roles.store'), {
         onSuccess: () => { showCreateModal.value = false; createForm.reset(); },
@@ -93,7 +95,8 @@ function openEdit(role) {
     editForm.title = role.title;
     editForm.description = role.description ?? '';
     editForm.typical_seniority = role.typical_seniority ?? '';
-    editForm.avg_salary_range = role.avg_salary_range ? JSON.stringify(role.avg_salary_range) : '';
+    editForm.salary_min = role.avg_salary_range?.min ?? '';
+    editForm.salary_max = role.avg_salary_range?.max ?? '';
     editForm.growth_outlook = role.growth_outlook ?? '';
     editSelectedSkills.value = (role.required_skills ?? role.requiredSkills ?? []).map(s => ({
         id: s.id, name: s.name,
@@ -105,6 +108,7 @@ function openEdit(role) {
 }
 
 function submitEdit() {
+    editForm.avg_salary_range = { min: parseInt(editForm.salary_min) || 0, max: parseInt(editForm.salary_max) || 0 };
     editForm.skills = editSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
     editForm.put(route('admin.career-roles.update', editingRole.value.id), {
         onSuccess: () => { showEditModal.value = false; editingRole.value = null; },
@@ -220,10 +224,17 @@ function destroyRole() {
                             </select>
                             <InputError :message="createForm.errors.typical_seniority" />
                         </div>
-                        <div>
-                            <InputLabel for="c-salary" value="Avg Salary Range (JSON)" />
-                            <TextInput id="c-salary" v-model="createForm.avg_salary_range" type="text" placeholder='{"min":50000,"max":80000}' class="mt-1 block w-full" />
-                            <InputError :message="createForm.errors.avg_salary_range" />
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <InputLabel for="c-salary-min" value="Min Salary ($)" />
+                                <TextInput id="c-salary-min" v-model="createForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />
+                                <InputError :message="createForm.errors['avg_salary_range.min']" />
+                            </div>
+                            <div>
+                                <InputLabel for="c-salary-max" value="Max Salary ($)" />
+                                <TextInput id="c-salary-max" v-model="createForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" />
+                                <InputError :message="createForm.errors['avg_salary_range.max']" />
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -294,10 +305,17 @@ function destroyRole() {
                             </select>
                             <InputError :message="editForm.errors.typical_seniority" />
                         </div>
-                        <div>
-                            <InputLabel for="e-salary" value="Avg Salary Range (JSON)" />
-                            <TextInput id="e-salary" v-model="editForm.avg_salary_range" type="text" placeholder='{"min":50000,"max":80000}' class="mt-1 block w-full" />
-                            <InputError :message="editForm.errors.avg_salary_range" />
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <InputLabel for="e-salary-min" value="Min Salary ($)" />
+                                <TextInput id="e-salary-min" v-model="editForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />
+                                <InputError :message="editForm.errors['avg_salary_range.min']" />
+                            </div>
+                            <div>
+                                <InputLabel for="e-salary-max" value="Max Salary ($)" />
+                                <TextInput id="e-salary-max" v-model="editForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" />
+                                <InputError :message="editForm.errors['avg_salary_range.max']" />
+                            </div>
                         </div>
                     </div>
                     <div>
