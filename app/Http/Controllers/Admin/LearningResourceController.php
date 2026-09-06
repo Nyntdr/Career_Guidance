@@ -23,7 +23,7 @@ class LearningResourceController extends Controller
             ->when($search, fn ($q, $v) => $q->where('title', 'like', "%{$v}%"))
             ->when($typeFilter, fn ($q, $v) => $q->where('resource_type', $v))
             ->orderBy('created_at', 'desc')
-            ->paginate(20)
+            ->paginate(\App\Support\Settings::get('admin_page_size', 20))
             ->withQueryString();
 
         $skills = Skill::with('category')

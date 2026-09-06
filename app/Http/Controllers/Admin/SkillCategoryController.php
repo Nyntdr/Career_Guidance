@@ -20,7 +20,7 @@ class SkillCategoryController extends Controller
         $categories = SkillCategory::withCount('skills')
             ->when($search, fn ($q, $v) => $q->where('name', 'like', "%{$v}%"))
             ->orderBy('name')
-            ->paginate(20)
+            ->paginate(\App\Support\Settings::get('admin_page_size', 20))
             ->withQueryString();
 
         return Inertia::render('Admin/SkillCategories/Index', [

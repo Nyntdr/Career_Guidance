@@ -3,6 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { formatMoney } from '@/lib/format';
+
+const settings = usePage().props.settings ?? {};
 
 const props = defineProps({
     roles: Object,
@@ -30,7 +34,7 @@ watch(search, (val) => {
 
 function formatSalary(range) {
     if (!range) return '—';
-    const fmt = (n) => (n ? `$${Number(n).toLocaleString()}` : '—');
+    const fmt = (n) => (n ? formatMoney(n, settings.currency_symbol, settings.currency_position) : '—');
     return `${fmt(range.min)}${range.max ? ` – ${fmt(range.max)}` : ''}`;
 }
 </script>

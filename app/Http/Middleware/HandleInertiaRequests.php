@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Settings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,6 +45,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'settings' => [
+                'site_name' => Settings::get('site_name'),
+                'currency_symbol' => Settings::get('currency_symbol'),
+                'currency_position' => Settings::get('currency_position'),
             ],
             'onboarding' => $onboarding,
         ];

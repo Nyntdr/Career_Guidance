@@ -1,6 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { formatMoney } from '@/lib/format';
+
+const settings = usePage().props.settings ?? {};
 
 const props = defineProps({
     role: Object,
@@ -24,7 +27,7 @@ const seniorityColors = {
 
 function formatSalary(range) {
     if (!range) return '—';
-    const fmt = (n) => (n ? `$${Number(n).toLocaleString()}` : '—');
+    const fmt = (n) => (n ? formatMoney(n, settings.currency_symbol, settings.currency_position) : '—');
     return `${fmt(range.min)}${range.max ? ` – ${fmt(range.max)}` : ''}`;
 }
 

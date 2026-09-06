@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment: &app-env
       APP_KEY: base64:unu4s82yn9qVhO51gWUwk7reDRTxGfEKtKv8xf8nbOY=
-      APP_NAME: CareerGuide
+      APP_NAME: Ujjwol Bato
       APP_ENV: local
       APP_DEBUG: "true"
       APP_URL: http://localhost:8082

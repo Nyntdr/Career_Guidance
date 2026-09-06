@@ -9,6 +9,7 @@ use App\Models\GapAssessment;
 use App\Models\ProgressTracking;
 use App\Models\UserSkill;
 use App\Models\WorkExperience;
+use App\Support\Settings;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -178,7 +179,7 @@ class DashboardController extends Controller
 
         usort($matches, fn($a, $b) => $b['score'] <=> $a['score']);
 
-        return array_slice($matches, 0, 10);
+        return array_slice($matches, 0, Settings::get('top_matches', 10));
     }
 
     private function computeGaps($userSkills, $userSkillIds): array
@@ -215,7 +216,7 @@ class DashboardController extends Controller
         usort($gaps, fn($a, $b) => ['High' => 0, 'Medium' => 1, 'Low' => 2][$a['priority']]
             <=> ['High' => 0, 'Medium' => 1, 'Low' => 2][$b['priority']]);
 
-        return array_values(array_slice($gaps, 0, 10));
+        return array_values(array_slice($gaps, 0, Settings::get('top_matches', 10)));
     }
 
     private function buildRecentActivity($profile, $userSkills, $education, $workExperiences): array
@@ -265,8 +266,17 @@ class DashboardController extends Controller
         if (!$range || !isset($range['min'])) {
             return 'Not specified';
         }
-        $min = '$' . number_format($range['min']);
-        $max = isset($range['max']) ? '$' . number_format($range['max']) : '';
+
+        $symbol = Settings::get('currency_symbol', '$');
+        $position = Settings::get('currency_position', 'before');
+
+        $fmt = fn ($n) => $position === 'after'
+            ? number_format($n) . $symbol
+            : $symbol . number_format($n);
+
+        $min = $fmt($range['min']);
+        $max = isset($range['max']) ? $fmt($range['max']) : '';
+
         return $max ? "{$min} – {$max}" : $min;
     }
 }

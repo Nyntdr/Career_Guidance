@@ -213,7 +213,12 @@ const interests = computed(() => {
 
                         <!-- Skills to Develop -->
                         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Skills to develop</h3>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Skills to develop</h3>
+                                <Link :href="route('roadmap.index')" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                                    View roadmap
+                                </Link>
+                            </div>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Priority gaps for your top match</p>
 
                             <div v-if="skillsToDevelop?.length" class="mt-4 space-y-4">

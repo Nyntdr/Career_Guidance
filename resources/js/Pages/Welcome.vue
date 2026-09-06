@@ -1,15 +1,19 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { brandInitials } from '@/lib/format';
 
 defineProps({
     canLogin: {
         type: Boolean,
     },
 });
+
+const settings = usePage().props.settings ?? {};
+const siteName = settings.site_name ?? 'Ujjwol Bato';
 </script>
 
 <template>
-    <Head title="AI Career Guidance" />
+    <Head :title="siteName" />
 
     <div class="min-h-screen bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-900 text-white">
         <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -17,9 +21,9 @@ defineProps({
                 <div
                     class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-lg font-bold"
                 >
-                    ACG
+                    {{ brandInitials(siteName) }}
                 </div>
-                <span class="text-lg font-semibold tracking-tight">Career Guidance AI</span>
+                <span class="text-lg font-semibold tracking-tight">{{ siteName }}</span>
             </div>
 
             <div v-if="canLogin" class="flex items-center gap-3">
@@ -50,7 +54,7 @@ defineProps({
                         </span>
                     </h1>
                     <p class="mt-6 max-w-xl text-lg leading-relaxed text-indigo-100/90">
-                        CareerGuide AI analyzes your skills, interests, and goals to deliver
+                        {{ siteName }} analyzes your skills, interests, and goals to deliver
                         personalized career recommendations, skill gap insights, and actionable
                         roadmaps — all in one place.
                     </p>
@@ -154,7 +158,7 @@ defineProps({
         </main>
 
         <footer class="border-t border-white/10 py-8 text-center text-sm text-indigo-300">
-            &copy; {{ new Date().getFullYear() }} CareerGuide AI. All rights reserved.
+            &copy; {{ new Date().getFullYear() }} {{ siteName }}. All rights reserved.
         </footer>
     </div>
 </template>

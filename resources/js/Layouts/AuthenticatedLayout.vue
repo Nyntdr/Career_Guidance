@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -11,10 +11,13 @@ import { useDarkMode } from '@/composables/useDarkMode';
 const { isDark, toggleDark } = useDarkMode();
 
 const showingNavigationDropdown = ref(false);
-const showSearch = ref(false);
+const navScrollRef = ref(null);
+const canScrollLeft = ref(false);
+const canScrollRight = ref(false);
 
 const user = computed(() => usePage().props.auth.user);
 const role = computed(() => user.value?.role ?? 'user');
+const siteName = computed(() => usePage().props.settings?.site_name ?? 'Ujjwol Bato');
 
 const navLinks = computed(() => {
     if (role.value === 'admin') {
@@ -31,6 +34,9 @@ const navLinks = computed(() => {
     }
     return [
         { route: 'dashboard', label: 'Dashboard' },
+        { route: 'roadmap.index', label: 'Roadmap' },
+        { route: 'jobs.index', label: 'Jobs' },
+        { route: 'resume.index', label: 'Resumes' },
         { route: 'careers.index', label: 'Careers' },
         { route: 'skills.index', label: 'Skills' },
         { route: 'learning.index', label: 'Learning' },
@@ -43,6 +49,28 @@ const dashboardRoute = computed(() => {
 });
 
 const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
+
+function updateNavScrollState() {
+    const el = navScrollRef.value;
+    if (!el) return;
+    canScrollLeft.value = el.scrollLeft > 0;
+    canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+}
+
+function scrollNav(dir) {
+    const el = navScrollRef.value;
+    if (!el) return;
+    el.scrollBy({ left: dir * 220, behavior: 'smooth' });
+}
+
+onMounted(() => {
+    updateNavScrollState();
+    window.addEventListener('resize', updateNavScrollState);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateNavScrollState);
+});
 </script>
 
 <template>
@@ -54,45 +82,59 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
-                        <div class="flex">
+                        <div class="flex min-w-0">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="dashboardRoute" class="flex items-center gap-2">
                                     <ApplicationLogo
                                         class="block text-gray-800 dark:text-gray-200"
                                     />
-                                    <span class="hidden text-lg font-bold text-gray-800 dark:text-gray-200 sm:block">CareerGuide</span>
+                                    <span class="hidden text-lg font-bold text-gray-800 dark:text-gray-200 sm:block">{{ siteName }}</span>
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
-                            >
-                                <NavLink
-                                    v-for="link in navLinks"
-                                    :key="link.label"
-                                    :href="route(link.route)"
-                                    :active="route().current(link.route)"
+                            <div class="relative hidden items-center sm:ms-10 sm:flex">
+                                <button
+                                    v-if="canScrollLeft"
+                                    @click="scrollNav(-1)"
+                                    class="absolute -left-3 z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50 dark:bg-gray-700 dark:ring-gray-600 dark:text-gray-300 dark:hover:text-white transition-colors"
+                                    title="Scroll left"
                                 >
-                                    {{ link.label }}
-                                </NavLink>
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+
+                                <div
+                                    ref="navScrollRef"
+                                    @scroll="updateNavScrollState"
+                                    class="flex max-w-full flex-nowrap items-center gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide"
+                                >
+                                    <NavLink
+                                        v-for="link in navLinks"
+                                        :key="link.label"
+                                        :href="route(link.route)"
+                                        :active="route().current(link.route)"
+                                    >
+                                        {{ link.label }}
+                                    </NavLink>
+                                </div>
+
+                                <button
+                                    v-if="canScrollRight"
+                                    @click="scrollNav(1)"
+                                    class="absolute -right-3 z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50 dark:bg-gray-700 dark:ring-gray-600 dark:text-gray-300 dark:hover:text-white transition-colors"
+                                    title="Scroll right"
+                                >
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center sm:gap-4">
-                            <!-- Search (user only) -->
-                            <button
-                                v-if="role === 'user'"
-                                @click="showSearch = !showSearch"
-                                class="rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                title="Search"
-                            >
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </button>
-
                             <!-- Dark Mode Toggle -->
                             <button
                                 @click="toggleDark"
@@ -140,6 +182,12 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                                             :href="route('profile.edit')"
                                         >
                                             Profile
+                                        </DropdownLink>
+                                        <DropdownLink
+                                            v-if="role === 'admin'"
+                                            :href="route('admin.settings.index')"
+                                        >
+                                            Settings
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
@@ -238,6 +286,12 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 Profile
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                v-if="role === 'admin'"
+                                :href="route('admin.settings.index')"
+                            >
+                                Settings
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"

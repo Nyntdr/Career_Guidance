@@ -14,8 +14,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SkillSeeder::class,
+            SkillAliasSeeder::class,
             CareerRoleSeeder::class,
             LearningResourceSeeder::class,
+            JobPostingSeeder::class,
         ]);
 
         User::firstOrCreate(

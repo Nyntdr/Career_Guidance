@@ -221,7 +221,7 @@ const typeBadge = (t) => ({
                             <InputError :message="createForm.errors.duration_hours" />
                         </div>
                         <div>
-                            <InputLabel for="c-cost" value="Cost ($)" />
+                            <InputLabel for="c-cost" :value="`Cost (${$page.props.settings?.currency_symbol ?? '$'})`" />
                             <TextInput id="c-cost" v-model="createForm.cost" type="number" step="0.01" min="0" class="mt-1 block w-full" />
                             <InputError :message="createForm.errors.cost" />
                         </div>
@@ -289,7 +289,7 @@ const typeBadge = (t) => ({
                             <InputError :message="editForm.errors.duration_hours" />
                         </div>
                         <div>
-                            <InputLabel for="e-cost" value="Cost ($)" />
+                            <InputLabel for="e-cost" :value="`Cost (${$page.props.settings?.currency_symbol ?? '$'})`" />
                             <TextInput id="e-cost" v-model="editForm.cost" type="number" step="0.01" min="0" class="mt-1 block w-full" />
                             <InputError :message="editForm.errors.cost" />
                         </div>
