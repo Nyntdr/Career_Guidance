@@ -10,9 +10,12 @@ use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController as AdminSkillController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\EnsureUserRole;
+use App\Http\Controllers\CareersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EducationController;
+use App\Http\Controllers\LearningController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SkillsController;
 use App\Http\Controllers\UserSkillController;
 use App\Http\Controllers\WorkExperienceController;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +52,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/careers', [CareersController::class, 'index'])->name('careers.index');
+    Route::get('/careers/{careerRole}', [CareersController::class, 'show'])->name('careers.show');
+    Route::get('/skills', [SkillsController::class, 'index'])->name('skills.index');
+    Route::get('/learning', [LearningController::class, 'index'])->name('learning.index');
+
     Route::post('/onboarding/skip', function (\Illuminate\Http\Request $r) {
         $r->session()->put('onboarding_skipped', true);
         return redirect()->back();

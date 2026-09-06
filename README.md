@@ -234,6 +234,11 @@ career_guidance/
 └── docker-compose.yml      # app, nginx, mysql services
 ```
 
+## Documentation
+
+- [`docs/implementation-roadmap.md`](docs/implementation-roadmap.md) — current-phase plan for the remaining feature areas (no AI / datasets)
+- [`docs/project-overview.md`](docs/project-overview.md) — feature & architecture overview
+
 ## Notes
 
 - The Docker build uses PHP **8.4** (required by current Composer dependencies).

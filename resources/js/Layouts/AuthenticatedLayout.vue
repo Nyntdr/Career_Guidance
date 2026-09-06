@@ -31,9 +31,9 @@ const navLinks = computed(() => {
     }
     return [
         { route: 'dashboard', label: 'Dashboard' },
-        { route: 'dashboard', label: 'Careers' },
-        { route: 'dashboard', label: 'Skills' },
-        { route: 'dashboard', label: 'Learning' },
+        { route: 'careers.index', label: 'Careers' },
+        { route: 'skills.index', label: 'Skills' },
+        { route: 'learning.index', label: 'Learning' },
     ];
 });
 
