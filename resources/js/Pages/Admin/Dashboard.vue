@@ -99,14 +99,6 @@ const barOptions = {
                         <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Total Users</p>
                         <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">{{ stats.totalUsers }}</p>
                     </Link>
-                    <Link :href="route('admin.users.index', { role: 'candidate' })" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600 transition-all">
-                        <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Candidates</p>
-                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">{{ stats.totalCandidates }}</p>
-                    </Link>
-                    <Link :href="route('admin.users.index', { role: 'counselor' })" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600 transition-all">
-                        <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Counselors</p>
-                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">{{ stats.totalCounselors }}</p>
-                    </Link>
                     <Link :href="route('admin.users.index', { role: 'admin' })" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600 transition-all">
                         <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Admins</p>
                         <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">{{ stats.totalAdmins }}</p>
@@ -201,8 +193,7 @@ const barOptions = {
                                         <td class="whitespace-nowrap px-5 py-3 text-sm text-gray-600 dark:text-gray-400">{{ user.email }}</td>
                                         <td class="whitespace-nowrap px-5 py-3">
                                             <span :class="{
-                                                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300': user.role === 'candidate',
-                                                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300': user.role === 'counselor',
+                                                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300': user.role === 'user',
                                                 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300': user.role === 'admin',
                                             }" class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize">
                                                 {{ user.role }}

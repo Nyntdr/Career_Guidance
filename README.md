@@ -85,6 +85,50 @@ docker compose build --no-cache
 docker compose up -d --force-recreate
 ```
 
+### Command reference — Docker vs Local
+
+> **Golden rule:** whenever a command starts with `php artisan ...`, it runs PHP inside the
+> `app` container. From the host you must prefix it with `docker compose exec app`.
+> Only `docker`, `docker compose`, `npm`, and the `mysql` client can run directly on the host.
+>
+> **Why:** app config is passed via the `environment:` block in `docker-compose.yml`, where
+> `DB_HOST=mysql` — a hostname that only resolves *inside* the Docker network. Host PHP
+> cannot resolve it, so running a bare `php artisan ...` from your terminal fails with
+> `getaddrinfo for mysql failed`.
+
+| Task | Inside Docker (✔ recommended) | Host / local (requires `.env`, ✔b) |
+|---|---|---|
+| Run migrations | `docker compose exec app php artisan migrate` | `php artisan migrate` ✔b |
+| Seed the database | `docker compose exec app php artisan db:seed` | `php artisan db:seed` ✔b |
+| Fresh migrate + seed | `docker compose exec app php artisan migrate:fresh --seed` | `php artisan migrate:fresh --seed` ✔b |
+| Interactive tinker | `docker compose exec app php artisan tinker` | `php artisan tinker` ✔b |
+| List routes | `docker compose exec app php artisan route:list` | `php artisan route:list` ✔b |
+| Check migration status | `docker compose exec app php artisan migrate:status` | `php artisan migrate:status` ✔b |
+| Build frontend assets | `docker compose exec app npm run build` | `npm run build` |
+| Run tests | `docker compose exec app composer test` | `composer test` ✔b |
+| MySQL shell | `docker compose exec mysql mysql -u laravel -psecret career_guidance` | `mysql -h 127.0.0.1 -P 3307 -u laravel -psecret career_guidance` |
+
+**✔b (local commands only work if your `.env` points at the Docker MySQL):**
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3307
+DB_DATABASE=career_guidance
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
+
+- Docker's MySQL is exposed on the host at port **3307** (mapped from the container's 3306) to
+  avoid clashing with a locally installed MySQL. The local MySQL on port 3306 **rejects** the
+  app credentials — don't point `.env` there.
+- These values live in **`.env`** (gitignored). They do **not** affect the containers; those use
+  docker-compose's `environment:` block.
+
+> **Troubleshooting:** if you see `php_network_getaddresses: getaddrinfo for mysql failed`
+> or `Connection refused`, you ran a host `php artisan ...` command while `.env` still says
+> `DB_HOST=mysql`. Either fix `.env` as above or use `docker compose exec app ...`.
+
 ### Checking the database
 
 **Via the MySQL container:**
@@ -140,6 +184,11 @@ php artisan migrate
 npm run build
 ```
 
+> **Note for local commands:** if your database is the one running in Docker (exposed on host
+> port `3307`), point `.env` at `DB_HOST=127.0.0.1` and `DB_PORT=3307`. Otherwise local
+> `php artisan ...` commands will fail with `getaddrinfo for mysql failed`. See
+> [Command reference — Docker vs Local](#command-reference--docker-vs-local).
+
 ### Run the development server
 
 ```bash
@@ -184,6 +233,11 @@ career_guidance/
 ├── Dockerfile              # Multi-stage build: vendor → frontend → app → web
 └── docker-compose.yml      # app, nginx, mysql services
 ```
+
+## Documentation
+
+- [`docs/implementation-roadmap.md`](docs/implementation-roadmap.md) — current-phase plan for the remaining feature areas (no AI / datasets)
+- [`docs/project-overview.md`](docs/project-overview.md) — feature & architecture overview
 
 ## Notes
 

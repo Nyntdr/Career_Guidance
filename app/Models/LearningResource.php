@@ -21,7 +21,8 @@ class LearningResource extends Model
 
     public function skills()
     {
-        return $this->belongsToMany(Skill::class, 'learning_resource_skills');
+        return $this->belongsToMany(Skill::class, 'learning_resource_skills')
+            ->using(LearningResourceSkill::class);
     }
 
     public function gapRecommendations()

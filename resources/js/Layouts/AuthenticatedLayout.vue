@@ -14,7 +14,7 @@ const showingNavigationDropdown = ref(false);
 const showSearch = ref(false);
 
 const user = computed(() => usePage().props.auth.user);
-const role = computed(() => user.value?.role ?? 'candidate');
+const role = computed(() => user.value?.role ?? 'user');
 
 const navLinks = computed(() => {
     if (role.value === 'admin') {
@@ -29,23 +29,16 @@ const navLinks = computed(() => {
             { route: 'admin.reports', label: 'Reports' },
         ];
     }
-    if (role.value === 'counselor') {
-        return [
-            { route: 'counselor.dashboard', label: 'Dashboard' },
-            { route: 'counselor.dashboard', label: 'Candidates' },
-        ];
-    }
     return [
         { route: 'dashboard', label: 'Dashboard' },
-        { route: 'dashboard', label: 'Careers' },
-        { route: 'dashboard', label: 'Skills' },
-        { route: 'dashboard', label: 'Learning' },
+        { route: 'careers.index', label: 'Careers' },
+        { route: 'skills.index', label: 'Skills' },
+        { route: 'learning.index', label: 'Learning' },
     ];
 });
 
 const dashboardRoute = computed(() => {
     if (role.value === 'admin') return route('admin.dashboard');
-    if (role.value === 'counselor') return route('counselor.dashboard');
     return route('dashboard');
 });
 
@@ -88,9 +81,9 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center sm:gap-4">
-                            <!-- Search (candidate only) -->
+                            <!-- Search (user only) -->
                             <button
-                                v-if="role === 'candidate'"
+                                v-if="role === 'user'"
                                 @click="showSearch = !showSearch"
                                 class="rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                                 title="Search"
@@ -114,9 +107,9 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                                 </svg>
                             </button>
 
-                            <!-- Notifications (candidate only) -->
+                            <!-- Notifications (user only) -->
                             <button
-                                v-if="role === 'candidate'"
+                                v-if="role === 'user'"
                                 class="relative rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                                 title="Notifications"
                             >

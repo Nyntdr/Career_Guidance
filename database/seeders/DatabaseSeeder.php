@@ -15,21 +15,17 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SkillSeeder::class,
             CareerRoleSeeder::class,
+            LearningResourceSeeder::class,
         ]);
 
         User::firstOrCreate(
             ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => bcrypt('password'), 'role' => 'candidate'],
+            ['name' => 'Test User', 'password' => bcrypt('password'), 'role' => 'user'],
         );
 
         User::firstOrCreate(
             ['email' => 'admin@example.com'],
             ['name' => 'Admin User', 'password' => bcrypt('password'), 'role' => 'admin'],
-        );
-
-        User::firstOrCreate(
-            ['email' => 'counselor@example.com'],
-            ['name' => 'Counselor User', 'password' => bcrypt('password'), 'role' => 'counselor'],
         );
     }
 }

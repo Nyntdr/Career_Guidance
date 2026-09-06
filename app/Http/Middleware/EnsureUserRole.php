@@ -17,7 +17,6 @@ class EnsureUserRole
             $dashboard = $userRole
                 ? route(match ($userRole) {
                     UserRole::Admin => 'admin.dashboard',
-                    UserRole::Counselor => 'counselor.dashboard',
                     default => 'dashboard',
                 })
                 : route('dashboard');

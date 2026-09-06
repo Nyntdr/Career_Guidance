@@ -25,7 +25,7 @@ class ReportController extends Controller
             ->get();
 
         $profileCount = Profile::count();
-        $totalCandidates = \App\Models\User::where('role', 'candidate')->count();
+        $totalCandidates = \App\Models\User::where('role', 'user')->count();
 
         $onboardingStats = [
             'total_candidates' => $totalCandidates,
