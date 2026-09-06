@@ -25,7 +25,7 @@ class JobPostingController extends Controller
                   ->orWhere('company', 'like', "%{$v}%");
             }))
             ->orderBy('created_at', 'desc')
-            ->paginate(20)
+            ->paginate(\App\Support\Settings::get('admin_page_size', 20))
             ->withQueryString();
 
         $skills = Skill::with('category')

@@ -7,6 +7,7 @@ use App\Models\AtsScan;
 use App\Models\AtsScanDetail;
 use App\Models\JobPosting;
 use App\Models\Resume;
+use App\Support\Settings;
 
 class AtsScanner
 {
@@ -22,16 +23,20 @@ class AtsScanner
         $resumeText = $resume->raw_text ?? '';
         $jdText = $jobPosting->raw_description ?? '';
 
-        $resume->loadMissing('sections');
+        $resume->loadMissing('sections', 'profile');
 
         [$keywordScore, $keywords] = $this->keywordScore($resumeText, $jdText, $jobPosting);
         $structureScore = $this->structureScore($resume);
         $formattingScore = $this->formattingScore($resumeText);
         $grade = app(Readability::class)->gradeLevel($resumeText);
         $readabilityScore = $this->readabilityScore($grade);
+        $weights = $this->weights();
 
         $overallScore = round(
-            $keywordScore * 0.5 + $structureScore * 0.15 + $formattingScore * 0.15 + $readabilityScore * 0.2,
+            $keywordScore * $weights['keyword'] / 100
+                + $structureScore * $weights['structure'] / 100
+                + $formattingScore * $weights['formatting'] / 100
+                + $readabilityScore * $weights['readability'] / 100,
         );
 
         $scan = AtsScan::create([
@@ -149,6 +154,30 @@ class AtsScanner
         }
 
         return (int) round(max(20, min(95, 100 - max(0, $grade - 7) * 5)));
+    }
+
+    private function weights(): array
+    {
+        $default = [
+            'keyword' => 50,
+            'structure' => 15,
+            'formatting' => 15,
+            'readability' => 20,
+        ];
+
+        $weights = Settings::get('ats_weights', $default);
+
+        $weights = is_array($weights)
+            ? array_merge($default, $weights)
+            : $default;
+
+        $total = array_sum($weights);
+
+        if ($total !== 100) {
+            $weights = array_map(fn ($w) => (int) round($w / max($total, 1) * 100), $weights);
+        }
+
+        return $weights;
     }
 
     private function countOccurrences(string $haystack, string $needle): int

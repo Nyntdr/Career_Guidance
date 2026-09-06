@@ -3,7 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
+import { formatMoney } from '@/lib/format';
+
+const settings = usePage().props.settings ?? {};
 
 const props = defineProps({
     items: Array,
@@ -41,7 +44,7 @@ function setStatus(item, status) {
 function formatCost(cost) {
     const n = Number(cost);
     if (!cost || n === 0) return 'Free';
-    return `$${n.toLocaleString()}`;
+    return formatMoney(n, settings.currency_symbol, settings.currency_position);
 }
 </script>
 

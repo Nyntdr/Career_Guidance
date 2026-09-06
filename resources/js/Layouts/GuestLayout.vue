@@ -1,6 +1,8 @@
 <script setup>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+
+const siteName = usePage().props.settings?.site_name ?? 'Ujjwol Bato';
 </script>
 
 <template>
@@ -10,7 +12,7 @@ import { Link } from '@inertiajs/vue3';
         <div class="mb-6 text-center">
             <Link href="/" class="inline-flex flex-col items-center gap-3">
                 <ApplicationLogo class="h-16 w-16" />
-                <span class="text-xl font-bold text-gray-800 dark:text-gray-100">Ujjwol Bato</span>
+                <span class="text-xl font-bold text-gray-800 dark:text-gray-100">{{ siteName }}</span>
             </Link>
         </div>
 

@@ -14,6 +14,7 @@ const showingNavigationDropdown = ref(false);
 
 const user = computed(() => usePage().props.auth.user);
 const role = computed(() => user.value?.role ?? 'user');
+const siteName = computed(() => usePage().props.settings?.site_name ?? 'Ujjwol Bato');
 
 const navLinks = computed(() => {
     if (role.value === 'admin') {
@@ -26,6 +27,7 @@ const navLinks = computed(() => {
             { route: 'admin.skill-categories.index', label: 'Categories' },
             { route: 'admin.career-roles.index', label: 'Career Roles' },
             { route: 'admin.reports', label: 'Reports' },
+            { route: 'admin.settings.index', label: 'Settings' },
         ];
     }
     return [
@@ -63,7 +65,7 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                                     <ApplicationLogo
                                         class="block text-gray-800 dark:text-gray-200"
                                     />
-                                    <span class="hidden text-lg font-bold text-gray-800 dark:text-gray-200 sm:block">Ujjwol Bato</span>
+                                    <span class="hidden text-lg font-bold text-gray-800 dark:text-gray-200 sm:block">{{ siteName }}</span>
                                 </Link>
                             </div>
 

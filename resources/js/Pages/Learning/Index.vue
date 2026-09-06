@@ -3,6 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { formatMoney } from '@/lib/format';
+
+const settings = usePage().props.settings ?? {};
 
 const props = defineProps({
     resources: Object,
@@ -33,7 +37,7 @@ watch(type, (val) => {
 function formatCost(cost) {
     if (cost === null || cost === undefined) return 'Free';
     const n = Number(cost);
-    return n === 0 ? 'Free' : `$${n.toLocaleString()}`;
+    return n === 0 ? 'Free' : formatMoney(n, settings.currency_symbol, settings.currency_position);
 }
 </script>
 

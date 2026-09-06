@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
 use App\Models\UserSkill;
+use App\Support\Settings;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -104,6 +105,6 @@ class JobsController extends Controller
 
         usort($jobs, fn ($a, $b) => $b['score'] <=> $a['score']);
 
-        return array_slice($jobs, 0, 10);
+        return array_slice($jobs, 0, Settings::get('top_matches', 10));
     }
 }

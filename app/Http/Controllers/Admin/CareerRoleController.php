@@ -23,7 +23,7 @@ class CareerRoleController extends Controller
             ->withCount('skills')
             ->when($search, fn ($q, $v) => $q->where('title', 'like', "%{$v}%"))
             ->orderBy('title')
-            ->paginate(15)
+            ->paginate(\App\Support\Settings::get('admin_page_size', 20))
             ->withQueryString();
 
         $skills = Skill::with('category')

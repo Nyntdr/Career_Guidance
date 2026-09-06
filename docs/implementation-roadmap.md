@@ -1,6 +1,6 @@
 # CareerGuide AI — Implementation Roadmap (Current Phase)
 
-> **Status:** **A ✅**, **B ✅**, **C ✅**, **D ✅** and **E ✅** are complete. Remaining: **F** (career pathways). Everything uses existing seeded data (8 career roles, 30+ skills, 18 learning resources, 12 job postings) and light deterministic logic only.
+> **Status:** **A ✅**, **B ✅**, **C ✅**, **D ✅**, **E ✅** and **G ✅** (admin settings / dynamic config; Inter font self-hosted) are complete. Remaining: **F** (career pathways). Everything uses existing seeded data (8 career roles, 30+ skills, 18 learning resources, 12 job postings) and light deterministic logic only.
 >
 > **Deferred (future phase):** datasets (O\*NET / ESCO / job-posting / resume corpora) + importers, and advanced algorithms (TF-IDF / cosine / embeddings, semantic matching, LLM AI-counselor). See [Deferred](#deferred--future-phase) at the bottom.
 
@@ -98,6 +98,15 @@ Seed a hand-written set of `career_paths` edges and display progression (no grap
 
 - **Deliverable:** ~6–10 seeded edges; show "Pathways from this role" on the Careers detail page.
 
+### G. Admin settings (dynamic config) — ✅ COMPLETED
+
+Generic key-value settings so branding/scoring/limits are editable at runtime.
+
+- **Shipped:** `settings` table (uuid + `key` unique + `value` json); `app/Models/Setting.php`; `config/settings.php` (single source of truth: each key defines label/type/group/default — adding a setting is one config entry, no migration); `app/Support/Settings.php` helper (per-request cache, DB override falls back to config default, `save()` writes overrides, null reverts to default); `Admin/SettingsController` (`GET/PUT /admin/settings`); `Pages/Admin/Settings/Index.vue` (grouped form: Branding / Currency / Scoring / Limits, live weight-total check); admin navbar **Settings** link; settings shared app-wide via `HandleInertiaRequests` (`site_name`, `currency_symbol`, `currency_position`).
+- **Consumed by:** brand text (navbar / guest / welcome — now dynamic); money formatting (Careers Index/Show, Learning, Roadmap, Dashboard `formatSalary`, admin labels) via `resources/js/lib/format.js` `formatMoney()` + dynamic currency; `AtsScanner` scoring weights; `top_matches` (Jobs + Dashboard match/gap limits); `admin_page_size` (all admin list pagination).
+- **Settings:** `site_name` (Ujjwol Bato), `currency_symbol` ($), `currency_position` (before), `ats_weights` (50/15/15/20), `top_matches` (10), `admin_page_size` (20).
+- **No dependencies.** Defaults are config-only; admin saves create DB overrides.
+
 ---
 
 ## New infrastructure introduced
@@ -121,6 +130,7 @@ Seed a hand-written set of `career_paths` edges and display progression (no grap
 3. **C** — gap assessment + roadmap — ✅ done
 4. **D + E** — resume upload/parse + ATS scan (ATS needs resume text) — ✅ done
 5. **F** — career pathways — next
+6. **G** — admin settings (dynamic branding / currency / scoring / limits) + Inter font — ✅ done
 
 ---
 

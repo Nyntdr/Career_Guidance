@@ -25,7 +25,7 @@ class UserController extends Controller
             }))
             ->when($roleFilter, fn ($q, $v) => $q->where('role', $v))
             ->orderBy('created_at', 'desc')
-            ->paginate(15)
+            ->paginate(\App\Support\Settings::get('admin_page_size', 20))
             ->withQueryString();
 
         return Inertia::render('Admin/Users/Index', [

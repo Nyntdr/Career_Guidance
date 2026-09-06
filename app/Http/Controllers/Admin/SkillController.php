@@ -26,7 +26,7 @@ class SkillController extends Controller
             ->when($categoryFilter, fn ($q, $v) => $q->where('category_id', $v))
             ->orderBy(SkillCategory::select('name')->whereColumn('id', 'skills.category_id'))
             ->orderBy('name')
-            ->paginate(20)
+            ->paginate(\App\Support\Settings::get('admin_page_size', 20))
             ->withQueryString();
 
         $categories = SkillCategory::orderBy('name')->get(['id', 'name']);

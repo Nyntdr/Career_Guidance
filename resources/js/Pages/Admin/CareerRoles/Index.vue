@@ -226,12 +226,12 @@ function destroyRole() {
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <InputLabel for="c-salary-min" value="Min Salary ($)" />
+                                <InputLabel for="c-salary-min" :value="`Min Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
                                 <TextInput id="c-salary-min" v-model="createForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />
                                 <InputError :message="createForm.errors['avg_salary_range.min']" />
                             </div>
                             <div>
-                                <InputLabel for="c-salary-max" value="Max Salary ($)" />
+                                <InputLabel for="c-salary-max" :value="`Max Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
                                 <TextInput id="c-salary-max" v-model="createForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" />
                                 <InputError :message="createForm.errors['avg_salary_range.max']" />
                             </div>
@@ -307,12 +307,12 @@ function destroyRole() {
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <InputLabel for="e-salary-min" value="Min Salary ($)" />
+                                <InputLabel for="e-salary-min" :value="`Min Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
                                 <TextInput id="e-salary-min" v-model="editForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />
                                 <InputError :message="editForm.errors['avg_salary_range.min']" />
                             </div>
                             <div>
-                                <InputLabel for="e-salary-max" value="Max Salary ($)" />
+                                <InputLabel for="e-salary-max" :value="`Max Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
                                 <TextInput id="e-salary-max" v-model="editForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" />
                                 <InputError :message="editForm.errors['avg_salary_range.max']" />
                             </div>

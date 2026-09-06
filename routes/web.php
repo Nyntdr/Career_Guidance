@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\LearningResourceController;
 use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController as AdminSkillController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Middleware\EnsureUserRole;
 use App\Http\Controllers\AtsScanController;
 use App\Http\Controllers\CareersController;
@@ -49,6 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('job-postings', JobPostingController::class)->except(['create', 'edit', 'show']);
         Route::resource('learning-resources', LearningResourceController::class)->except(['create', 'edit', 'show']);
         Route::get('/reports', ReportController::class)->name('reports');
+        Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
         Route::get('/users/{user}/profile', [AdminProfileController::class, 'show'])->name('users.profile');
         Route::resource('career-roles', CareerRoleController::class)->except(['create', 'edit', 'show'])->parameters([
             'career-roles' => 'career_role',
