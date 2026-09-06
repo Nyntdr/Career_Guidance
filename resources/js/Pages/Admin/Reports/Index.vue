@@ -28,7 +28,7 @@ defineProps({
                     <div class="grid gap-6 sm:grid-cols-5">
                         <div>
                             <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ onboardingStats.total_candidates }}</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Candidates</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Users</p>
                         </div>
                         <div class="flex items-center">
                             <div class="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">

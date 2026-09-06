@@ -19,15 +19,9 @@ class DashboardController extends Controller
     {
         $role = $request->user()->role->value;
 
-        if ($role !== 'candidate') {
-            $controller = match ($role) {
-                'admin' => \App\Http\Controllers\Admin\DashboardController::class,
-                'counselor' => \App\Http\Controllers\Counselor\DashboardController::class,
-                default => null,
-            };
-
-            if ($controller) {
-                return app($controller)->__invoke($request);
+        if ($role !== 'user') {
+            if ($role === 'admin') {
+                return app(\App\Http\Controllers\Admin\DashboardController::class)->__invoke($request);
             }
         }
 

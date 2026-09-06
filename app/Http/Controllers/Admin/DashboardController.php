@@ -32,8 +32,6 @@ class DashboardController extends Controller
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
                 'totalUsers' => User::count(),
-                'totalCandidates' => User::where('role', 'candidate')->count(),
-                'totalCounselors' => User::where('role', 'counselor')->count(),
                 'totalAdmins' => User::where('role', 'admin')->count(),
                 'totalCareerRoles' => CareerRole::count(),
                 'totalSkills' => Skill::count(),
@@ -50,10 +48,9 @@ class DashboardController extends Controller
                 'data' => $data,
             ],
             'roleDistributionChart' => [
-                'labels' => ['Candidates', 'Counselors', 'Admins'],
+                'labels' => ['Users', 'Admins'],
                 'data' => [
-                    User::where('role', 'candidate')->count(),
-                    User::where('role', 'counselor')->count(),
+                    User::where('role', 'user')->count(),
                     User::where('role', 'admin')->count(),
                 ],
             ],

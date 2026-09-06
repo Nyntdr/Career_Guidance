@@ -361,7 +361,7 @@ Table "users" {
   "email" varchar(255) [unique, not null]
   "email_verified_at" timestamp
   "password" varchar(255) [not null]
-  "role" varchar(255) [not null, default: 'candidate']
+  "role" varchar(255) [not null, default: 'user']
   "remember_token" varchar(100)
   "created_at" timestamp
   "updated_at" timestamp

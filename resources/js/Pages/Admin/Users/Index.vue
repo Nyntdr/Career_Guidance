@@ -21,8 +21,8 @@ const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const editingUser = ref(null);
 
-const createForm = useForm({ name: '', email: '', password: '', password_confirmation: '', role: 'candidate' });
-const editForm = useForm({ name: '', email: '', password: '', password_confirmation: '', role: 'candidate' });
+const createForm = useForm({ name: '', email: '', password: '', password_confirmation: '', role: 'user' });
+const editForm = useForm({ name: '', email: '', password: '', password_confirmation: '', role: 'user' });
 
 const deletingUser = ref(null);
 const confirmDelete = ref(false);
@@ -119,8 +119,7 @@ function destroyUser() {
                         <div>
                             <select v-model="roleFilter" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">All roles</option>
-                                <option value="candidate">Candidate</option>
-                                <option value="counselor">Counselor</option>
+                                <option value="user">User</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
@@ -144,8 +143,7 @@ function destroyUser() {
                                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ user.email }}</td>
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <span :class="{
-                                            'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300': user.role === 'candidate',
-                                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300': user.role === 'counselor',
+                                            'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300': user.role === 'user',
                                             'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300': user.role === 'admin',
                                         }" class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize">
                                             {{ user.role }}
@@ -215,8 +213,7 @@ function destroyUser() {
                     <div>
                         <InputLabel for="create-role" value="Role" />
                         <select id="create-role" v-model="createForm.role" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="candidate">Candidate</option>
-                            <option value="counselor">Counselor</option>
+                            <option value="user">User</option>
                             <option value="admin">Admin</option>
                         </select>
                         <InputError :message="createForm.errors.role" />
@@ -257,8 +254,7 @@ function destroyUser() {
                     <div>
                         <InputLabel for="edit-role" value="Role" />
                         <select id="edit-role" v-model="editForm.role" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="candidate">Candidate</option>
-                            <option value="counselor">Counselor</option>
+                            <option value="user">User</option>
                             <option value="admin">Admin</option>
                         </select>
                         <InputError :message="editForm.errors.role" />

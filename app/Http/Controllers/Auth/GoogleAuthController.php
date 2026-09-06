@@ -49,7 +49,7 @@ class GoogleAuthController extends Controller
                 'name' => $googleUser->getName(),
                 'email' => $googleUser->getEmail(),
                 'avatar' => $googleUser->getAvatar(),
-                'role' => UserRole::Candidate,
+                'role' => UserRole::User,
                 'email_verified_at' => now(),
             ]);
         }

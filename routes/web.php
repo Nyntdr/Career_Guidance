@@ -10,7 +10,6 @@ use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController as AdminSkillController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\EnsureUserRole;
-use App\Http\Controllers\Counselor\DashboardController as CounselorDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EducationController;
 use App\Http\Controllers\ProfileController;
@@ -47,10 +46,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'career-roles' => 'career_role',
         ]);
     });
-
-    Route::get('/counselor/dashboard', CounselorDashboardController::class)
-        ->middleware('role:counselor')
-        ->name('counselor.dashboard');
 });
 
 Route::middleware('auth')->group(function () {

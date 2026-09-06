@@ -29,22 +29,19 @@
 - `WorkExperienceController` — CRUD with `_onboarding` flag
 - `UserSkillController` — CRUD with `_onboarding` flag
 - `DashboardController` — role-dispatched, real DB queries, skill overlap matching, gap computation, recent activity
-
 ### 5. Routes ✅
 - All profile routes under `auth` middleware
 - Onboarding skip route
 - Role-based dashboard routes:
-  - `/dashboard` → `DashboardController` (candidate)
+  - `/dashboard` → `DashboardController` (user)
   - `/admin/dashboard` → `Admin/DashboardController`
-  - `/counselor/dashboard` → `Counselor/DashboardController`
-- Role middleware: `role:admin`, `role:counselor`
+- Role middleware: `role:admin`
 
 ### 6. Role-Based Access ✅
-- `UserRole` backed enum: `Candidate`, `Counselor`, `Admin` with `label()` and `dashboardRoute()`
+- `UserRole` backed enum: `User`, `Admin` with `label()` and `dashboardRoute()`
 - `EnsureUserRole` middleware — checks role, redirects on mismatch
 - `role` alias registered in `bootstrap/app.php`
-- Admin dashboard: stats cards (users, candidates, counselors, admins, roles, skills)
-- Counselor dashboard: candidate list with skills count
+- Admin dashboard: stats cards (users, roles, skills)
 - Navbar in `AuthenticatedLayout.vue` is role-aware (different nav links per role)
 
 ### 7. Onboarding Wizard ✅
@@ -57,7 +54,7 @@
 - All Breeze components updated with `dark:` Tailwind variants
 - `Profile/Edit.vue` — 7 sections (profile info, password, career, skills, education, work, delete)
 - `Dashboard.vue` — onboarding modal trigger, real data sections, empty states
-- `Admin/Dashboard.vue`, `Counselor/Dashboard.vue` — role-specific dashboards
+- `Admin/Dashboard.vue` — role-specific dashboards
 - Vue partials for all profile forms
 
 ### 9. Dark Mode ✅
@@ -69,8 +66,8 @@
 
 ### 10. Navbar Redesign ✅
 - Logo + "CareerGuide" brand text
-- Nav links: role-aware sets (candidate: Dashboard/Careers/Skills/Learning; admin: Dashboard; counselor: Dashboard/Candidates)
-- Search icon (candidate only), dark mode toggle, notification bell with badge, user avatar initial + name dropdown
+- Nav links: role-aware sets (user: Dashboard/Careers/Skills/Learning; admin: Dashboard/Users/Jobs/Learning/Skills/Categories/Career Roles/Reports)
+- Search icon (user only), dark mode toggle, notification bell with badge, user avatar initial + name dropdown
 - Mobile hamburger includes all nav links + dark mode toggle
 
 ### 11. Seeders ✅
@@ -90,12 +87,10 @@
 | `app/Models/User.php` | User model with role cast |
 | `app/Http/Controllers/DashboardController.php` | Role-dispatched dashboard |
 | `app/Http/Controllers/Admin/DashboardController.php` | Admin stats |
-| `app/Http/Controllers/Counselor/DashboardController.php` | Candidate listing |
 | `resources/js/Layouts/AuthenticatedLayout.vue` | Role-aware navbar |
 | `resources/js/composables/useDarkMode.js` | Dark mode logic |
-| `resources/js/Pages/Dashboard.vue` | Candidate dashboard |
+| `resources/js/Pages/Dashboard.vue` | User dashboard |
 | `resources/js/Pages/Admin/Dashboard.vue` | Admin dashboard |
-| `resources/js/Pages/Counselor/Dashboard.vue` | Counselor dashboard |
 | `resources/js/Pages/Profile/Edit.vue` | Profile edit page |
 | `database/seeders/SkillSeeder.php` | 30 skills |
 | `database/seeders/CareerRoleSeeder.php` | 8 roles + skill pivots |
