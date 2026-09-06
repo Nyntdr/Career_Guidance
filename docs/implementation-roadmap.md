@@ -1,6 +1,6 @@
 # CareerGuide AI — Implementation Roadmap (Current Phase)
 
-> **Status:** current phase is completing the remaining feature areas using existing seeded data (8 career roles, 30+ skills) and light deterministic logic only.
+> **Status:** **A ✅** and **B ✅** are complete. Current phase is completing the remaining feature areas using existing seeded data (8 career roles, 30+ skills, 18 learning resources, 12 job postings) and light deterministic logic only.
 >
 > **Deferred (future phase):** datasets (O\*NET / ESCO / job-posting / resume corpora) + importers, and advanced algorithms (TF-IDF / cosine / embeddings, semantic matching, LLM AI-counselor). See [Deferred](#deferred--future-phase) at the bottom.
 
@@ -8,9 +8,9 @@
 
 ## Scope: completing feature areas (no AI, no new datasets)
 
-### A. Candidate-facing content pages
+### A. Candidate-facing content pages — ✅ COMPLETED
 
-The navbar already links **Careers / Skills / Learning**, but they all point to `/dashboard` — no dedicated pages exist yet.
+Read-only browsing pages for **Careers / Skills / Learning**, reachable from the user navbar.
 
 | Feature | Schema used |
 |---|---|
@@ -18,10 +18,11 @@ The navbar already links **Careers / Skills / Learning**, but they all point to 
 | Skills index (grouped by category) | `skills` (name, category_id) + `skill_categories` (name, slug) |
 | Learning index (+ skills each covers) | `learning_resources` (title, provider, url, resource_type, duration_hours, cost) + `learning_resource_skills` |
 
-- **Deliverables:** 3 read-only controllers + Vue pages; update nav links to real routes.
-- **No dependencies.**
+- **Shipped:** `CareersController`, `SkillsController`, `LearningController`; `Pages/Careers/Index.vue`, `Pages/Careers/Show.vue`, `Pages/Skills/Index.vue`, `Pages/Learning/Index.vue`; real nav links.
+- **Notes:** career-role search is server-side; skills uses client-side search + category filter; learning has server-side search + type filter.
+- **Also shipped:** `LearningResourceSeeder` (18 resources across all 6 types).
 
-### B. Personal job recommendations
+### B. Personal job recommendations — ✅ COMPLETED
 
 Score `job_postings` against the candidate's `user_skills`.
 
@@ -31,8 +32,8 @@ Score `job_postings` against the candidate's `user_skills`.
 | `job_required_skills` (job_posting_id, skill_id, importance, min_proficiency) |
 | `user_skills` (profile_id, skill_id, proficiency_level) |
 
-- Reuses the **existing essential/preferred weighting** already in `DashboardController::computeMatches` (essential 70% / preferred 30%, proficiency gate).
-- **Deliverable:** Recommended Jobs controller + page.
+- Reuses the **existing essential/preferred weighting** already in `DashboardController::computeMatches` (essential 70% / preferred 30%, proficiency gate). Job importance values are `required` (→ 70% weight) and `preferred` (→ 30% weight).
+- **Shipped:** `JobsController` (+ `scoreJobs()`), `Pages/Jobs/Index.vue` (stats row, match % badges, matched vs. missing skill chips), route `jobs.index`, navbar **Jobs** link, `JobPostingSeeder` (12 postings across the seeded domains).
 - **No dependencies.**
 
 ### C. Persisted skill-gap assessment → learning → roadmap
@@ -101,14 +102,15 @@ Seed a hand-written set of `career_paths` edges and display progression (no grap
   - `Readability`
 - **Storage disk config** for resume uploads (`storage` is already a mounted volume in Docker).
 - **New candidate routes/controllers/pages**; navbar link updates.
-- **Seeder additions** for `career_paths` (area F).
+- **Seeder additions:** `LearningResourceSeeder` (A), `JobPostingSeeder` (B), `career_paths` (area F).
+- **Gotcha (learned in A):** many-to-many links like `learning_resource_skills` have a UUID `id` PK and no model behind them, so plain `sync()` fails. Wire a `Pivot` model + `HasUuids` into the relation (`using(...)`) before syncing pivot tables.
 
 ---
 
 ## Build order
 
-1. **A** — content pages (Careers / Skills / Learning)
-2. **B** — recommended jobs
+1. **A** — content pages (Careers / Skills / Learning) — ✅ done
+2. **B** — recommended jobs — ✅ done
 3. **C** — gap assessment + roadmap
 4. **D + E** — resume upload/parse + ATS scan (ATS needs resume text)
 5. **F** — career pathways

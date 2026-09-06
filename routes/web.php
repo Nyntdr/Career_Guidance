@@ -13,6 +13,7 @@ use App\Http\Middleware\EnsureUserRole;
 use App\Http\Controllers\CareersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EducationController;
+use App\Http\Controllers\JobsController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SkillsController;
@@ -56,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/careers/{careerRole}', [CareersController::class, 'show'])->name('careers.show');
     Route::get('/skills', [SkillsController::class, 'index'])->name('skills.index');
     Route::get('/learning', [LearningController::class, 'index'])->name('learning.index');
+    Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 
     Route::post('/onboarding/skip', function (\Illuminate\Http\Request $r) {
         $r->session()->put('onboarding_skipped', true);

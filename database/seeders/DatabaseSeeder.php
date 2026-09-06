@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             CareerRoleSeeder::class,
             LearningResourceSeeder::class,
+            JobPostingSeeder::class,
         ]);
 
         User::firstOrCreate(
