@@ -11,7 +11,6 @@ import { useDarkMode } from '@/composables/useDarkMode';
 const { isDark, toggleDark } = useDarkMode();
 
 const showingNavigationDropdown = ref(false);
-const showSearch = ref(false);
 
 const user = computed(() => usePage().props.auth.user);
 const role = computed(() => user.value?.role ?? 'user');
@@ -31,7 +30,9 @@ const navLinks = computed(() => {
     }
     return [
         { route: 'dashboard', label: 'Dashboard' },
+        { route: 'roadmap.index', label: 'Roadmap' },
         { route: 'jobs.index', label: 'Jobs' },
+        { route: 'resume.index', label: 'Resumes' },
         { route: 'careers.index', label: 'Careers' },
         { route: 'skills.index', label: 'Skills' },
         { route: 'learning.index', label: 'Learning' },
@@ -62,7 +63,7 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                                     <ApplicationLogo
                                         class="block text-gray-800 dark:text-gray-200"
                                     />
-                                    <span class="hidden text-lg font-bold text-gray-800 dark:text-gray-200 sm:block">CareerGuide</span>
+                                    <span class="hidden text-lg font-bold text-gray-800 dark:text-gray-200 sm:block">Ujjwol Bato</span>
                                 </Link>
                             </div>
 
@@ -82,18 +83,6 @@ const userInitial = (name) => name?.charAt(0).toUpperCase() ?? '?';
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center sm:gap-4">
-                            <!-- Search (user only) -->
-                            <button
-                                v-if="role === 'user'"
-                                @click="showSearch = !showSearch"
-                                class="rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                title="Search"
-                            >
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </button>
-
                             <!-- Dark Mode Toggle -->
                             <button
                                 @click="toggleDark"
