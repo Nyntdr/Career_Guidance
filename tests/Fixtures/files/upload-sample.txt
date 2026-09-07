@@ -1,0 +1,15 @@
+Jordan Lee
+123 Main Street, Springfield
+
+Professional Summary
+Data analyst with 6 years of experience turning messy data into decisions.
+
+Work Experience
+Senior Data Analyst, Acme Corp (2019 - Present)
+Built dashboards and SQL pipelines used across the company.
+
+Education
+University of Springfield, BSc Data Science
+
+Technical Skills
+Python, SQL, Tableau

@@ -1,0 +1,377 @@
+﻿Background
+    • 18 years of IT experience with expertise in n-tier full SDLC utilizing latest Java and related technologies and libraries to design and implement highly scalable, clustered, multithreaded applications. 
+    • Expertise in Core Java, JEE APIs (JSP, Servlets, EJB, JMS, JNDI, JDBC, JAXB, JAXP, Custom Tags), HTML, JavaScript, AJAX, AngularJS, XML technologies, App servers like WebLogic, Web sphere, Tomcat, JBoss.
+    • Expert in Object Oriented Analysis, Design and Programming.
+    • Expertise working on IoT(Internet of Things) projects on IBM Bluemix platform  using Photon Sensors on Hardware side, Cloudant big data database, Node.js, SocketIO, Express, Backbone & MySQL.
+    • Expertise working on Proof of Concept (POC) projects.
+    • Solid experience of improving Application Performance.
+    • Expertise Understating and Achieving Application Performance objectives, Measuring Performance Metrics, Identifying Application Bottlenecks
+    • Expertise Profiling Java Applications using Profilers like JProbe.
+    • Expertise in Database Tuning, Application Tuning, JVM Tuning and Inefficient SQL Queries.
+    • Strong working Knowledge of various Java, JEE design patterns.
+    • Solid experience developing Proof of Concept projects.
+    • Expertise developing SOAP and RESTFUL web services using SOA.
+    • Expertise working on Struts, Spring and Hibernate frameworks.
+    • Experience working on NoSQL database such as MongoDB and Cloudant.
+    • Solid knowledge of Business Intelligence and Data Warehouse concepts.
+    • Experience developing iOS and android applications.
+    • Strong Experience working on B2B and B2C Ecommerce projects.
+    • Experience working Agile (XP, SCRUM) and RUP methodologies.
+    • Strong experience working with Customers and writing Requirements/Use Case/Design/Test Case documents and Use Case/Collaboration/Sequence/Class diagrams.
+    • Solid experience designing database in Oracle and SQL Server and writing Stored procedures and Triggers using PL/SQL
+    • Strong analytical, communication and interpersonal Skills.
+    • Meticulous attention to detail and outstanding customer service skills.
+
+Certifications Achieved:
+
+
+
+Technical skills
+    • Spring 4.0, Spring Boot
+    • IBM Bluemix
+    • JProbe, JProfiler
+    • Java 1.2 to 1.8
+    • Cloudant, MongoDB
+    • XML, JSON, JSP
+    • Spring WS 1.5.6
+    • Hadoop, HDFS
+    • AngularJS 
+    • Servlets 2.0 – 2.5
+    • IoT
+    • Node js
+    • JBoss, WebSphere
+    • Particle Photon
+    • HTML5
+    • Tomcat, Weblogic, Jetty
+    • MQTT
+    • JavaScript, CSS 
+    • RESTful, SOAP
+    • Cloud Foundry
+    • JSTL 1.1, XSLT
+    • SoapUI 4.6.3
+    • Hive, Pig
+    • JMS
+    • Axis-2, CXF
+    • WCS toolkit
+    • Velocity
+    • JAX-RS
+    • Maven, Gradle, Ant
+    • Cactus
+    • SAX, DOM
+    • XMLSpy
+    • JUnit
+    • Oracle, SQL Server
+    • Putty, Terminal
+    • JMockit
+    • MySql, DB2
+    • Spring Batch, Quartz 1.6
+    • ADT, ObjectiveC
+    • Hibernate, JPA, JDBC
+    • Express, Backbone
+    • Xcode
+    • Struts, Spring webflow
+    • Toad, mySql Workbench
+    • Jira,ClearQuest
+    • Eclipse, IntelliJ, Atom
+    • CVS, SVN, Git, Clearcase
+    • Unix, Linux, MacOs
+
+Project Summaries 
+
+Client: 
+Grainger Chicago IL
+Sept’ 14 – Current
+Role:
+Innovation team engineer
+Responsibilities:
+    • Working on R&D projects within innovation team.
+    • Developed Proof of Concept solution for Internet of Things (IoT) data received from industrial sensors using IBM Bluemix cloud environment (IBM Cloudant, IBM NodeRed, IoT configuration and MySQL)
+    • Designed data model for MySQL database to store application metadata and IBM cloudant to store IoT sensor data in json format.
+    • Worked on Particle hardware to collect and transmit sensor data using WIFI to IBM Bluemix cloud environment.
+    • Developed and supported full fledge dashboard application using Node js, Socket IO, Express framework and backbone.js to display IoT data on user Interface.
+    • Once POC was approved, worked on code base to update application to make it production ready to support multiple organizations.
+Environment:
+IBM Bluemix portal, IoT, Particle Web IDE, Cloudant, MQTT, nodeJS, Express, Backbone, JSON, ATOM, MySQL, MySQL Workbench, Cloud Foundry Toolkit, MacOS
+
+Client: 
+Gogo Air Chicago IL
+Aug’ 14 – Aug’ 15
+Role:
+Sr. Java JEE Consultant/Application Architect
+Responsibilities:
+    • Re architected and updated existing web services to improve performance and user experience. 
+    • Re architected several projects and upgraded spring framework version 2.5 to 4.0
+    • Helped development team in configuring new projects using Spring Boot framework to jump start development.  
+    • Developed several SOAP based web services for Air Borne Portal (ABP) module for user authentication. 
+    • Designed and developed several REST web services for Ground Based Portal (GBP) to interact with ABP and other internal systems.
+    • Added Gradle support for all projects within ABP, GBP & UPP.
+    • Designed and Developed several micro web services for GBP.
+    • Designed and Developed standalone CRUD application using Spring Boot framework with AngularJS to update promotions data.
+Environment:
+Java 1.6/1.7/8, JEE, Eclipse, AngularJS, Spring4.0, Spring Boot, Spring MVC, SOAP, REST web services, JUnit, JMockit, JBoss 7.2, Tomcat 7, Jetty 8, SVN, Maven, Gradle, GitHub, Windows, Linux
+
+Client: 
+Sears Holdings Inc. Hoffman Estates IL
+Aug’ 12 – Aug’ 14
+Role:
+Sr. Java JEE Consultant
+Responsibilities:
+    • Developed several key modules of Member Assist application like Sync-Associates, Call History, Shopping Recap, punch-in-punch-out API Integration and Logout.
+    • Designed and Developed Fully Automated in-App Training module which sends out training to one associate per store simultaneously.
+    • Designed and Developed Programmatic Load Balance module (round robin and Load Sharing mode) for Member Assist application to run on multiple servers.
+    • Implemented various logout schedules using spring scheduler. 
+    • Developed lots of Restful web service endpoints to support Associate app (iPad app) and Customer App (iPhone app).
+    • Helped Implementing Hibernate, Spring framework for Member Assist Application.
+    • Worked on re-architecting the whole backend system to make the application suited to packaged application. 
+    • Understood Associate App for Android version and iPad version.
+    • Implemented better solutions for various production bugs. 
+    • Worked on Login and Security components of CAS (Central Authentication System) for online and mobile clients.
+    • Worked on implementing AES 256 encryption and SHA1 encryption algorithm for security modules.
+    • Worked on WCS toolkit and CIS system for express checkout components
+    • Involved in Architecting MongoDB Database.
+    • Worked on Synchronizing data between DB2 and MongoDB
+    • Worked on MongoDB to perform Order History API changes
+    • Designed and Developed Visa-MC Linking functionality using Spring 4.0 and AngularJS and co-ordinate integration with multiple teams. 
+    • Performed end-to-end integration testing with multiple teams.
+    • Lead on migrating Websphere Commerce Server code out on Spring 4 based Universal Profile workspace
+Environment:
+Java1.6, JEE, Eclipse Kepler, AngularJS, Spring4.0, Spring MVC, Spring webflow, JUnit, JMockit, JBoss 4.2/5.1/7.2, Tomcat 7, Jetty 8, SVN, XCode4.6, ADT, WCS Toolkit 7.5.5, MongoDB, MySQL 5.1, Windows, Linux
+
+Client: 
+Nokia Location and Commerce Chicago IL
+Oct’ 09 – Aug’12
+Role:
+Java JEE Lead Consultant/Application Architect
+Responsibilities:
+    • Analyzed Geocoding applications GeoMatch, MapTP and XGC.
+    • Measured Performance Metrics and identified Performance bottlenecks by Stack trace, Performance, Memory and CPU time utilization analysis) using JProbe.
+    • Identified and removed loitering objects (TTCItem) created by oracle prepared statement which improved response time by 80%.
+    • Identified and fixed inefficient address sorting algorithm.
+    • Researched on different string comparison algorithms and replaced existing Levenshtein with Jaro-winkler string comparison algorithm which improved response time by 50%
+    • Performed web services load test using SoapUI on MapTP.
+    • Performed memory/performance analysis using JProbe on MapTP, GeoMatch & XGC deployed on remote Linux servers
+    • Designed and Developed Batch Geocoder application with web service layer used for Yahoo Microsoft, Fedex etc.
+    • Worked on implementing Auto Complete feature using Lucene.
+    • Worked on implementing better solutions for Search6 issues.
+    • Worked on integrating Geomatch application with Nokia Geocoder
+    • Worked on landmark-based geocoding for India.
+    • Using AGILE methodologies for past 2 years.
+Environment:
+Java, JEE, EJB, JProbe8.0.2, Eclipse, SoapUI, JMeter, Oracle 11g, Spring Batch2.0, REST Web services, JUnit, Apache Tomcat 6.0,Quartz1.5, Lucene, Crucible, Fisheye, Toad, Jira, ClearCase, ClearQuest, Windows, Linux
+
+Client: 
+NORC at University of Chicago IL
+Jan’ 09 – Sept’ 09
+Role:
+Sr. Software Engineer/Application Architect
+Responsibilities:
+    • Understood existing highly configurable Case Management System. 
+    • Understood Gates/WSA Locating requirements. 
+    • Fixed the defects with existing locating system. 
+    • Worked on Gates/WSA 2009 Locating and prompting requirements.
+    • Worked on Gates/WSA 2009 Receipt Control System requirements.
+    • Designed, Developed, Unit Tested, and Deployed RRS Youth, Leaseholder and their consent forms questionnaires.
+    • Designed and Developed look up functionality for Child Care Survey.
+    • Worked on NIS-ABS Receipt Control System.
+    • Worked with other Architects and developers to replace existing home-grown transaction layer with Hibernate.
+    • Worked with DBAs and Data Modeler to implement new schema.
+    • Worked with other Architect to implement new framework for CMS.
+    • Provided support during and after production release for above mentioned projects
+    • Worked simultaneously on 3 projects at a time.
+Environment:
+Java5.0, JEE, Struts, Hibernate, Tomcat 6.0,Eclipse-Ganymede, SQL Server 2005, Track+, CVS, Windows
+
+Client: 
+Blue Cross Blue Shield of IL Chicago, IL
+Apr’ 08 – Dec’ 08
+Role:
+Sr Java JEE Consultant
+Responsibilities:
+    • Analyzed existing Health Care Rating Application called Heron.
+    • Responsible for full life cycle solution for Labor and HMO Stand Alone rating functionality.
+    • Designed, and developed the enhancements for Opportunity update, Benefits and Funding, Stop Loss, Current Fees and Factors, Large Claims, Renewal Projection, Discount Projection, Multi Year Projection, Projected Benefit Cost, Admin Expenses, ISL/ASL Pooling modules.
+    • Designed and Developed Hibernate mapping files for above mentioned modules.
+    • Participated in data modeling design meetings. 
+    • Participated in different env (Alpha,SQA,WTC,Production) releases.
+Environment:
+Java, JEE, Struts, Hibernate, Spring, AJAX, RAD 6.0, Hudson, SQL Server 2005, Clear Quest, CVS, Windows, Novell
+
+Client: 
+Walgreens Inc Deerfield, IL
+Sep’ 06 – Apr ‘07
+Role:
+Senior Java JEE Consultant
+Responsibilities:
+    • Understood existing Benefits Enrollment system and its new requirements
+    • Designed, Developed and Tested Tobacco use status functionality for admin and employee section
+    • Developed and Tested consolidation of various summary pages
+    • Designed, Developed, Tested and implemented better solutions for various bugs
+    • Worked on improving the application performance and code maintenance.
+    • Participate in technical scoping discussions with customers to identify system complexity and estimate implementation costs and timeframes 
+    • Prepared business, technical documents, Designed and Developed several Stored Procedure for Manila Payroll Automation Project
+    • Designed and Developed ADP Payroll Automation process to switch over from ITAX
+    • Analyzed existing eSmart Application and worked on Manila PAF Module enhancements using Java, JEE and Swing
+    • Implemented better solution for eSmart application to remove Orbix middleware to save Client over $100,000 in licensing.
+    • Provided Production and Development support for eSmart
+    • Lead the team of 6 other developers and made sure the deliverables are on time.
+Environment:
+Java, JEE, Struts, Websphere5.1, WSAD5.1.1, Oracle 9i, CVS, Windows, Novell
+
+Client: 
+Orbitz LLC, Chicago, IL
+Mar’ 05 – Sep ‘06
+Role:
+Sr. Java J2EE Consultant/Tech Lead
+Responsibilities:
+    • Reviewed & analyzed Orbitz Application framework (NOVO, JINI, DC Services, Service Oriented Architecture)
+    • Suggested & implemented better solution for various defects.
+    • Worked as a lead developer on various enhancement projects.
+    • Identified performance bottleneck in Dynamic Packaging path using JProfiler which improved response time by 50%
+    • Worked on Orbitz.com, Cheaptickets.com, Lodging.com and Orbitz for Business Integration projects.
+    • Developed and implemented International EU opt-In and Data Transfer project functionality.
+    • Developed and implemented Clear Commerce upgrade project for Dynamic Packaging path.
+    • Analyzed existing VPS/OTS/OM Systems Architecture.
+    • Worked on Spring-Hibernate project to convert Valuation System data persistence layer from CMP to Hibernate.
+    • Developed Testing utility for Hibernate and OTS integration layer using Spring-Hibernate, Junit and XMLUnit to automate and quicker testing that saved 90% of the Integration-test time.
+    • Helped testing team in various schema-testing efforts.
+    • Developed a smart Automated Testing Tool to compare either two xml files or compare xml files with a txt file and produce nicely formatted report to display different/moved/missing lines between two files. Tool became very popular throughout the organization and saved 80% of the testing time.
+    • Worked on Ellie Mae project to generate PDF documents for legal contracts using XMLMill, Tomcat, XSL and XML and wrote proprietary code to generate CSV files for some legal documents.
+    • Brown bag presentations to the Technical and testing team.
+    • Lead 4 other developers for OTS enhancement project and mentor them for Hibernate implementation
+Environment:
+Java, J2EE, EJB, Jini 2.0, Orbitz Application Framework (NOVO, DC Services, SOA), Weblogic 8.1.2, Intellij 4.5, JProfiler, CVS, JUnit, Cactus-tests, VMWare, Oracle 9i, Red Hat Linux 7.3 
+
+Client: 
+John Deere Power Systems, Waterloo, IA
+Jun’03-Mar’05
+Role:
+Sr. Java J2EE Developer
+Responsibilities:
+    • Reviewed and Analyzed SDS application
+    • Proposed, Designed, Developed, Coded, and Unit tested the time limiting features/host-id/user-Id based license application.
+    • Identified, Proposed, Analyzed and Reengineered Intranet, Extranet and Local Server Return File processing code to reduce code redundancy (Very much appreciated by client).
+    • Worked on enhancement project to accept Injector Calibration Information in Full Return File and Abbreviated Return File and Extract Injector Information from Return File and store them in database based on very complex business rules.
+    • Worked on the Renault application to support Renault dealers to download payload, request controllers information and upload return files to SDS Central server. 
+    • Worked on SDS application to support PIP-DE10 enhancements
+    • Developed Renault and PIP-DE10 enhancement applications using J2EE, EJB, JMS, JAXP, JAX-RPC, XML, XSD technologies.
+    • Worked on enhancement project to include DE10 cal file and injector cal file in payload download functionality.
+    • Suggested very important database Re-Org, Run-Stat, tuning related points and rewrote large and inefficient SQL queries which improved database and system performance by 500%.
+    • Rewrote, managed and fixed issues with existing code, restructured lots of inefficient algorithms 
+    • Troubleshoot and fixed lots of long standing bugs in SDS code.
+    • Worked on PMUI application for several enhancements
+    • Suggested and implemented better solutions for PMUI.
+    • Improved performance by 40% of PMUI reports.
+    • Reviewed and Analyzed Deere Proprietary Internet Application Framework (IAF) and Preferred Programming Model (PPM).
+    • Reverse engineered, Re-factored, and Re-wrote CMPM application code to meet Deere application standards.
+Environment:
+Java, JSP, Servlets, EJB, JMS, JTA, J2EE Connector Architecture 1.5, JAXB, JAXP, XML, XSD, JDOM 9, JAX-RPC, WAS 5.1/5.0, WSAD5.1.1, IAF, PPM, MS SQL Query, DB2, Java, Macromedia Flash, StarTeam, Oracle 9i, 
+
+Employer:
+Planet Group Inc. 
+Dec’99-Jun’03
+Client: 
+Michael Lewis Company, Wood Dale, IL.
+Jan‘02-Jun’03
+Role:
+Sr. Java J2EE Developer/Tech Lead
+Project:
+Online Order Management System
+Responsibilities:
+    • Participated in technical scoping discussions with customers to identify system complexity and estimate implementation costs and timeframes
+    • Developed system prototype and presented to client.
+    • Prepared Requirements/Use Case/Design/Test case documents.
+    • Designed, Coded, Tested and Deployed various application modules like User, Message, Shipment, Contact Log, Event, Error, Automatic Email Notification, Item History, Reports, Regulations, Help (online manual in pdf and mpeg file) 
+    • Developed the application Message module using JMS API and MDB EJB and User authentication framework using JAAS API included role based and password based authentication. 
+    • Developed and coded Stored Procedures to Calculate wine usage, Create Inventory with snapshots, Populate Catalog, Update orders from backend (DG System), Update Catalog, Update Inventory, Create and Update Users and Company.
+    • Successfully Introduced, Designed, Developed and Implemented Download Reports feature which saved clients money, time and training. It was greatly appreciated by client.
+    • Developed and Coded RMI Server program which makes RPC call to DG system to get the SO# every minute.
+    • Successful Implementation and Integration of project with DG (Main- Frame) System at client site and Successful Implementation of Weblogic app server at ISP
+    • Fine tuned Weblogic App Server and resolved various architecture issues. 
+    • Lead the team of 5 other developers and mentored them. 
+    • Trained Client CSRs and involved in meeting with client.
+Environment:
+JDK 1.4, J2ee2.0, Rational Suite, Servlets, EJB, JSP, Taglib, JMS, XML, XSL, HTML, Java Script, Junit, Visual Café, Weblogic7.0, SQL Server 2000, CVS, Win 2000, Unix (Rx6000) & Mainframe (DG System).
+
+Client: 
+Insurance Noodle Inc, Chicago, IL	
+Dec’00-Dec'01
+Role:
+Sr. Java Developer
+Project:
+WPE (Web Processing Engine)
+Responsibilities:
+    • Full Life Cycle Development of an interface to integrate several disparate systems to eliminate redundant data entry as well as maximize workflow to create simple and efficient work experiences for the Customer Service Representatives.
+    • Designed and developed application using Rational Rose, Java, EJB, Servlets, JSPs, XML and employs MVC, Session-Facade, Business Delegate, Value Object and DAO design patterns
+    • Prepared Requirements/Use Case/Design/Test Case documents
+    • Developed JSPs, Servlets, EJBs(entity & Session), Model, Event, Value Objects, DAOs, Custom Tag Library Classes and Request Mapping and Screen Definitions XML files
+    • Designed and Developed XML parsers to upload quote information to Insurance Carriers like The Hartford, Zurich, CNA and Kemper.
+    • Designed, Developed, Coded, unit tested, Demonstrated, Implemented Quote Response Engine, AL3 file parser, accelerator and Policy Engine.
+    • Developed several Stored Procedures to insert update and delete the quotes, carriers and policies in Oracle8i.
+    • Used Rational Clear Case for version control, Rational Clear Quest for activity assignment, monitor status and tracking debugging status.
+    • Optimized WAS 4.0 performance by fine tuning
+    • Mentored Client Customer Service Representatives.
+Environment:
+JDK 1.2, EJB 1.1, Servlets, JSP 1.1, XML, HTML, JavaScript, Oracle 8.i, Web sphere 4.0, WSAD4.0.3, Windows 2000, Rational Suite, Dream weaver.
+
+Client:
+NETg Inc, Naperville, IL.
+Jul’00-Nov’00
+Role:
+Java Developer
+Project:
+Web SVM (Skill Vantage Manager)
+Responsibilities:
+    • Worked on product development as assigned. NETg provides CBT eLearning.
+    • Worked on Web SVM using VAJ 3.0.
+    • Developed automatic installation and/or automatic update of Learning Object Delivery (subject course) Plug-In on users machine using JSP, Servlets, EJB.
+    • Developed an Applet to launch the courses over the web through NETg Website. Applet checks for the latest version of local installation of Skill Builder (32 bit player to run the learning courses on user machine), ask for the update the version if not latest; Applet also allows taking the test online as well as offline and updates the score of the test when user gets online.
+    • Developed few version of installation program using script engine of Install Shield Prof. Edition and source code control using VSS 6.0
+Environment:
+JDK 1.2, JSDK2.0, EJB 1.0, JSP 1.0, HTML 4.0, JavaScript, Oracle 8.0, Web sphere 3.0, Visual age for Java 3.0, Windows NT 4.0.
+
+Client: 
+Motorola Inc. Arlington Heights, IL	
+Dec’99-Jul’00
+Role:
+Web Developer
+Project:
+Training Based Learning System (TBLS)
+Responsibilities:
+    • Worked on news board intranet application.
+    • Troubleshoot and bug fixing on couple assignments using ASP and C++.
+    • Designed and developed prototype for the News board application. 
+    • Developed upload, editing, approval and final presentation modules using Java, HTML, Server Side JavaScript1.2
+    • Troubleshoot and fixed bugs of another intranet application using C, C++ and ASP
+Environment:
+Server Side JavaScript 1.4, Textpad, Exceed, NES 4.0, Oracle 8.0, LiveWire3.0, C, C++, ASP, NT 4.0, Unix/Sun OS 5.6
+
+Employer: 
+CMC Ltd. Ahmedabad, India	
+May’97-Dec’99
+Role:
+Programmer/System Admin
+Project:
+System for Computerized Electoral Roll (SCROLL)
+Responsibilities:
+    • Full Life Cycle Development of two-tier Client-Server architecture system. System is Computerized Electoral Roll (SCROLL) for Election Commission of India, Gujarat State. SCROLL is the state level program to computerize elector’s data with local language (Gujarati) interface. System captures all election data about elector. GIST package (third party tool) used to convert the English fonts into Gujarati fonts.
+    • Designed, developed, normalized Relational Database and partition of huge tables using Oracle.
+    • Designed, Developed, Coded, Unit Tested and Implemented of State Master, Metro Master, Assembly Master, and Parliament Master Modules. Wrote all these modules related stored procedures, triggers and functions using oracle8.
+    • Designed and Developed above modules related forms and reports using Developer 2000 forms 5 and reports 5.
+    • Developed Business logic triggers and functions using VB5.
+    • Successful Implementation of project at client site.
+    • Performance Tuning of Oracle Database using Oracle Enterprise Manager to optimize data retrieval performance.
+    • 
+Environment:
+Oracle 7.x/8, VB 5-Enterprise edition, Developer 2000 (Forms 5, Reports 3, Graphics 3), Client – Server on Win NT/95
+
+Education and Trainings
+    • Equivalent to BS in Computer Science.   
+BE in Electronics and Communications Engineering, 
+L. D. College of Engg. – Ahmedabad, 1997
+
+    • In-house training of web services deployment on tomcat using IBM wstk, UML, RUP, Object modeling using Rational Rose, GoF Patterns, and multi agent artificial intelligent technology using ontology editor from MagentA
+    • Professional training on BEA Weblogic 6.0 architecture and administration.
+    • In-house training on Sybase, Informix databases.
+    • In-house training on ASP IIS, NES, Apache, Tomcat, ANT, Microsoft PWS 
+    • Professional training on Oracle 7.3, Developer 2000 and Visual Basic 5
+    • Professional training on IBM Mainframe on simulated environment

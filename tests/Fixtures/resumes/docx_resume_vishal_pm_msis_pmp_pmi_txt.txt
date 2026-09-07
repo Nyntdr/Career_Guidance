@@ -1,0 +1,117 @@
+﻿Vishal Salman
+Accomplishment driven Project Manager with strong technical, management and business analysis skills. Abilities to streamline and strengthen existing operations by identifying, implementing reliable & cost-effective solutions, and fixing inefficient processes to ensure on-time management deliverables.
+3028 1st Ave
+Seattle, WA 98121
+469 920 9532
+vishalsalman@gmail.com
+EXPERIENCE SUMMARY
+    • PMP® Project Manager with 8+ years of focused experience in tactical and strategic delivery within management and technical consulting in the field of IT Infrastructure, Data Network Technology, Customer Support and Delivery, Telecom, and Network Management.
+    • Proficient in strategic planning, people management, service quality improvement, coordination, and leadership.
+    • Experienced in financial reporting and budgeting for existing engagements and upcoming proposals.
+    • Experienced in Leading and Managing of project teams with Agile/SCRUM and Waterfall methodologies.
+    • Management abilities span areas of change management, organizational, motivational, estimating, strategic thought leadership with a complimenting blend of adept technology skills.
+    • Proactive team player with the ability to work in a globally dynamic environment. direct interaction with customers, executives, and software architects with clear written and oral presentation of ideas.
+    • Experienced to handle multiple tasks/sub-projects simultaneously, organizational skills, virtual and cross-functional, globally dispersed teams.
+    • Experienced with data network technologies, routing, switching, MPLS/ISP, LAN/WAN, VOIP, UCM Cisco Video Conferencing tools (creating, monitoring, and tweaking video conferences over the cisco tools), CA Tools (Spectrum, e-health, Service Desk), ICRM/ECRM Oracle base customer relationship management applications, M6 Metasolv.
+    • Adept in maintaining communication with project stakeholders and manage expectations evaluate projects and assess results
+    • Proficient with Microsoft operating systems and MS Office tools (Excel, Word, PowerPoint, Access, Outlook), MS Project (Project Management)
+    • Academic Proficiency: MS Info Systems: Business / Data analysis, model building with machine learning algorithms (Methods for Classification, Clustering, and Association Rules, including Decision Trees, Random Forest, Naive Bayes, k Nearest Neighbor, Neural Networks, Support Vector Machines (SVM), One R, Logistic Regression, K-means, and hierarchical and density-based clustering, Performance evaluation of data mining algorithms using metrics like precision, recall, f-measure, and ROC curves) for prediction and forecasting using data (Cross-Sectional/Timeseries), using statistical/econometric tools like SAS and R (R-Studio), data mining using python, SQL, WEKA, Hadoop Big Data, MapReduce, Spark, Hive, Impala Flume, HBase etc. Tools and techniques from the fields of machine learning (AI) and statistics used in practical data mining for finding, and describing, structural patterns in data. Techniques for data pre-processing, cleaning, reduction, transformation, and visualization. Data science using Python/Java and machine learning libraries like NLP, SVM, Gensim, Google TensorFlow etc. for web/text scrapping, subjectivity and sensitivity analysis, word cloud, Topic Modeling. Worked on SAP environment, performing ETL operation, building info objects, concepts of preprocessing data for OLTP and OLAP for Data Lakes/Warehouse systems, concepts of deformalizing and normalizing data, relational schemas, ER entity relationship modeling (crow foot/Chen notation) for RDBMS/ORDBMS, structured unstructured data handling/data modeling, data quality concepts
+
+Tech10 Networks, Frisco TX, USA
+Project – Financial Planner Analysis, Role - Project Manager
+JUNE 2016- PRESENT
+Following are the responsibilities / learning as an PM at Tech10:
+    • Managing services and products, delivered across different phases of the project roadmap on par excellence. Helping reengineer or streamline present processes
+    • Accountability for release deliverables on time. liaison between senior business stakeholders and technology teams for successful project delivery
+    • Working independently to lead and develop a team of analysts to provide project support and assistance to business and development teams with the design of new products or offerings and set-up of financial systems to ensure appropriate business support and controllership
+    • Communicates plans, status and issues to management related to the Business or Financial Systems IT projects during regularly scheduled meetings
+    • Operational KPI Data Preparation & Review with Product owner and other stakeholders. Gathering business requirements and creating use cases, managing requirements documentation, feasibility analysis reports. Having joint sessions (JAD) with all stakeholders for planning and bringing everyone to joint consensus on delivery roadmap.
+    • Using Interview techniques, JAD sessions, focus groups, questionnaires (online/offline) for requirement gathering and making sure stakeholders are on same page and committed. Using this information to help create use cases, sequence diagrams and flowcharts.
+    • New Opportunity, Resource Fulfillment, Negotiation & revenue Management. Working on Project proposals (RFP’s), Objectives, Scope, Threats, and Risks with contingency plans. Creating new request for proposals and analyzing responses on RFP’s submitted. Creating matrices/scorecards to analyze RFP’s submitted (review and analysis)
+    • Creating Network Diagrams, defining milestones and creating WBS using MS Project suite
+    • Manage reporting and resolution of issues, risks, and dependencies by proactively identifying potential planning gaps, suggesting mitigations to risks, actions to close issues or complete open items.
+    • Regular risk management and business continuity planning. Creating risk matrix and prioritizing risk and assigning weight to designed matrix for more clarity.
+    • Built relationships to facilitate team interactions and enable the creation, prioritization and maintenance of product backlog and its grooming & refinement.
+    • To recognize and adopt best practices in development, testing and documentation to improve the current processes. Incorporating proper change management to deal with scope changes and proper validation procedures for closure and handover activities.
+    • Root Cause Analysis and Retrospectives among the teams to improve the productivity and aid the team to eliminate future impediments.
+    • Ensure team’s growth & learning index is managed and career expectations are met, and guidance is provided. Responsibility for delivery of complex cross functional projects
+    • Working with Customer Relationship Management CRM tools for processing, tracking, reporting purposes of deliverables.
+    • Effectively communicating and maintaining great relationships with clients/customers, collecting feedbacks, involving them in JAD sessions & collecting signoffs/acceptance’s
+    • To help the teams adapt to ad hoc business requirements with no schedule slippage help.
+
+
+
+
+Tech10 Networks, Frisco TX, USA
+Project – Employee Management System, Role - Project Manager
+NOV 2014- JUNE 2016
+Following are the responsibilities / learning as a PM at Tech10:
+    • End to end Production Operation and Service Delivery, Escalation Management
+    • Handling outage calls or service impact issue and monitoring & reviewing all sorts of communication that goes out to senior management
+    • Interacting with the designers, developers & technical architects for different purposes like to find out any strategic solution for operational issues and creating request for proposal and initial high-level requirement documentation. writing use cases and user stories (with use case diagrams, activity diagrams), business requirement document (BRD), software requirement specification (SRS), business rules & defining matrices, WBS, work flow charts
+    • Interacted with clients for maintenance purposes like any issue which may require bug fixes etc. and having JAD sessions with all stakeholders
+    • To recognize and adopt best practices in development, testing and documentation to improve the current processes.
+    • Root Cause Analysis and Retrospectives among the teams to improve the productivity and aid the team to eliminate future impediments
+    • Ensure team’s growth & learning index is managed and career expectations are met, and guidance is provided
+    • Monitor & Troubleshoot any issue during 24*7 batch run or address any concerns raised by the customers
+    • To help the teams adapt to ad hoc business requirements with no schedule slippage
+    • Providing SLA driven responses to issues that occur, technical expertise to guide end users, and focused analysis of systems within the CRM environment
+
+
+Bharti Airtel Ltd, India
+Role – Project Manager (Service Delivery Telecom)
+MAY 2011 – MARCH 2014
+Following are the responsibilities:
+    • Customer kick off meets along with solution, design & sales team for initiation & planning of a project. Eliciting requirements from RFP.
+    • Sharing reports and updates to customer. Sharing important milestones, dates, schedules, status dates along with expected phase wise delivery timelines.
+    • Reviews with cross country teams. Delegation of executables to internal teams/vendors across nation. Project Co-ordination with several teams across nation for provisioning, implementation, installation on regular.
+    • Updating enterprise project management tool for providing updates to PMO, generating project status reports.
+    • Testing, troubleshooting, and delivering MPLS VPN, ISP, VSAT, local loop, and International local loops lease line circuits on Radio/Copper/Fiber media before handing over link to operation and maintenance (LAN/WAN). Coordinating modem, router, hardware installations from POP to customer end.
+    • Customer WAN testing on firewalls and internal LAN (routing and troubleshooting customer multi-site connectivity). Router configuration/installation support with end to end routing for VPN and Internet circuits.
+    • New fiber site plan creation and network augmentation requests for MPLS/ISP connectivity. IP/Bandwidth (E1) planning and provisioning for MPLS/ISP circuits.
+    • Establishing and managing internal, vendor and contractor relationships as necessary to support business objectives
+
+Tulip Telecom Ltd, India
+Designation – Network Support Engineer (NOC)
+JULY 2009 – MAY 2011
+Following are responsibilities/learning as Engineer Network Op Center Tulip:
+    • Design, install & configure LAN/WAN as per organizational requirement, governed by communication protocols.
+    • Configuring routers, switches, firewalls, and other networking devices like UCM, voice gateways and Servers etc.
+    • Worked on Cisco Voice and Video tools for establishing Voice/Video conferences over MPLS and internet.
+    • Worked on NMS (Network Management System) software/products by CA i.e. E-health, Spectrum, Service Desk. Generated reports for network uptime/downtime and device availability, reach ability, bandwidth etc., Spectrum monitoring tool, Service Desk (fault ticket server).
+    • Troubleshoot all networking problems to ensure minimum downtime and maximum availability of network.
+    • Liaison with data connectivity service providers (BSNL, Reliance and Bharti.
+
+Khanna Paper Mills Ltd, India
+Designation – Graduate Engineer Trainee (GET)
+JULY 2008 – JULY 2009
+Following are responsibilities/learning:
+Worked in KHANNA PAPER MILLS LTD as a Graduate Engineer Trainee in operation and maintenance department for paper production plant. Managed two plants which were automated with DCS technology (Supported by Yokogawa / Siemens) and PLC technology (Supported by ABB / Rockwell).
+EDUCATION
+University of Texas at Arlington, Texas, US
+Master of Science in Information Systems with GPA 3.8
+
+Punjab Technical University, Punjab, India
+Bachelor of Technology in Electronics & Communication Engineering
+
+
+MSIS PROJECTS:
+
+Project: Social Media Analytics (Tweets Data Mining)
+Social media (twitter) data analysis using text mining. We wanted to analyze mood, sentiment of people from their tweets to make an inference. Data was collected using twitter API and preprocessed/cleaned using NLTK, NLP to filter words, punctuation, numbers. Further, topic modeling using NMF Scikit learn & LDA Gensim, data word cloud, sentiment analysis using polarity/subjectivity of words in tweets were done.
+
+Mobile Application Analysis (Pokemon Go)
+Pokemon Go! became a very famous augmented reality (AR) game in 2016 summer. In this project, we wanted to understand the success of the mobile app game. Specifically, the purposes of the project were to do web scraping using BeautifulSoup, to construct a Pandas dataframe for data manipulation, to explore/visualize the numeric data using matplotlib or seaborn, GIT, scipy, numpy, and finally to use scikitlearn to build machine learning models to predict the app’s review counts. Did analysis of app’s webpage images by using deep learning with tensorflow. Data analysis was done on web pages of Google Play store and Apple App store.
+
+Analysis of Social Media on Stock Market & Volatility
+Text mining with python, I along with two other teammates did stock price analysis using data from twitter, google finance API. The idea was to study how sentiment of people on social media (tweets) impact or influence a company’s stock price. We used sentiment analysis on tweets collected and compared stock prices of few stocks for same time period of tweets to observe an impact on prices or stocks volatility.
+AWARDS
+2014: Received recognitions for performance and over achieving the given targets. Was awarded as best performing ‘Project Manager’ nationally by COO of BHARTI AIRTEL LTD.
+SKILLS
+    • Certifications: PMP Certified PMP® #1824099 (PMI Member), CCNA Certified CISCO ID - CSCO11818666
+    • Software: Python, Java, C++, R, Big Data: HDFS (Hadoop File System), SPARK (Spark RDD, Spark SQL), Hive, MapReduce, Impala, H-Base, SQL, SAP, Unix/Windows Shell Scripting
+    • Process: Agile/Scrum, Kanban, Waterfall.
+    • Knowledgebase:
+    • Statistical Modeling, Data Mining, Data Science, Data Warehousing, ETL, Quantitative Analysis, Project Management, BI Reporting, Agile Methodology, Unified Modeling Language(UML), Big Data Analytics, Econometrics, Advanced Business statistics, Forecasting, System Analysis and Design, Database Management Systems, SAP.
+
+

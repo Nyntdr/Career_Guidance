@@ -54,6 +54,15 @@ function fileSelected(event) {
     uploadForm.resume_file = event.target.files[0] ?? null;
 }
 
+function fileBadge(resume) {
+    const types = {
+        txt: '.txt file',
+        pdf: '.pdf file',
+        docx: '.docx file',
+    };
+    return (resume.file_url && types[resume.file_type]) || 'Pasted text';
+}
+
 function currentYear() {
     return new Date().getFullYear();
 }
@@ -80,17 +89,17 @@ function currentYear() {
                 <div class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Add a resume</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Upload a <span class="font-medium">.txt</span> file or paste raw text. We'll split it into sections and extract skills automatically.
+                        Upload a <span class="font-medium">.txt, .pdf, or .docx</span> file or paste raw text. We'll split it into sections and extract skills automatically.
                     </p>
 
                     <form @submit.prevent="submitUpload" class="mt-5 space-y-4">
                         <div class="grid gap-4 sm:grid-cols-2">
                             <div>
-                                <InputLabel for="resume_file" value="Upload .txt file" />
+                                <InputLabel for="resume_file" value="Upload .txt, .pdf, or .docx" />
                                 <input
                                     id="resume_file"
                                     type="file"
-                                    accept=".txt"
+                                    accept=".txt,.pdf,.docx"
                                     @change="fileSelected"
                                     class="mt-1 block w-full text-sm text-gray-600 dark:text-gray-300 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-600 hover:file:bg-indigo-100 dark:file:bg-indigo-900/40 dark:file:text-indigo-400"
                                 />
@@ -130,7 +139,7 @@ function currentYear() {
                                         Resume v{{ resume.version }}
                                     </h3>
                                     <span class="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
-                                        {{ resume.file_type === 'txt' ? '.txt file' : 'Pasted text' }}
+                                        {{ fileBadge(resume) }}
                                     </span>
                                     <span
                                         v-if="resume.is_primary"
@@ -153,7 +162,7 @@ function currentYear() {
                                     Make primary
                                 </button>
                                 <a
-                                    v-if="resume.file_url && resume.file_type === 'txt' && resume.file_url.startsWith('resumes/')"
+                                    v-if="resume.file_url && ['txt', 'pdf', 'docx'].includes(resume.file_type) && resume.file_url.startsWith('resumes/')"
                                     :href="route('resume.download', resume.id)"
                                     class="rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >

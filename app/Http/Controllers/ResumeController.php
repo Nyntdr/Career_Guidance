@@ -6,11 +6,13 @@ use App\Models\JobPosting;
 use App\Models\Resume;
 use App\Services\AtsScanner;
 use App\Services\ResumeParser;
+use App\Services\ResumeTextExtractor;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ResumeController extends Controller
@@ -49,12 +51,12 @@ class ResumeController extends Controller
         $profile = $request->user()->profile()->firstOrCreate([]);
 
         $validated = $request->validate([
-            'resume_file' => ['nullable', 'file', 'mimes:txt', 'max:256'],
+            'resume_file' => ['nullable', 'file', 'mimes:txt,pdf,docx', 'max:5120'],
             'content' => ['nullable', 'string', 'max:50000'],
         ]);
 
         if (empty($validated['resume_file']) && empty($validated['content'])) {
-            return redirect()->route('resume.index')->with('error', 'Upload a .txt file or paste your resume text.');
+            return redirect()->route('resume.index')->with('error', 'Upload a .txt, .pdf, or .docx file, or paste your resume text.');
         }
 
         $fileUrl = null;
@@ -65,9 +67,16 @@ class ResumeController extends Controller
             $file = $validated['resume_file'];
             $stored = $file->store('resumes', 'local');
             $fileName = $file->getClientOriginalName();
-            $rawText = Storage::disk('local')->get($stored);
             $fileUrl = $stored;
-            $fileType = 'txt';
+            $fileType = app(ResumeTextExtractor::class)->typeFor($file);
+
+            try {
+                $rawText = app(ResumeTextExtractor::class)->extract($file);
+            } catch (RuntimeException $e) {
+                Storage::disk('local')->delete($stored);
+
+                return redirect()->route('resume.index')->with('error', $e->getMessage());
+            }
         } else {
             $rawText = $validated['content'];
         }

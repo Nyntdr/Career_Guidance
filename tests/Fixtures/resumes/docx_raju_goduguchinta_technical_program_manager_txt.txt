@@ -1,0 +1,70 @@
+﻿Raju Goduguchinta
+512.803.5956               rajugoduguchinta@gmail.com           LinkedIn Profile
+Senior Technical Program Manager
+Combining fresh ideas and leadership abilities to deliver world-class technical Projects
+Senior program development/delivery management professional with 17+ years of global IT, data science, business analytics experience. Expertise in conceiving, developing and implementing cutting edge solutions for highly complex, cross functional IT projects in waterfall, agile Scrum, test driven development, Kanban. Built innovative, mission critical, scalable tools and applications in extremely fast paced environments. Expert in strategic planning, negotiation with project stake -holders, scheduling and tracking, release management, security management, organizing, and tracking processes, business plans, change management, team leadership, operational streamlining, process reengineering, IT standards development, security & disaster recovery and technology evaluation. Hands-on leader with open management style who is effective in creating cohesive and productive work teams. Extensive experience in business understanding and working in major verticals: content management systems, e-commerce, life insurance, annuities, P&C insurance, banking, real estate loan origination system, mortgage banking, home equity, retail, telecommunications, digital marketing. Ability to learn and embrace new changing technologies, build teams that drive solutions with innovative ideas that reduces cost and improve customer experience
+Technology Skills
+.NET Framework 4.7, Eclipse Mars, SOA, Web services, API driven communications, Dev Ops Automation, CI/CD(continuous integration and continuous deployment), LINQ, WPF,TFS, Visual Studio 2017, SharePoint 2015, C#, Java, HTML5, XML, JSON & AJAX,ASP.NET, APIs, C, C++, Elastic Search, FAST, Oracle, SQL, Documentum, VANTAGE-ONE, Unifi Pro, Quality Center, Test Director; Business Intelligence, Octopus , Team City, JavaScript Frameworks (Angular, Bootstrap, Backbone), MongoDB, JQuery, CSS, DHTML, REST/Soap Services, Silverlight,  Selenium (web application automation), Test Automation, SoapUI, Postman, Swagger, UML, SOMA(Service-oriented modelling and architecture),Test Driven Development, Reactive Manifesto, 12-factor apps, JIRA, Git, Spring boot, Jenkins, Erwin, Rally, Informatica, SAP, SQL Server Management Studio, Azure cloud services, Tableau, Domo, Splunk, IBM TeaLeaf, Service Now, Identity & Access Management, MS office, Visio
+Professional Experience
+Senior Technical Program Manager, Dell Technologies,  Austin, TX USA                                                                Jun’17- Present
+ECommerce B2B Online – Using Agile/Scrum development methodology, Pivotal Cloud Foundry(PCF)- cloud computing platform, micro services architecture
+    • Generated $3.5 million ROI by building new self-onboarding, account management dashboard, profile API web applications to onboard existing premier plus customers into B2B space that enhance punch out experience while integrating variety of ERP systems with various protocols to make buying experience seamless.
+    • Developed robust and scalable B2B architecture for the advanced shipping notifications and purchase Order complete notifications to include estimated shipping date and estimated delivery date.
+    • Enhanced Global Portal for APJ region that enables customers buying capability using multiple currency and supporting multiple languages. eCommerce Data Science/Analytics and Insights to define business frictions, CI/CD( Continuous Integration & Continuous Deployment) using Pivotal Could Foundry, Digital Marketing
+    • Contributed for business requirements documentation, technical solution, scrum meetings, remove blockers, end-to-end implementation of several global portfolio projects, scope, project metrics, resource planning, tracking, timelines, project communication. Exhibited exceptional analytical, problem solving skills. Interacted efficiently and effectively in a fast-paced deadline driven work in highly matrix environment. worked with many dependent application executives to have established communication through web services in SOA.
+
+Senior Dévelopment Manager, Kiewit Corporation,  Omaha, NE USA                                                                     Oct’16-June’17
+Products Marketing and ecommerce- HD Contracts management, bid package, product configurations, contract change management with budget of $8 million. Using Agile/Scrum methodology manage challenging cross-functional multiple offshore-onsite stakeholders and delivering results to the customer and release the multiple new products(HD contracts and change management under HD Suites) that are desktop and mobile friendly to market on time for client Kiewit/InEight
+    • Redefined organizational structure, introduced process changes, Dev Ops, automation, developed services, web applications and systems. Manage day to day interactions with executive clients and sponsors
+    • Hired, Managed, directed and inspired the cross-functional teams at Omaha, USA, offshore (India) and nearshore (Argentina). Coached Scrum masters, Planned, developed, and executed schedules to ensure timely completion of project deadlines and milestones. Lead project teams to align with the roadmap objectives, created budget and build plans, communicated project plans to align stakeholders and team members.
+    • Involved in decision making on project scope, MVP for releases, time lines, and negotiated both with internal and external stake holders, daily standups, and retrospection and Demo meetings. Handled scrum of scrum meetings, customer relations, resolved conflicts, process control, deployments, release management and driven Impact oriented actions
+Senior Technical Program Manager, Dell Technologies, Austin, TX USA                                                                  Mar’13-Oct’16
+Content Management Systems for ecommerce- Enhance and maintain existing content management system that supports content in dell.com and create next generation content management solution with budget of $5 million
+    • Manage stakeholder’s expectations, releases. Developed new in-take model to work with stakeholders. Personally trained the 4 Individual teams with SCRUM methodologies and defined the formula for team success, created business proposals. Increased Sprint Velocity/Productivity by 23%.
+    • Planned and orchestrated a technology development and implemented new Content Management System for dell.com which resulted in 57% savings. Worked in complex, distributed, dynamic, fast paced, scalable agile ecommerce environment using SCRUM/Agile methodologies.
+
+As part of ongoing support for current Content Management System, I have performed and delivered the following:
+    • Managed the enhancements/support for global SEO sites for various regions AMERICAS, EMEA, APJ(APAC), INDIA, LATAM
+    • Directed global translation workflow team for language translation based on profiles(country, language, region and Segment) using 3rd party tool TMS
+    • Partnered with diverse content operation teams that maintains multiple product details using various home grown and 3rd party tools Harmony, PIM-X, CNET, Adobe, Digital Asset Manager(DAM), Bazaar Voice, Sales Catalog, Ooyala, Xinet, Elastic Search, Domino to create, manage and maintain product contents like metadata, Rich Media, Images, Videos, technical specifications, ratings and reviews
+    • Created single stop high performance new content management solution(Content Studio) by merging various tools like Taxonomy, guided product discovery, storm attribute manager,  mast head where content authors, content admins, content owners can create, manage, maintain, import, report product content claiming no other tool like this in the globe
+    • Implemented agile scrum methodologies including daily stand-up, backlog grooming, sprint planning, sprint demos and removed blockers to the Team using great negotiation, management skills.
+    • Created work plans, cost analysis, budget and schedule, install & rollback plans, implementation and communication plans
+
+Scrum Master/Manager/Senior Business Analyst, USAA, San Antonio, TX USA                                                     Feb’11-Mar’13
+USAA Federal Savings Banks Loan Origination System - as per Dodd-Frank Wall Street reform and consumer protection act that suggested changes in the American financial regulatory environment
+    • Tracking the various 3rd party vendors efforts and to enable new state level content integration of Unifi Pro with new content providers DocMagic with Business Rules, Print Rules, Packaging Rules,  Enterprise Requirements as per Federal PreEmption and made USAA compliance
+    • Created cross-functional Agile-SCRUM teams and managed implementation for Origination, Processing, Closing and Post-Closing documents of Mortgage Loan Origination System. Triaged defects and verified updated documents
+
+Senior Business System Analyst/Project Manager, USAA, San Antonio, TX USA                                                    Feb’10- Jan’11
+Migrate the entire legacy application “Corporate Correspondence System” to new platform
+    • Analyzed new technology trends. Worked closely with Stakeholders for business requirements.
+    • Designed Master Templates, Subdocuments, Enclosures. Created Schema, Sub-schema, and Metadata
+    • Successfully migrated the legacy system into new platform Documentum that provides reduced maintenance cost and improve the scalability and performance of USAA’s “Corporate Correspondence System”
+
+Technical team Lead/Associate Project Manager, Belgacom, Brussels, Belgium                                                    Aug’08-Jan’10
+Migrate the whole telecommunication systems from Z9/IDMS platform to IBM Mainframes platform
+    • Analyzed the existing system and proposed migration plan. Created migration tools and managed the project
+    • Successfully migrated the whole telecommunication system. Achieved “Outstanding Performer” Award from Client
+
+Team Lead, Halifax Bank of Scotland(Lloyds Banking Group), England, UK                                                              Aug’06-Jul’08
+HBOS Plc Banking and Insurance systems to be implemented with the new consumer law “the Consumer Credit Act 2006(c 14) which is an Act of the Parliament of the United Kingdom intended to increase consumer protection when borrowing money. Scheduled workshops with stakeholders designed technical solutions, tested. Managed offshore team as Single point of contact
+
+Business Analyst, Computer Science Corporation – Lincoln Financial Group, East Hartford, CT USA                 Sep’01-Jul’06
+VANTAGE-ONE application enhancements. Build and Enhance Life Insurance and Annuity Products for qualified and non-qualified markets. Analyzed VANTAGE-ONE system enhancements, Designed and implemented solutions, , performed L3 support
+Education
+2001	Master of Engineering, Anna University (Campus), Chennai, India
+1999	Bachelor of Technology, G Pula Reddy Engineering College, Sri Krishnadevaraya University), Kurnool, India
+Honors
+2016 “Live the Values” Delivery Hi-Tech Award by UST Global
+2011,2012 “Xtra Mile” Champion Award by HCL Technologies
+2010 “Outstanding Performer” Award by Belgacom
+2009 “Innovative Thinker” Award by HCL Technologies
+Certifications
+2018 – Data Science Methodology by IBM cognitive class.ai
+2015 - American Accent Training for IT Professionals by Susan Ryan
+2014 - Certified Scrum Master, Scrum Alliance.
+2012 - Scrum Master Accredited Certification, International Scrum Institute.
+2012 - PMP, PMI.
+2003 - FLMI, LOMA
+
