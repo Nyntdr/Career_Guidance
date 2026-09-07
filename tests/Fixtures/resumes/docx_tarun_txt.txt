@@ -1,0 +1,280 @@
+﻿
+
+Tarun Nalluri
+Sr. Java/Python Developer
+Phone: (802) 768-1105                                             E mail:  nalluri.t01@gmail.com
+
+
+Professional Summary:
+
+    • 10+ years of IT experience that include deployment of java/j2eeapplications, tune up, performance optimization, troubleshoot, make decisions, data process, code review and documentation.
+    • Experience in client/server and distributed (multi-tier)Oracle Web Commerce, ATG BCC, CSC, ATG Endeca, Jboss, Weblogic & WebSphere applications,  their development, maintenance and administration in different UNIX, Linux and Windows platforms
+    • Having Domain Experience in  Finance, Accounting, Banking Telecom, Health Care, Airlines and E-Commerce.
+    • Involve in designing, developing, Installing and Configuring, Administering and Tuning and Troubleshooting Java/J2EE applications such as JBoss, IBM WebSphere (Application, Portal, Process, MQ) Tivoli, ND clusters 7.x/6.1/5.X,Weblogic, Web servers (HTTP Servers, web services, Tomcat Apache) all on cluster (vertical & horizontal). With Functional expertise on Web Application & Desktop Application, CRM Applications.
+    • Experience on Oracle-Endeca Experience Manager, Operational and Search tuning, creating and maintaining Endeca page templates and cartridges. Also familiar with DevOps concepts.
+    • Sound experience comprising of Software Configuration Management (SCM) & Development. Extensive experience includes SCM, Build/Release Management, Change/Incident Management, VMware and AWS Cloud computing
+    • Worked on creating page layouts using Commerce Composer. .
+    • Cloud based deployment experience on Amazon EC2 and their other offerings like S3 and AWS
+    • Experienced in installing, configuring, and administrating Hadoop cluster of major Hadoop distributions, 2.5+ Fyears of experience with Hadoop, HDFS, Map Reduce and Hadoop Ecosystem (Pig & Hive).
+    • Experienced at Software Development Life Cycles and Agile Programming Methodologies.
+    • Good knowledge on Hudson and Jenkins for continuous integration and for End to End automation for all build and deployments.
+    • Extensively worked on setting up enterprise monitoring tools like Zabbix, AppDynamics,  Graphite
+    • Expert in deploying the code through web application servers like Web Sphere/Web Logic/ Apache Tomcat/JBOSS.
+    • Hands on experience in installing, configuring and using ecosystem components like Hadoop MapReduce, HDFS, Sqoop, Pig, Hive and pig commands. Strong   understanding of Zoo Keeper, Cassandra & Flume to the existing Hadoop cluster on linux and HD Insight on windows
+    • Exposure to OOA&D methodologies like waterfall model. Knowledgeable in creating various project artefacts like use-case documents, class diagrams, design document, architecture document, etc.
+    • Experienced in Object Oriented Analysis and Object Oriented Design using Unified Modelling Language (UML) and in Design Methodologies like MVC, DAO, OOP, and OOD
+    • Good skills in Java Multithreading,  Exception Handling, J2EE, JSP, Servlets, JDBC, EJB, PHP,Custom Tag Libraries, Java Script, AJAX, CSS, HTML5, Struts, Spring, Hibernate, Enterprise Java Beans, JDBC, RMI, ESB,JNDI, XML XSD, XSLT, (DOM, SAX), SOAP, WSDL, JSON, JQuery, Java Script, CSS and HTML, , LDAP,Web Services related technologies using AXIS.
+    • Proficiency in back-end procedure development, for RDBMS, Database Applications using Oracle, DB2, SQL and PL/SQL, SQL Server.Hands on experience on writing Queries, Stored procedures, Functions and Triggers by using PL/SQL.
+    • Strong understanding and experience in automation and configuration management tools(Rundeck,chef, Puppet)andContinuous Integration/Delivery solutions (Jenkins,Hudson)
+    • Experience in version control system tools (Git, SVN, Clearcase).
+    • Extensively worked with Infrastructure as a Service (IaaS) environments using tool Chef.
+    • Managed environments DEV, QA, UAT and PROD for various releases and designed instance strategies. 
+    • Well Adverse with the principles and best practices of Software Configuration Management (SCM) processes, which include compiling, packaging, deploying and Application configurations. 
+    • Hands-on Experience of the J2EE Framework and its components as related to Java build, test, deployment and release management initiatives..
+    • Exposure to Module development, Requirement Analysis, Functional Specification Documentation and interaction - onsite coordination with client.
+    • Monitoring and maintaining multiple Applications in different Environments. Extensive Experience in installation/migration/deployment of Enterprise Applications using dynmo admin, Endeca-workbench, BCC, WAS Admin Console, on a  highly available, load balanced production environments.
+    • Strong analytical and problem solving skills, ability to quickly adapt to new environments, learn new technologies and meet deadlines.
+
+Technical Skills:
+Application
+s/ Web Servers / Database Server
+Oracle-ATG web commerce, Oracle Endeca search, IBM HTTP, Apache Tomcat , BEA WebLogic 7/8.1, IBM WebSphere 6.1, WebSphere Portal/ Process, MQ Series Manager, Tivoli Access Manager   JBOSS, SQL Server , Oracle 9i/10g
+Java Technologies:
+JDK 1.7/1.6/1.5, J2EE, Scala,Java Mail, JMS, JDBC, JavaBeans, Servlets, JavaServer Pages, EJB, JNDI, Applets, Swing, RMI, MVC Framework, Webservices, JAX-WS, Spring, Struts, Hibernate, JSF, MDB, XML, XSLT, Mockiton, and  JUnit.
+Other Languages
+PL/SQL,SQL UNIX/Linux Shell Scripts, Python, Ruby,PHP, JavaScript, XML.
+ORM & Frameworks:
+Hibernate, MVC - Struts &Spring.
+Design Methodologies:
+Design Patterns, OOA/OOD, UML, RUP
+IDE:
+Eclipse,  NetBeans, WSAD, jBuilder, RAD, Visual Studio
+Web & Xml  Technologies:
+HTML 5, DHTML, CSS, JavaScript, AJAX, CMS, XML, XSLT and SOAP.
+e-commerce:
+ATG Dynamo, ATG 9.x, ATG 10.x, ATG 11, Endeca, WebeSpherecommerce, Hybris
+BigData/ Hadoop Ecosystem NoSQL Database:
+Hadoop, MapReduce, HDFS, Mahout, Zookeeper, Hive, Pig, Sqoop, Flume, Oozie , HDInsight, Hbase, MongoDB, Cassandra
+Database &Tools:
+RDBMS, Oracle 9i, MS SQL 2000, MySQL5.0, Oracle TOAD
+Operating Systems:
+Windows (NT,XP, 7, Vista, Server), Unix(AIX Sun solaris)/Linux (Redhat, Suse)
+Version Control:
+CVS2.0, Visual Source Safe (VSS),SVN
+Build Tools:
+Apache ant, Maven, Hudson, Jenkins, Chef, Puppet
+Software Development methodology:
+Waterfall model, Agile, Scrum, OOAD, UML, Design Patterns.
+Monit tools:
+Graphite, Monit.,Appdynamics. Rundeck., logstash, Appdynamics
+Management tools:
+Jira, vtiger, Assrubutiors
+embla, Gemini, asana, Skybot
+
+
+
+
+
+Professional Experience
+
+Client
+Citibank
+Duration
+Nov 2014 – Till Date
+Client Location
+NYC, NY
+Role
+Sr Java/Python/Hadoop Developer
+Technology
+JDK 7,  JSF 2.0, Prime faces 3.0, JPA 2.0, Hibernate 3.4, Oracle 11, ESB, Web logic, GIT, Maven ,HTML 5,Javascript and LOG4J, SOAP, Rest, AWS,J2EE, Maven, Informatica ,UNIX, Spring, SOAP, REST, Python
+Responsibility
+
+
+
+
+    • Incorporate in installing, deploying, and configuring java/JEE applications for ATG Commerce, CSC, fand Search/Endeca framework.
+    • Successfully build complex web-based application using in Oracle Web Commerce, 9.X and 10.X, 11.X BCC, Endeca search, Infrastructure implementation,
+    • Working with developer and designer to create eCommerce website
+    •  Manage and update eCommerce stores with customized backend functionalities
+    • Coach team members and new hires on various eCommerce platforms, CRMs and productivity tools
+    • Build and Release Management Built application logic using Python 2.7.
+    • Have delegated in successful administer& troubleshoot various difficult project issues in,Jboss, Web logic and Endeca-ATG integration, BCC administration, Experience Manager, Workbench, dynmo admin, Operational, Search tuning and Infrastructure implementation solutions.
+    • Dashboard to keep User Open Conversation and task counts using Node.js and Cassandra
+    • Upgraded complete ESB environment from XS40 to XG45, XI50 to XI52 firmware and hardware versions.
+    • •Experienced with Data Extraction, Transformation and Loading using ETL tools like Informatica 8x, 9x and Bancware
+    • Architecting complex SOA applications with ESB frameworks
+    • Configured mongo clusters on red hat, have complete understanding on mongodb CRUD, indexing, replication and sharding techniques. Also have past experience on DBA functions.
+    •  used Groovy scripting to incorporate complex logic not possible through boomi interface.
+    • Designed and Developed Web and REST services integration through Datapower ESB for various applications running on Mainframe, WAS, WPS, WMB
+    • Build and release software baselines, code merges, branch and label creation and interfaced between development and infrastructure. Performed all necessary day-to-day Subversion support for different projects.
+    • Hands on experience with Spark-Scala programming with good knowledge
+    • Experienced Hadoop Developer has a strong background with file distribution systems in a big-data arena. Understands the complex processing needs of big data and has experience developing codes and modules to address those needs.
+    • Design the J2EE components of the RestFul Web Services and scheduled Java batch jobs based application in UML. Used existing Deal Model in Python to inherit and create object data structure for regulatory reporting.
+    • Expert knowledge on mongodb no sql data modeling, tuning, disaster recovery and backup
+    • Experienced on Java/scala object-oriented programming language
+    • Providing a responsive, AJAX-driven design using JavaScript libraries such as jQuery, AngularJS, Backbone.js and Bootstrap.js - Using Subversion (SVN) for version control.
+    • Worked on Node.js and Socket.io for developing a chat application.
+    • Added a script to find fixed tickets for the Akka repository using shell scripting, and converted Akkaclasses to use new functionalities over deprecated functionalities
+    • Effectively used GIT(version control) to collaborate with the Akka team members
+    • Expertise in designing and developing applications using J2EE technologies including Servlets, JSP, EJB, JMS, Struts, Hibernate, Web Services, XML, JNDI, JDBC, CVS, Maven, HTML, CSS and JavaScript.
+    • Hands-on  experience  with  Hadoop  applications  (such  as  administration,  configuration  management, monitoring, debugging, and performance tuning).
+    • Resolve, tune, maintain &manage client’s Jboss / weblogic / WAS – ATG instances on cluster connectivity producing optimal performance results in each environment throughout the life cycle.
+    • Building and monitoring in the project has been done continuously with a CI Tools like Jenkins.
+    • Deployment of the Business processes by creating JAR, WAR and EAR files to J2EE application servers. Used build tools on java projects for the development of build artifacts on the source code.
+    • Worked on install & Configure (Zabbix, Graphite, App Dynamics) agents as enterprise monitoring tool on windows and Linux operating systems.
+    • In depth exposure to creating API for internal and external application using REST and SOAP based design. Open source framework like Jersey used for create REST API.
+    • Also worked as a system administrator for the build and deployments process on the enterprise server.
+    • Developed, maintained, and distributed release notes for each scheduled release.
+    • Implemented scripts for doing Cron jobs, wrote cookbooks (recipes) for all applications to manage the configuration files and to manage them as services.
+    • Created views and appropriate meta-data, performed merges, and executed builds on a pool of dedicated build machines.
+    • Hands on experience implementing Apache Spark or Spark Streaming project, preferably using Scala, and Spark SQL
+    • Developed applications using TDD and Clean Code principles in an Agile environment; Java 1.6/1.8, Spring, Web Services (REST and SOAP), XML, Oracle, SQL, and Hibernate in a relational database design
+    • Designed workflows, screens, field configurations and components as part of Projects definition for JIRA as an administrator.
+    • Used Ajax and JavaScript to handle asynchronous request, CSS to handle look and feel of the application.
+    • Experience in AWS cloud design, Architect, implement, and consultancy.
+    • Involved in periodic archiving and storage of the source code for disaster recovery.
+    • Used Atlassian JIRA &vtiger as ticketing tool.
+    • Involved in week production window, on monthly on-call support.
+    • Working on Namenode high availability customizing Zookeeper Services
+    • Collaborate with zookeeper on weekly habitat construction and maintenance tasks which include handling.
+    • Daily routine is to deploy the code to the lower environments, automating the deployments.
+    • Implemented Subversion branching, merging operations for Java Source Code and tweak if changes in the requirements.
+    • Created a demo website running on a Node.js, using the Express framework, Jade, and Backbone.js with Mustache.js for front end MVC/ templating.
+    • Worked with the Automation Team to Automate the Windows and Linux Deployments.
+    • Configured Jenkins daily periodic backups for Jenkins config and plugins files.
+    • Integrated Jenkins Build pipeline plugin for managing multi project jobs efficiently.
+    • Customizing ATG Commerce and Merchandizing modules including customizing Catalog, Product display, Pricing, Coupon, Promotions, Cart, Checkout, fulfillment and inventory management.
+    • Proficient MDEX engines creation, failovers on multi-clustered environment
+    • Resolved numerous configuration issues with Apache, tomcat, plugins & add-on tools like Akamai Caching. Document Root Cause Analysis for all High Severity issues and present the same to clients
+    • Participate in high level team discussions in understanding of Networking Technologies like Load balancer(F5), Firewall, VIP, DNS.
+    • Experience in Bootstrap (responsive design), Backbone, and Angular JS frameworks.
+    • Quick Response to any given technical situation that requires immediate attention to ensure maximum system availability for supported commerce or middleware instances
+    • Sole in charge for Endeca performance tuning, migration, pipeline, cartridges, and templets using scripts and implement various metrics that can statistically signify the success.
+    • Strong understanding and knowledge of Linux, automation and CI Tools like Chef,  Hudson, Jenkins & Git with scripting languages (Shell, python, pearl  and ruby).
+    • Efficient, cost effective, secure, and scalable AWS cloud design based on business requirements.
+    • Provided periodic feedback of status and scheduling issues to the management for change management, production support.
+    • Represent, correspond & coordinate, organize meetings like- incident management, change management (CAB), Build and Release management, PCI.
+
+
+
+
+Client
+McKesson Health Solutions
+Duration
+Jan 2012 -Oct 2014
+Client Location
+Rochester, MN
+Role
+Sr Java/Hadoop/Python developer
+Technology
+JDK 7,  JSF 2.0, Prime faces 3.0, JPA 2.0, Hibernate 3.4, Oracle 11, GIT, Maven and LOG4J, SOAP, Rest, J2EE, Maven,AWS, UNIX, Spring, SOAP, REST,microservices
+Responsibility
+    • This web-based application was built using agile development practices using Extreme Programming.
+    • Responsible in Installing, Configuring and Trouble-Shooting IBM Web Sphere Application Server, Network Deployment) and Web Servers like IBM HTTP Server, IBM Web Sphere MQ 5.3, 6.0, IBM Web Sphere Message Broker 6.1, Sun One Web Server on Linux, Solaris, AIX and Windows platforms.
+    • Expertise in using cloud services (AWS) EC2, S3 Storage, Kinesis for multiple Big Data  PoC's
+    • Designed and developed software applications using Java, Multithreading, Servlet, AngularJS, Bootstrap 3, JSP, JSTL, HTML, JavaScript, Groovy, Grails, EJB, JMS, XML, XSL, JSF, Ajax, JQuery, Adobe Flex 3, GWT, ADF etc.
+    • Developed back-end using RESTful Web Services, Spring, Hibernate, Oracle and Groovy/Grails script with Java code.
+    • Wrote controllers with Groovy to connect front-end interfaces with java services on Grails framework
+    • Developed RESTful web services interface to Java-based runtime engine and accounts.
+    • Was also involved in migrating Web Sphere applications from 5.x to 6.0 and 6.1x on various operating systems of UNIX (Solaris/AIX/Linux) and Windows.
+    • Responsible for developing data pipeline using Hadoop ecosystem to extract the data from weblogs and store in HDFS.
+    • Worked extensively on the Python based proprietary framework Quartz.
+    • Created a Rich Single Page Application using HTML, CSS, Angular js, JQuery , SOAP and REST Services.
+    • In-depth understanding of Map Reduce and the Hadoop Infrastructure.
+    • Developed internal application using Angular.js and Node.js connecting to Oracle on the backend.
+    • Standardized backup and restore practices for Mongo / Cassandra
+    • Installed & configured MMS for Mongo production databases
+    •  Used various tools to test the REST based web services
+    • Used Spark to create API’s in JAVA and Scala for Big data analysis.
+    • Migration of Existing Application to AWS cloud
+    • Excellent performance and scalability by integrating Datastax Cassandra
+    • Created and Implemented Restful Web Services to provide the interface to the various clients running on both Java and Non Java applications
+    • Worked on Performance tuning on Spark Application.
+    • Designed, developed, implemented, and maintained custom Ant tasks in Java and Groovy.
+    •  Implemented dual security application using Java/Groovy/Grails that eradicates the hazard of compromised credentials during authentication.
+    • Developed and executed software systems utilizing JavaScript and Groovy.
+    • SDesigned and developed Groovy Grails applications for end users.
+    • Developed an automation tool, in Java and Scala on Akka framework, to allow Aspect’s customers to provide a background load of agent traffic on the system, while they perform functional testing on the real clients
+    • Excellent performance and scalability by integrating Datastax Cassandra
+    • Served as the sole Web Sphere Administrator for development team. Deployed and configured java based applications with clear understanding of firewalls and ports used to ensure application connections with back-end systems and front-end configurations of IHS
+    • Designed, implemented and tested the Spring Domain Model for the services using Core Java.
+    • Developed presentation layer using JSP, HTML, DHTML, CSS, AJAX, JavaScript, and JSTL Taglibs.
+    • Involved in implementation of application using conventional design practices (Web-Service Oriented Architecture, MVC-Model View Controller).
+    • Developed the presentation layer using CSS and HTML taken from Bootstrap to develop for multiple browsers including mobiles and tablets.
+    • Good experience with Python, Pig, Sqoop, Oozie, Hadoop Streaming and Hive.
+    • Integrated springs framework with Hibernate that is used for Database operations.
+    • Collaborated on design spec reviews together with Business Analysts
+    • Involved in web component design and development using the spring framework, JSP, Servlets, and taglibs.
+    • Hands on experience in installing, configuring and using ecosystem components like Hadoop Map Reduce, HDFS, Sqoop, Pig & Hive.
+    • Provided complete infrastructure solutions for public cloud services like AWS, Rackspace and digitalOcean etc.
+    • Extract Real time feed using Kafka and Spark Streaming
+    • Worked on the modernization of a legacy and outsourced UI. Technologies used were Angularjs, Backbonejs, Node.js and JQuery.
+    • Developed a prototype of a MASHUP where back end is JAX-RS (Jersey) REST and SOAP webservice and front end is UI developed using Bootstrap.js, Angular.js.
+    • Involved in loading and storing objects using Hibernate and in configuring mapping file.
+    • Provided periodic feedback of status and scheduling issues to the management.
+    • Publish and Consume Contract First SOAP web services using spring & Restful Web services using Jersey.
+
+Client
+Oracle Retail Group
+Duration
+Nov2010 - Dec 2012
+Client Location
+San Francisco, CA
+Role
+Sr Java /PythonDeveloper
+Technology
+WebSphere Application Server, Apache Server, Eclipse, Oracle database, Core Java,DB2,OBIEE,Unix AIX, Sun Solaris, Linux, Shell script, Web service and Agile Development
+Responsibility
+    • Multi-channel system for originating and processing a full range of finance applications
+    • Experience in middleware infrastructure configuration, migration and administration. As part of distributed middleware team (DSMT), helped in several internal clients with planning, design, configuration and migration of their WebSphere servers & Deployment Manager Topologies.
+    • UIS system design (Python Object Oriented Design approach, developing various modules/packages/utilities, e.g.: Cryptography - Encryption/Hashing, Foundation Utilities, Persona management, error/exception management etc.).
+    • Involves installation, configure, administer and support Network Deployment Manager, Nodes and Application Servers. Federated multiple WebSphere Application server 6.x, 5.x, 4.x, IBM HTTP Server 1.3.x, 2.0.x, 6.x, IBM WebSphere MQ 5.3, 6.0, nodes to the Deployment Manager on Unix (AIX) and Linux environments.
+    • Developed Unit and E2E test cases using Node JS.
+    • 	Created and configured clusters of servers both vertical and horizontal on federated nodes for load balancing and failover using BigIp.
+    • 	Installed IBM Http Server and Apache web server and configured it with WebSphere Plug-ins to work with WebSphere Application Server.
+    • 	Installed IBM DB2 UDB 8.1.5 and catalogued the remote database server and database for db2 legacy type2 drivers.
+    • Built a RESTful API to save and retrieve using a remote server in Java using Spring, MongoDB, Apache CXF, and JAX-RS.
+    • Developer (RAD), Angular JS for Java/J2EE application development.
+    • Designed and developed the UI using Struts view component, JSP, HTML, CSS and JavaScript.
+    •  Developed Python Mapper and Reducer scripts and implemented them using Hadoop streaming.
+    • 	Created J2C authentication data entries for configured data source to test database connection from Web Sphere administrative console.
+    • 	Configured virtual hosts and transports for Web Sphere application servers.
+    • 	Configured SSL for IBM Http Server using Ikeyman utility provided with the Http Server.
+    • Applied fix packs and cumulative fix packs to upgrade the Web Sphere Application Server versions.
+    • 	Involved in trouble shooting application server, web server and plug-in logs and analyzed them using Log Analyzer in case of any critical issue.
+    • 	Monitored the performance of the deployed applications by enabling the Performance Monitoring Infrastructure (PMI) using Runtime Performance Advisor and Tivoli Performance Monitor.
+    • 	Actively monitoring of all the servers in production and staging environments and fixing any issues with the servers.
+    • Managed tasks and acted as point of contact for off-shore team coordination. Develop technical design documents UML, reverse engineering code
+
+Client
+AT&T Telecom
+Duration
+Mar 2007 – Nov 2010
+Client Location
+NYC, NY
+Role
+Java Developer
+Technology
+JBoss Application Server, JBOSS DROOLS engine,JDeveloper, Struts,Core Java,Helix framework,Hibernate,DB2, EBI,PHP,Jquery, Agile Development, Oracle 9i/11i, Spring
+Responsibility
+    • This web-based application was built using agile development practices using Extreme Programming.
+    • Participating in user requirement sessions to gather business requirements.
+    • Involved in Analysis, Design, Development, Integration and Testing of application modules.
+    • Participated in the design meetings and created class and sequence diagrams from the Design Documents for the modules assigned to me using UML.
+    • Implementing MVC Architecture using Spring
+    •  Framework, customized user interfaces. Used Core Java, and Spring Aspect  Oriented programming concepts for logging, security, error handling mechanism
+    • Developed user interface using JSP, AJAX, HTML, CSS, JSP Tag libraries to simplify the complexities of the application.
+    • Created SQL Map config files to create the sql queries, map the data and objects to retrieve data from the database using IBATIS. Injected objects using Spring dependency injection concepts
+    • Have worked on Oracle  data base for storing and retrieving the application data
+    • Implemented procedures, packages, triggers, and different Joins to retrieve the data base using PL/SQL, SQL scripts. Created DDL, DML scripts to create tables and privileges on respective tables in the database.
+    • Creation of REST Web Services for the management of data using Apache CXF.
+    • Connected to Web Services applications using AXIS and integrated it with maven and Spring.
+    • Created a batched job which retrieves the records from the database and sends the data to the letter generating web service.
+    • Maven is used to create build file and does Unit testing by creating Test Suites using JUnit Framework.
+    • Solving the issues found during the testing phase for all the modules that developed. Extensive troubleshooting and stress testing for the developed module and improved the performance of the application.
+    • Used Ajax and JavaScript to handle asynchronous request, CSS , HTML to handle look and feel of the application.
+    • Involved in code versioning, Check In, Check outs and code merging using SVN versioning tool.
+    • Used JBoss Drools Flow provides workflow or (business) process capabilities to the Drools platform.
+    • Involved in the integration of all the 3-tiers of the architecture consisting of Data service layer, Business Object layer and Presentation layer (front frameworks).
+    • Involved in the integration testing and made sure the data flows correctly from one sub system to another.
+

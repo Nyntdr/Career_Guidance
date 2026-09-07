@@ -34,6 +34,8 @@ services:
       - ./database:/var/www/html/database
       - ./resources/views:/var/www/html/resources/views
       - ./resources/css:/var/www/html/resources/css
+      - ./tests:/var/www/html/tests
+      - ./phpunit.xml:/var/www/html/phpunit.xml
       - ./public:/var/www/html/public
     depends_on:
       mysql:

@@ -7,6 +7,7 @@ use App\Models\Resume;
 use App\Models\ResumeSection;
 use App\Models\Skill;
 use App\Models\UserSkill;
+use App\Services\Ml\ResumeSegmenter;
 
 class ResumeParser
 {
@@ -58,7 +59,7 @@ class ResumeParser
                 'source_filename' => $fileName,
             ],
             'version' => $this->nextVersion($profile),
-            'is_primary' => !Resume::where('profile_id', $profile->id)->exists(),
+            'is_primary' => ! Resume::where('profile_id', $profile->id)->exists(),
             'uploaded_at' => now(),
         ]);
 
@@ -88,54 +89,7 @@ class ResumeParser
 
     public function segmentSections(string $text): array
     {
-        $lines = preg_split('/\r\n|\r|\n/', $text);
-        $sections = [];
-        $current = 'contact';
-        $buffer = [];
-
-        $flush = function () use (&$sections, &$current, &$buffer) {
-            $content = trim(implode("\n", $buffer));
-            if ($content !== '') {
-                $sections[] = ['type' => $current, 'content' => $content];
-            }
-            $buffer = [];
-        };
-
-        foreach ($lines as $line) {
-            $trimmed = trim($line);
-            if ($trimmed === '') {
-                continue;
-            }
-
-            $normalized = strtolower(preg_replace('/^[\d.\-_)\s]+/', '', $trimmed));
-            $type = $this->matchHeading($normalized);
-
-            if ($type !== null) {
-                $flush();
-                $current = $type;
-            } else {
-                $buffer[] = $trimmed;
-            }
-        }
-
-        $flush();
-
-        return $sections;
-    }
-
-    private function matchHeading(string $normalizedLine): ?string
-    {
-        if (strlen($normalizedLine) > 60) {
-            return null;
-        }
-
-        foreach (self::HEADINGS as $heading => $type) {
-            if ($normalizedLine === $heading) {
-                return $type;
-            }
-        }
-
-        return null;
+        return app(ResumeSegmenter::class)->segment($text, self::HEADINGS);
     }
 
     public function extractSkills(string $text): array
@@ -177,6 +131,6 @@ class ResumeParser
     {
         $quoted = preg_quote($needle, '/');
 
-        return '/\b' . $quoted . '\b/i';
+        return '/\b'.$quoted.'\b/i';
     }
 }

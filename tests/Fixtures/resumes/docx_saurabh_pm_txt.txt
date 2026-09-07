@@ -1,0 +1,135 @@
+﻿
+
+
+SUMMARY
+
+    • Around 8 years of IT Project Manager Experience in the Banking, Insurance and Financial sector
+    • Managed AGILE teams through Sprint Planning Sessions and leading SCRUM Meetings
+    • Extensively interfaced with Leadership to review Weekly and Monthly team performance
+    • Managed PMO and Portfolio Governance for globally diverse and cross-functional teams
+    • Excellent communicator capable of effectively and efficiently interfacing with stakeholders, business users and senior management
+    • Well-versed in BA activities like requirements gathering, writing functional test cases and use cases, translating business problems to technical requirements, as well as documenting critical project deliverables and hosting meetings between business and development teams
+    • Expert in conducting Gap Analysis and Use Case Analysis
+    • Proficient in working with stakeholders and team members to elicit, analyze, document, and validate business requirements using JAD, JAR, and brainstorming sessions
+    • Efficient in analyzing the data and implementing an appropriate solution using PMP tools
+    • Understanding of Financial Statements, Cash Flows, Financing Structures, Capital Management, Portfolio Analysis, Stock Valuation, Bond Pricing, Budgeting, Asset Management - Risks and Returns, Optimizing Cash Flows, Cash Management and enhancing Liquidity Management
+    • Certified Six Sigma Green Belt and Lean Manufacturing
+    • Planning Releases by coordinating with I.T. team, Quality Assurance team and Admin BA's
+    • Coordinating with admin systems for Life Insurance, Long term Care, Health and Annuities
+    • Comprehensive knowledge of Business Process Analysis and re-engineering, including cost/benefit analysis, risk and impact analysis, and requirements analysis
+    • Highly experienced in Rally, CA-PPM (Clarity) and Microsoft tools like Excel, PowerPoint, Visio, SharePoint, etc.
+
+
+WORK EXPERIENCE
+
+Visa Inc. – Austin, TX                                                                                                                                                   October 2016 – Present
+Project Manager
+Description:
+Visa Inc.is an American multinational financial service corporation headquartered in Foster City, United States. It facilitates electronic funds transfer throughout the world, most commonly through Visa-branded credit cards and debit cards Visa does not issue cards, extend credit or set rates and fees for consumers; rather, Visa provides financial institutions with Visa-branded payment products that they then use to offer credit, debit, prepaid and cash-access programs to their customers. Visa is the world's second largest card payment organization (debit and credit cards combined).
+Responsibilities:
+    • Responsible for managing the completion of projects within specified time and budget dealing with financials, project work flow, change management and dealing with outside vendor relationships
+    • Interact with multiple cross-functional teams ensuring that all business requirements are captured correctly; reported progress to all levels in the organization
+    • Document and write User Stories and facilitated Story Point discussions to analyze the level of effort on project specifications
+    • Implement resource/ requirement gathering tool using Six Sigma technique
+    • Broad understand and knowledge of Insurance Industry operations with emphasis on Life and Long Term Care Insurance processes
+    • Write requirement specification, user stories, acceptance criteria, test cases and used JIRA as ticket management tool and confluence for documentation
+    • Analyze the data using Quality PMP tools such as Cause and Effect diagrams, Pareto charts, Flowcharts and control charts
+    • Query relational databases using SQL to resolve operational issues and assist business and IT in better understanding of business requirements
+    • Created data flow diagrams, business process modeling and process flow diagrams to facilitate better system understanding using MS Visio
+    • Preparation of Requirement Traceability matrix from Business Requirement Document
+    • Monitor cash transactions to ensure accurate bank account balances and report unusual items to be investigated
+    • Ensure that our internal partners are aware of the cash management sales activities and that they assist in promoting the cash management sales program
+
+Environment: MS Visio, Six Sigma, Rational Rose Modeler, SalesForce, MS Visio, DevOps, SCRUM, PMP tools, JIRA, MS Project, SDLC, MS Office suite, Oracle, SQL server, Informatica PowerCenter
+
+American Express - New York, NY                                                                                                                   July 2015 – September 2016
+Project Manager
+Description:
+American Express is an American multinational financial services corporation. It facilitates electronic funds transfers (EFT) throughout the world, most commonly through American express-branded credit cards. The credit bureau program delivered a common servicing platform for American Express, Inc., to send consumer and commercial data to bureaus merging the BlueLight platform and Mobis platform. This project included process redesign and Integration across multiple channels for account reconciliation since transactions are spread across multiple systems.
+
+Responsibilities:
+    • Facilitate sprint planning meetings, daily stand-ups, product backlog review and sprint reviews
+    • Work closely with project owner in backlog management and continuous delivery of user stories and features
+    • Educate and reinforce scrum methodology and agile framework to team members and business partners
+    • Track burn-down metrics, velocity, task break-down, capacity planning and assigned user story points using the Fibonacci series
+    • Work with the business partners from project inception to closure through the various processes of SDLC via the project management function
+    • Collaborate with various cross-functional teams located across different geographical locations for the portfolio governance and PMO organization
+    • Instigated sales campaign to increase sales of backpacker travel insurance by the agency, increasing sales by 20% over a three month period
+    • Coordinate with Relationship Managers to discuss new business opportunities, customer issues and product development Hire, train and manage Implementation Specialists, Sales Advisors and Administrative staff to expand the Cash Management
+    • Maintain and own SharePoint for compliance and audit purpose
+    • Implemented Lean Six Sigma for in-house project in order to save total cost and lead-time for that project.
+    • Gather requirements during the requirements gathering phase and work with the development team to convert them into BRDs and technical requirements
+    • Suggested new procedure for dealing with repeat clients leading to 30% greater customer retention rate across business continuity products
+    • Create project documents like project charter, design document, test document, user acceptance test documents and ensure they are compliant with the organization standards
+
+Environment: Rational Rose Modeler, JIRA, SQL queries, SDLC, Six, Sigma, Rational ClearCase, MS Project, MS Office suit, Oracle, SQL server
+
+Morgan Stanley - New York, N                                                                                                                            August 2014 – May 2015
+Project Manager
+Description:
+Morgan Stanley is a leading global financial services firm providing a wide range of investment banking, securities, investment management, and wealth management services. I worked in Wealth Operations & Technology providing business and systems analysis for large-scale projects within Morgan Stanley. The online brokerage provides users with the tools to track and manage their portfolios online 24/7. The module allows for the viewing of account information in real time, to review asset allocation by stocks, mutual funds, and fixed income. Users can monitor realized and unrealized gains and losses. The web application utilizes industry leading portfolio monitoring and reporting features and provides proprietary research.
+Responsibilities:
+    • Performed analysis of business rules, business and system process flows, and user administration to be used for the new merged platform
+    • Prepared, analyzed AS IS and TO BE of existing architecture and performed Gap Analysis, created workflow scenarios, designed new process flows and documented the Business Process and various Business Scenarios and activities of the business from the conceptual to procedural level
+    • Worked in close cohesion with the business partners and application capability domain owners to ensure application availability targets are met as per the service level agreement (SLA)
+    • Managed WBS, project sizing, and resource allocation by analyzing triple constraint trade-offs
+    • Conducted JAD and brainstorming sessions with the business users and stakeholders
+    • Introduced streamlined processes and procedures for managing new insurance clients, resulting in an increased customer retention rate of 10%
+    •  Worked with the User Experience team to design the GUI for the reports
+    • Performed risk and impact analysis, developed solution options, and influenced the organization to adopt recommended solutions and tradeoffs
+
+Environment: MS Visio, MS Office, SQL Server, C, MS Access, MS Project, SCRUM, Window OS, Linux OS
+
+
+
+Industrial Engineering Corporation – Mumbai, India                                                                                     November 2011 – July 2013
+Junior Project Manager
+Description:
+Industrial Engineering Corporation is a world-class manufacturer of fully traceable high integrity fasteners to the oil, gas, petrochemical, subsea and power generation industries. IEC offers a wide range of production options to suit your unique requirements in terms of quantity, type of product and material. IEC place a great emphasis to deliver quality product to ensure peace of mind, quality service with prompt, accurate and full delivery of requirements, quality advice to ensure the best product is recommended for the application.
+Responsibilities:
+    • Delivered quarterly releases as lead /tester and reduced customer defects by 80% over four quarters
+    • Successfully implemented Route Card System and Daily Improvement Sheet to aid in traceability of manufacturing products
+    • Provided training to the New Associates in Failure analysis Process, Reliability Test Planning, and Execution
+    • Used Six Sigma and 5S technique to implement route card system and Lean Manufacturing to eliminate wastes in the company
+    • Trained, managed and lead over 100 employees in the company on several projects using ERP system
+    • Design and maintain project roadmap, KPI’s and project prioritization presentations for review with the stakeholders
+    • Meet with customers to determine their needs, gather and document requirements, communicate with customers throughout the development project to manage customer expectations, resolve issues, and provide project status
+
+Environment: MS Visio, MS Project, SAP ERP, Supply Chain, Agile, Lean Manufacturing, Six Sigma, 5S, MS Office suite, Kanban
+
+Refair Industries – Mumbai, India                                                                                                                            May 2009 – August 2012
+Quality Analyst/ Junior Business Analyst (Internship Project)
+Description:
+Refair Industries is a manufacturer and supplier of precision pressed & turned components, mechanical components, and precision machine parts for electrical and automobile. The company’s vision and focus is to provide customized solutions with quality and cost product range. A strong customer focus approach and constant quest for top class quality and services have enabled the company to attain and sustain leadership position. The company assures the best services of products and excellent technical support for any of the needs and optimum satisfactory services.
+Responsibilities:
+    • Developed cost estimates for die configuration, equipment capabilities, and manpower requirements
+    • Designed and developed a company product utilizing pressure die-casting to eliminate drawbacks from gravity die-casting
+    • Reviewed project artifacts such as planning documents, applicable standards, requirements, test cases and procedures, source code and result documentation
+    • Worked in close cohesion with the business partners and application capability domain owners to ensure application availability targets are met as per the service level agreement (SLA)
+    • Delivered quality controls and enhancements to proactively address problems and improved product quality, manufacturing flow, customer satisfaction and bottom-line results by ISO standards and by supporting company audits
+    • Performed risk and impact analysis, developed solution options, and influenced the organization to adopt recommended solutions and tradeoffs
+
+Environment:  Testing, Lean Six Sigma, SAP ERP, MRP, MS Visio, ISO, MS Office suite
+
+
+EDUCATIONAL QUALIFICATION
+University of Mumbai
+Bachelor in Engineering- Production Engineering
+
+
+
+
+
+
+
+ADDITIONAL INFORMATION:
+
+Methodologies used - Agile, DevOps, RESTful Web Services, Six Sigma, Rational Unified Process and Waterfall
+Modeling and Design Tools - Rational Rose, Requisite Pro, Clear Quest, UML, MS Visio, MS Access.
+Operating Systems -Windows 98/2000/XP/Vista/7, Mac-OS, Linux, UNIX
+Other Tools -Rally, Jira, Teradata SQL Assistant, xPression, Office365, Microsoft Project, Six Sigma, COBOL, Microsoft SharePoint, Lean, Kronos, Adobe Photoshop, Tableau
+
+
+
+
+

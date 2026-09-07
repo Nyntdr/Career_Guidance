@@ -68,5 +68,31 @@ return [
             'group' => 'Limits',
             'default' => 20,
         ],
+        'ml_enabled' => [
+            'label' => 'ML resume parsing',
+            'type' => 'select',
+            'options' => [
+                'enabled' => 'Enabled',
+                'disabled' => 'Disabled',
+            ],
+            'group' => 'ML',
+            'default' => 'enabled',
+        ],
+        'ml_min_confidence' => [
+            'label' => 'ML confidence threshold',
+            'type' => 'number',
+            'min' => 0.05,
+            'max' => 0.99,
+            'group' => 'ML',
+            'default' => 0.3,
+        ],
+        'ml_cluster_purity' => [
+            'label' => 'ML cluster purity',
+            'type' => 'number',
+            'min' => 0.5,
+            'max' => 1,
+            'group' => 'ML',
+            'default' => 0.7,
+        ],
     ],
 ];
