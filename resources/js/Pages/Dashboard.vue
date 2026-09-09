@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import OnboardingWizard from './Dashboard/Partials/OnboardingWizard.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -18,6 +18,10 @@ const userName = computed(() => usePage().props.auth.user?.name ?? 'there');
 const onboarding = computed(() => usePage().props.onboarding ?? false);
 const showOnboarding = ref(onboarding.value);
 const hasData = computed(() => props.stats?.skillsAssessed > 0 || props.stats?.careerPaths > 0);
+
+function regenerate() {
+    router.post(route('recommendations.generate'), {}, { preserveScroll: true });
+}
 
 const priorityColors = {
     High: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
@@ -147,8 +151,30 @@ const interests = computed(() => {
 
                         <!-- Career Matches -->
                         <div class="mt-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">All career matches</h3>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Ranked by skill compatibility score</p>
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">All career matches</h3>
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Ranked by skill compatibility score</p>
+                                </div>
+                                <div v-if="careerMatches?.length" class="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        @click="regenerate"
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 dark:border-indigo-700 px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
+                                    >
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                        Regenerate
+                                    </button>
+                                    <Link
+                                        :href="route('recommendations.index')"
+                                        class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+                                    >
+                                        View details
+                                    </Link>
+                                </div>
+                            </div>
 
                             <div v-if="careerMatches?.length" class="mt-5 space-y-4">
                                 <div

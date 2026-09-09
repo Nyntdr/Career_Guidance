@@ -9,6 +9,7 @@ use App\Models\GapAssessment;
 use App\Models\ProgressTracking;
 use App\Models\UserSkill;
 use App\Models\WorkExperience;
+use App\Services\RecommendationEngine;
 use App\Support\Settings;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -60,36 +61,33 @@ class DashboardController extends Controller
         $progressCount = ProgressTracking::where('profile_id', $profile->id)->count();
 
         if ($recommendations->isEmpty()) {
-            $computed = $this->computeMatches($userSkills, $userSkillIds);
+            app(RecommendationEngine::class)->generate($profile);
 
-            $recommendations = collect($computed);
-            $topMatch = $computed[0] ?? null;
-            $careerMatches = $computed;
-            $avgCompatibility = count($computed) > 0
-                ? round(collect($computed)->avg('compatibility'))
-                : 0;
-            $careerPathsCount = count($computed);
-        } else {
-            $topRec = $recommendations->first();
-            $topMatch = $topRec ? [
-                'title' => $topRec->careerRole?->title ?? 'Unknown',
-                'compatibility' => (int) round($topRec->match_score),
-                'description' => $topRec->rationale ?? $topRec->careerRole?->description ?? '',
-                'salaryRange' => $this->formatSalary($topRec->careerRole?->avg_salary_range),
-                'growth' => $topRec->careerRole?->growth_outlook ?? '',
-            ] : null;
-
-            $careerMatches = $recommendations->map(fn($r) => [
-                'title' => $r->careerRole?->title ?? 'Unknown',
-                'score' => (int) round($r->match_score),
-                'category' => $r->careerRole?->typical_seniority ?? 'General',
-            ])->toArray();
-
-            $avgCompatibility = $recommendations->count() > 0
-                ? (int) round($recommendations->avg('match_score'))
-                : 0;
-            $careerPathsCount = $recommendations->count();
+            $recommendations = CareerRecommendation::where('profile_id', $profile->id)
+                ->with('careerRole')
+                ->orderByDesc('match_score')
+                ->get();
         }
+
+        $topRec = $recommendations->first();
+        $topMatch = $topRec ? [
+            'title' => $topRec->careerRole?->title ?? 'Unknown',
+            'compatibility' => (int) round($topRec->match_score),
+            'description' => $topRec->rationale ?? $topRec->careerRole?->description ?? '',
+            'salaryRange' => $this->formatSalary($topRec->careerRole?->avg_salary_range),
+            'growth' => $topRec->careerRole?->growth_outlook ?? '',
+        ] : null;
+
+        $careerMatches = $recommendations->map(fn($r) => [
+            'title' => $r->careerRole?->title ?? 'Unknown',
+            'score' => (int) round($r->match_score),
+            'category' => $r->careerRole?->typical_seniority ?? 'General',
+        ])->toArray();
+
+        $avgCompatibility = $recommendations->count() > 0
+            ? (int) round($recommendations->avg('match_score'))
+            : 0;
+        $careerPathsCount = $recommendations->count();
 
         if ($gapAssessment && $gapAssessment->items->isNotEmpty()) {
             $skillsToDevelop = $gapAssessment->items->map(fn($item) => [
@@ -125,61 +123,6 @@ class DashboardController extends Controller
             'profileSummary' => $profileSummary,
             'recentActivity' => $recentActivity,
         ]);
-    }
-
-    private function computeMatches($userSkills, $userSkillIds): array
-    {
-        $userSkillMap = $userSkills->keyBy('skill_id');
-        $roles = CareerRole::with('requiredSkills')->get();
-        $matches = [];
-
-        foreach ($roles as $role) {
-            $required = $role->requiredSkills;
-            if ($required->isEmpty()) {
-                continue;
-            }
-
-            $essential = $required->filter(fn($s) => $s->pivot->importance === 'essential');
-            $preferred = $required->filter(fn($s) => $s->pivot->importance === 'preferred');
-
-            $essentialMatched = 0;
-            $essentialTotal = max($essential->count(), 1);
-            $preferredMatched = 0;
-            $preferredTotal = max($preferred->count(), 1);
-
-            foreach ($essential as $skill) {
-                if ($userSkillMap->has($skill->id)) {
-                    $userProficiency = $userSkillMap->get($skill->id)->proficiency_level;
-                    if ($userProficiency >= $skill->pivot->min_proficiency) {
-                        $essentialMatched++;
-                    }
-                }
-            }
-
-            foreach ($preferred as $skill) {
-                if ($userSkillMap->has($skill->id)) {
-                    $preferredMatched++;
-                }
-            }
-
-            $essentialRate = $essentialMatched / $essentialTotal;
-            $preferredRate = $preferredMatched / $preferredTotal;
-
-            $score = round(($essentialRate * 70 + $preferredRate * 30));
-
-            if ($score > 0) {
-                $matches[] = [
-                    'title' => $role->title,
-                    'score' => $score,
-                    'category' => $role->typical_seniority ?? 'General',
-                    'compatibility' => $score,
-                ];
-            }
-        }
-
-        usort($matches, fn($a, $b) => $b['score'] <=> $a['score']);
-
-        return array_slice($matches, 0, Settings::get('top_matches', 10));
     }
 
     private function computeGaps($userSkills, $userSkillIds): array

@@ -34,6 +34,7 @@ const navLinks = computed(() => {
     }
     return [
         { route: 'dashboard', label: 'Dashboard' },
+        { route: 'recommendations.index', label: 'Recommendations' },
         { route: 'roadmap.index', label: 'Roadmap' },
         { route: 'jobs.index', label: 'Jobs' },
         { route: 'resume.index', label: 'Resumes' },
