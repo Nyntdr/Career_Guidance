@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             SkillAliasSeeder::class,
             CareerRoleSeeder::class,
+            CareerPathSeeder::class,
             LearningResourceSeeder::class,
             JobPostingSeeder::class,
         ]);

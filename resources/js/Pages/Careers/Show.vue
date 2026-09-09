@@ -10,6 +10,8 @@ const props = defineProps({
     skillsByImportance: Object,
     skillCount: Number,
     relatedRoles: Array,
+    outgoingPaths: Array,
+    incomingPaths: Array,
 });
 
 const growthColors = {
@@ -133,11 +135,57 @@ function proficiencyLabel(level) {
                     </div>
                 </div>
 
+                <div class="grid gap-6 lg:grid-cols-2">
+                    <div v-if="outgoingPaths.length" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">Pathways from this role</h3>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Typical next steps after {{ role.title }}</p>
+                        <template v-if="outgoingPaths.length">
+                            <ul class="mt-4 space-y-3">
+                                <li v-for="path in outgoingPaths" :key="path.id" class="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <Link :href="route('careers.show', path.to_role_id)" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            {{ path.to_role }}
+                                        </Link>
+                                        <span v-if="path.typical_years" class="shrink-0 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 px-2.5 py-0.5 text-xs font-medium">
+                                            ~{{ path.typical_years }} yr{{ path.typical_years === 1 ? '' : 's' }}
+                                        </span>
+                                    </div>
+                                    <p v-if="path.notes" class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ path.notes }}</p>
+                                </li>
+                            </ul>
+                        </template>
+                        <p v-else class="mt-4 text-sm text-gray-400 dark:text-gray-500">No defined pathways from this role yet.</p>
+                    </div>
+
+                    <div v-if="incomingPaths.length" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">Roles leading to this role</h3>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">How professionals typically reach {{ role.title }}</p>
+                        <template v-if="incomingPaths.length">
+                            <ul class="mt-4 space-y-3">
+                                <li v-for="path in incomingPaths" :key="path.id" class="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <Link :href="route('careers.show', path.from_role_id)" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            {{ path.from_role }}
+                                        </Link>
+                                        <span v-if="path.typical_years" class="shrink-0 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 px-2.5 py-0.5 text-xs font-medium">
+                                            ~{{ path.typical_years }} yr{{ path.typical_years === 1 ? '' : 's' }}
+                                        </span>
+                                    </div>
+                                    <p v-if="path.notes" class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ path.notes }}</p>
+                                </li>
+                            </ul>
+                        </template>
+                        <p v-else class="mt-4 text-sm text-gray-400 dark:text-gray-500">No defined pathways into this role yet.</p>
+                    </div>
+                </div>
+
                 <div class="rounded-2xl border border-dashed border-indigo-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 p-6 text-center">
                     <p class="text-sm text-gray-500 dark:text-gray-400">
                         Assess your readiness for this role and build a learning roadmap.
                     </p>
-                    <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">Coming in the next phase (gap assessment).</p>
+                    <Link :href="route('assessment.run', { target_role_id: role.id })" class="mt-2 inline-block text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline" method="post" as="button">
+                        Run a skill-gap assessment for this role
+                    </Link>
                 </div>
             </div>
         </div>
