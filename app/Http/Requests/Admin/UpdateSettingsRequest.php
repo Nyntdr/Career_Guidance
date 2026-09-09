@@ -25,23 +25,29 @@ class UpdateSettingsRequest extends FormRequest
             'ats_weights.readability' => ['required', 'integer', 'min:0', 'max:100'],
             'top_matches' => ['required', 'integer', 'min:1', 'max:50'],
             'admin_page_size' => ['required', 'integer', 'min:5', 'max:100'],
+            'recommendation_weights' => ['required', 'array'],
+            'recommendation_weights.overlap' => ['required', 'integer', 'min:0', 'max:100'],
+            'recommendation_weights.semantic' => ['required', 'integer', 'min:0', 'max:100'],
+            'recommendation_path_bonus' => ['required', 'numeric', 'min:0', 'max:20'],
+            'llm_rationale' => ['required', Rule::in(['enabled', 'disabled'])],
+            'llm_provider' => ['required', Rule::in(['gemini', 'groq'])],
         ];
     }
 
     public function after(): array
     {
-        return [
-            function () {
-                $weights = $this->input('ats_weights', []);
+        $percentGroups = ['ats_weights', 'recommendation_weights'];
 
-                $sum = collect($weights)
-                    ->filter(fn ($v) => is_numeric($v))
-                    ->sum(fn ($v) => (int) $v);
+        return array_map(fn (string $group) => function () use ($group) {
+            $weights = $this->input($group, []);
 
-                if ($sum !== 100) {
-                    $this->errors()->add('ats_weights', 'ATS scan weights must sum to 100.');
-                }
-            },
-        ];
+            $sum = collect($weights)
+                ->filter(fn ($v) => is_numeric($v))
+                ->sum(fn ($v) => (int) $v);
+
+            if ($sum !== 100) {
+                $this->errors()->add($group, ucwords(str_replace('_', ' ', $group)).' must sum to 100.');
+            }
+        }, $percentGroups);
     }
 }
