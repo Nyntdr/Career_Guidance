@@ -1,8 +1,8 @@
 # CareerGuide AI — Implementation Roadmap (Current Phase)
 
-> **Status:** **A ✅**, **B ✅**, **C ✅**, **D ✅**, **E ✅** and **G ✅** (admin settings / dynamic config; Inter font self-hosted) are complete. Remaining: **F** (career pathways). Everything uses existing seeded data (8 career roles, 30+ skills, 18 learning resources, 12 job postings) and light deterministic logic only.
+> **Status:** **A ✅**, **B ✅**, **C ✅**, **D ✅**, **E ✅**, **F ✅**, **G ✅** (admin settings / dynamic config; Inter font self-hosted) and **H ✅** (AI career recommendations: deterministic score blend with semantic TF-IDF/cosine + career-path BFS boost + template rationale; LLM rationale provider shipped but inert behind a placeholder endpoint). All scoped feature areas are complete.
 >
-> **Deferred (future phase):** datasets (O\*NET / ESCO / job-posting / resume corpora) + importers, and advanced algorithms (TF-IDF / cosine / embeddings, semantic matching, LLM AI-counselor). See [Deferred](#deferred--future-phase) at the bottom.
+> **Deferred (future phase):** datasets (O\*NET / ESCO / job-posting / resume corpora) + importers, real embeddings (the `embedding` JSON columns stay a seam), and wiring a live LLM provider key into the shipped rationale tier. See [Deferred](#deferred--future-phase) at the bottom.
 
 ---
 
@@ -32,7 +32,7 @@ Score `job_postings` against the candidate's `user_skills`.
 | `job_required_skills` (job_posting_id, skill_id, importance, min_proficiency) |
 | `user_skills` (profile_id, skill_id, proficiency_level) |
 
-- Reuses the **existing essential/preferred weighting** already in `DashboardController::computeMatches` (essential 70% / preferred 30%, proficiency gate). Job importance values are `required` (→ 70% weight) and `preferred` (→ 30% weight).
+- Reuses the **existing essential/preferred weighting** (essential 70% / preferred 30%, proficiency gate) that historically lived in `DashboardController::computeMatches` and is now extracted into `app/Services/RoleMatchScorer` (phase H). Job importance values are `required` (→ 70% weight) and `preferred` (→ 30% weight).
 - **Shipped:** `JobsController` (+ `scoreJobs()`), `Pages/Jobs/Index.vue` (stats row, match % badges, matched vs. missing skill chips), route `jobs.index`, navbar **Jobs** link, `JobPostingSeeder` (12 postings across the seeded domains).
 - **No dependencies.**
 
@@ -88,7 +88,7 @@ Pick a `job_posting` + the user's primary resume and compute + persist a scan.
   - **Shipped:** `app/Services/Readability.php` (pure Flesch-Kincaid grade → 0–100 rescaled score); `app/Services/AtsScanner.php` (`scan()` persists `ats_scans` + `ats_matched_keywords` + `ats_scan_details`; keyword score = required 70% / preferred 30% of JD-skill overlap with alias-aware term frequency; structure = expected sections present; formatting = bullets/action-verbs/quantified points; readability = Flesch-Kincaid; overall = 50/15/15/20 weighted). `AtsScanController@show` (`GET /ats-scans/{scan}`, ownership check); `Pages/AtsScans/Show.vue` (overall gauge, 4 component bars, per-keyword Found/Missing + frequencies, required vs preferred skill chips, severity-coded suggestions).
   - **Notes:** verified end-to-end in Docker — sample Data Scientist resume parsed into 5 sections / 8 skills, scan vs Senior Data Scientist = overall 73 (keyword 68, structure 100, formatting 63, readability 73) with correct missing-keyword details (Statistics, Deep Learning).
 
-### F. Career pathways
+### F. Career pathways — ✅ COMPLETED
 
 Seed a hand-written set of `career_paths` edges and display progression (no graph algorithm).
 
@@ -96,7 +96,9 @@ Seed a hand-written set of `career_paths` edges and display progression (no grap
 |---|
 | `career_paths` (from_role_id, to_role_id, typical_years, notes) |
 
-- **Deliverable:** ~6–10 seeded edges; show "Pathways from this role" on the Careers detail page.
+- **Shipped:** `CareerPathSeeder` (11 hand-written edges across the 8 seeded roles — e.g. Data Analyst → Data Scientist → ML Engineer, Frontend/Backend Developer → Software Engineer → DevOps/ML Engineer — each with `typical_years` + `notes`); `CareersController@show` now loads `outgoingPaths`/`incomingPaths` (with role titles + years + notes); `Pages/Careers/Show.vue` renders "Pathways from this role" and "Roles leading to this role" cards (replacing the old placeholder), plus an active "Run a skill-gap assessment for this role" action linking to `assessment.run` with `target_role_id`.
+- **Tests:** `tests/Feature/CareerPathTest.php` (seeder edge counts/content, idempotency, careers.show Inertia props).
+- **Notes:** table + model (`CareerPath`) + `CareerRole::outgoingPaths/incomingPaths` relations already existed from the original schema — no migration needed.
 
 ### G. Admin settings (dynamic config) — ✅ COMPLETED
 
@@ -107,6 +109,25 @@ Generic key-value settings so branding/scoring/limits are editable at runtime.
 - **Settings:** `site_name` (Ujjwol Bato), `currency_symbol` ($), `currency_position` (before), `ats_weights` (50/15/15/20), `top_matches` (10), `admin_page_size` (20).
 - **No dependencies.** Defaults are config-only; admin saves create DB overrides.
 
+### H. AI career recommendations (deterministic + LLM-ready) — ✅ COMPLETED
+
+Score career roles against `user_skills`, persist ranked `career_recommendations`, and explain every match.
+
+| Schema used |
+|---|
+| `career_recommendations` (profile_id, career_role_id, match_score, rationale, generated_at) |
+| `career_roles` + `career_role_skills` (importance, min_proficiency) |
+| `career_paths` (from_role_id, to_role_id) — BFS boost |
+| `user_skills` (proficiency_level) |
+
+- **Score blend (admin-tunable `recommendation_weights`, default 60/40):** deterministic overlap (via `RoleMatchScorer`, `overlap`) + semantic TF-IDF-weighted cosine (via `Ml\SkillSimilarity::score`) + hop-decayed career-path bonus (`recommendation_path_bonus`, default 5) for roles reachable within 2 hops of the best direct matches.
+- **Rationale (`RecommendationRationalizer`):** deterministic template (matched/missing skills → outlook → education) always works; the LLM path is wired (OpenAI-compatible chat endpoint, `capacity` setting `llm_rationale`) but stays **inert** — it only fires when `llm_rationale=enabled` **and** `RECOMMENDATION_LLM_KEY` is set, and any provider failure falls back to the template silently. Endpoint default is a placeholder (`api.example.com`) until a real key is configured.
+- **Shipped:** `RoleMatchScorer`, `Ml\SkillSimilarity`, `RecommendationEngine` (wipes + recreates the snapshot, no-op when no skills), `RecommendationRationalizer`; `RecommendationController` (`GET /recommendations` auto-generates when empty, `POST /recommendations/generate`); `Pages/Recommendations/Index.vue` (stats row, ranked cards, rationale, matched/missing chips, Regenerate + route/roadmap links); navbar **Recommendations** link; dashboard now auto-generates via the engine instead of `computeMatches` and gained **Regenerate + View details** actions (dead `computeMatches` method removed).
+- **Settings added:** `recommendation_weights` (percent_group, Scoring), `recommendation_path_bonus` (number, Limits), `llm_rationale` (select, **ML** — this also renders the previously-defined-but-unwired ML settings group).
+- **Config/env:** `config/recommendations.php` (weights, path bonus, LLM placeholder); `.env.example` documents empty `RECOMMENDATION_LLM_ENDPOINT/KEY/MODEL`; `docker-compose.yml` passes them through.
+- **Tests (13 new):** `tests/Unit/SkillSimilarityTest.php`, `tests/Unit/RoleMatchScorerTest.php`, `tests/Unit/RecommendationEngineTest.php`, `tests/Feature/RecommendationControllerTest.php`.
+- **No dependencies** (pure PHP math; LLM client uses the built-in HTTP client).
+
 ---
 
 ## New infrastructure introduced
@@ -116,6 +137,12 @@ Generic key-value settings so branding/scoring/limits are editable at runtime.
   - `ResumeParser` — ✅ shipped (Phase D)
   - `AtsScanner` — ✅ shipped (Phase E)
   - `Readability` — ✅ shipped (Phase E)
+  - `RoleMatchScorer` — ✅ shipped (Phase H)
+  - `RecommendationEngine` — ✅ shipped (Phase H)
+  - `RecommendationRationalizer` — ✅ shipped (Phase H)
+- **`app/Services/Ml/`** — ML-tier service seam:
+  - `SkillSimilarity` — ✅ shipped (Phase H): TF-IDF-weighted cosine (pure PHP), the evaluation seam the
+    `skills.embedding`/`job_postings.embedding` JSON columns will one day feed.
 - **Storage disk config** for resume uploads (`storage` is already a mounted volume in Docker; .txt files stored under `resumes/`).
 - **New candidate routes/controllers/pages**; navbar link updates.
 - **Seeder additions:** `LearningResourceSeeder` (A), `JobPostingSeeder` (B), `SkillAliasSeeder` (D), `career_paths` (area F).
@@ -129,8 +156,9 @@ Generic key-value settings so branding/scoring/limits are editable at runtime.
 2. **B** — recommended jobs — ✅ done
 3. **C** — gap assessment + roadmap — ✅ done
 4. **D + E** — resume upload/parse + ATS scan (ATS needs resume text) — ✅ done
-5. **F** — career pathways — next
+5. **F** — career pathways (seeder + careers-detail UI + tests) — ✅ done
 6. **G** — admin settings (dynamic branding / currency / scoring / limits) + Inter font — ✅ done
+7. **H** — AI career recommendations (deterministic blend + semantic TF-IDF/cosine + path BFS + LLM-ready rationale) — ✅ done
 
 ---
 
@@ -147,8 +175,9 @@ Generic key-value settings so branding/scoring/limits are editable at runtime.
 ## Deferred (future phase)
 
 - **Datasets + importers:** O\*NET / ESCO occupation→skill taxonomies, job-posting corpora, labeled resume corpora. Populate `skills` (incl. `taxonomy_source`, `embedding`), `career_roles`, `career_role_skills`, `job_postings`, `resumes`.
-- **Algorithms:** TF-IDF + cosine similarity, embedding-based semantic matching (real vectors in the `embedding` JSON columns), career-path graph traversal (BFS / shortest path).
-- **LLM / AI-counselor tier:** structured resume parsing, generated rationale for recommendations, AI chat assistant acting as the counselor role.
+- **Real embeddings / semantic tier:** swap `Ml\SkillSimilarity`'s keyword-TFIDF vectors for actual embedding vectors in the `embedding` JSON columns (same cosine interface, no caller changes).
+- **Live LLM rationale:** set `RECOMMENDATION_LLM_ENDPOINT` / `RECOMMENDATION_LLM_KEY` (any OpenAI-compatible chat endpoint) and enable the `llm_rationale` setting — the shipped code path activates with no further changes.
+- **AI-counselor chat:** structured resume parsing and an AI chat assistant are future phases beyond the rationale tier.
 
 ---
 
