@@ -17,7 +17,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Data Scientist',
                 'description' => 'Analyze and interpret complex data to help Nepali banks, telecoms (NTC, Ncell), and e-commerce platforms make decisions. Combines statistics, machine learning, and domain expertise.',
                 'typical_seniority' => 'Mid to Senior',
-                'avg_salary_range' => ['min' => 720000, 'max' => 3600000],
+                'avg_salary_range' => ['min' => 480000, 'max' => 1920000],
                 'growth_outlook' => 'High demand — an emerging field in Nepal with few qualified professionals',
                 'skills' => [
                     'Python' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -36,7 +36,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Machine Learning Engineer',
                 'description' => 'Design and build production ML systems for Nepali AI startups, fintechs, and remote international teams. Focus on scaling models, pipelines, and deploying AI solutions.',
                 'typical_seniority' => 'Mid to Senior',
-                'avg_salary_range' => ['min' => 960000, 'max' => 4200000],
+                'avg_salary_range' => ['min' => 600000, 'max' => 2400000],
                 'growth_outlook' => 'Very high demand — AI and remote roles pay top of the Nepali market',
                 'skills' => [
                     'Python' => ['importance' => 'essential', 'min_proficiency' => 5],
@@ -55,7 +55,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Software Engineer',
                 'description' => 'Design, develop, and maintain software systems for Nepali IT companies, banks, and international clients (outsourcing/remote). Work across the full stack or specialize in backend or frontend.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 480000, 'max' => 3000000],
+                'avg_salary_range' => ['min' => 384000, 'max' => 1800000],
                 'growth_outlook' => 'Strong demand — Nepal\'s IT outsourcing and fintech sectors are growing rapidly',
                 'skills' => [
                     'Python' => ['importance' => 'preferred', 'min_proficiency' => 3],
@@ -74,7 +74,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Data Analyst',
                 'description' => 'Collect, process, and analyze data for Nepali banks, MFIs, NGOs/INGOs, and businesses. Create reports and dashboards for stakeholders. Excel and SQL skills are highly valued locally.',
                 'typical_seniority' => 'Entry to Mid',
-                'avg_salary_range' => ['min' => 360000, 'max' => 1440000],
+                'avg_salary_range' => ['min' => 288000, 'max' => 960000],
                 'growth_outlook' => 'Strong demand — banks, MFIs, and NGOs in Nepal are investing in data roles',
                 'skills' => [
                     'SQL' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -92,7 +92,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Product Manager',
                 'description' => 'Define product vision, strategy, and roadmap for Nepali startups and fintechs (eSewa, Khalti, Fonepay) and software houses. Work cross-functionally with engineering, design, and business teams.',
                 'typical_seniority' => 'Mid to Senior',
-                'avg_salary_range' => ['min' => 840000, 'max' => 3600000],
+                'avg_salary_range' => ['min' => 600000, 'max' => 2160000],
                 'growth_outlook' => 'High demand — Nepal\'s startup and digital payment ecosystems are expanding',
                 'skills' => [
                     'Project Management' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -108,7 +108,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'DevOps Engineer',
                 'description' => 'Build and maintain CI/CD pipelines, manage cloud infrastructure, and automate deployments for Nepali software companies, ISPs, and hosting providers.',
                 'typical_seniority' => 'Mid to Senior',
-                'avg_salary_range' => ['min' => 840000, 'max' => 3600000],
+                'avg_salary_range' => ['min' => 540000, 'max' => 1920000],
                 'growth_outlook' => 'High demand — cloud adoption is accelerating among Nepali enterprises',
                 'skills' => [
                     'AWS' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -125,7 +125,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Frontend Developer',
                 'description' => 'Build responsive, performant user interfaces for Nepali web agencies, startups, and remote clients. Work with modern frameworks to create engaging web experiences.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 420000, 'max' => 2400000],
+                'avg_salary_range' => ['min' => 336000, 'max' => 1440000],
                 'growth_outlook' => 'Steady demand — most Nepali software houses hire frontend developers regularly',
                 'skills' => [
                     'JavaScript' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -144,7 +144,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Backend Developer',
                 'description' => 'Design and build server-side logic, APIs, and database integrations. Laravel and Node.js stacks are especially in demand across Nepali software companies.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 420000, 'max' => 2400000],
+                'avg_salary_range' => ['min' => 336000, 'max' => 1560000],
                 'growth_outlook' => 'Steady demand — Laravel remains the most requested stack in Nepal',
                 'skills' => [
                     'PHP' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -163,7 +163,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Mobile App Developer',
                 'description' => 'Build Android/iOS apps for Nepali fintech, food delivery, and e-wallet startups. Flutter and native Android skills are most in demand locally.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 420000, 'max' => 2400000],
+                'avg_salary_range' => ['min' => 336000, 'max' => 1440000],
                 'growth_outlook' => 'High demand — mobile-first products dominate Nepal\'s startup scene',
                 'skills' => [
                     'Flutter' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -179,7 +179,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'UI/UX Designer',
                 'description' => 'Design intuitive user interfaces and experiences for Nepali digital products — from banking apps to e-commerce. Translate user research into wireframes and prototypes.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 360000, 'max' => 1800000],
+                'avg_salary_range' => ['min' => 300000, 'max' => 1080000],
                 'growth_outlook' => 'Growing demand as Nepali companies invest in digital products',
                 'skills' => [
                     'UI/UX Design' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -194,7 +194,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'QA Engineer',
                 'description' => 'Test software products to ensure quality before release. Manual and automated testing skills are sought by Nepali software houses and outsourcing firms.',
                 'typical_seniority' => 'Entry to Mid',
-                'avg_salary_range' => ['min' => 360000, 'max' => 1440000],
+                'avg_salary_range' => ['min' => 288000, 'max' => 960000],
                 'growth_outlook' => 'Steady demand — quality processes are becoming standard in Nepali IT companies',
                 'skills' => [
                     'Quality Assurance' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -210,7 +210,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Digital Marketing Specialist',
                 'description' => 'Run social media, SEO, and paid campaigns for Nepali brands, e-commerce, and tourism businesses. Facebook/Instagram and Google Ads dominate the local landscape.',
                 'typical_seniority' => 'Entry to Mid',
-                'avg_salary_range' => ['min' => 300000, 'max' => 1200000],
+                'avg_salary_range' => ['min' => 240000, 'max' => 840000],
                 'growth_outlook' => 'High demand — every Nepali business is moving online',
                 'skills' => [
                     'Digital Marketing' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -226,7 +226,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Accountant',
                 'description' => 'Manage bookkeeping, tax filings (VAT, PAN), and financial reporting for Nepali businesses. Knowledge of NRB regulations and Tally ERP is expected in most local jobs.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 300000, 'max' => 1200000],
+                'avg_salary_range' => ['min' => 264000, 'max' => 720000],
                 'growth_outlook' => 'Steady demand — every registered business in Nepal needs accounting staff',
                 'skills' => [
                     'Accounting' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -241,7 +241,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Civil Engineer',
                 'description' => 'Plan and supervise construction of roads, hydropower projects, and buildings. Nepal\'s infrastructure boom and hydropower sector offer strong opportunities.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 360000, 'max' => 1800000],
+                'avg_salary_range' => ['min' => 300000, 'max' => 1200000],
                 'growth_outlook' => 'Steady demand — driven by hydropower, road, and urban development projects',
                 'skills' => [
                     'AutoCAD' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -256,7 +256,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Registered Nurse',
                 'description' => 'Provide patient care in hospitals, clinics, and community health posts. Nursing remains one of the most stable careers in Nepal, with strong demand at home and abroad.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 240000, 'max' => 960000],
+                'avg_salary_range' => ['min' => 192000, 'max' => 600000],
                 'growth_outlook' => 'High demand — chronic shortage of nurses in Nepali hospitals and abroad',
                 'skills' => [
                     'Patient Care' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -270,7 +270,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Bank Officer',
                 'description' => 'Work in commercial banks or microfinance institutions handling credit, operations, or customer relations. Banking remains one of the most sought-after careers in Nepal.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 360000, 'max' => 1800000],
+                'avg_salary_range' => ['min' => 360000, 'max' => 1200000],
                 'growth_outlook' => 'Steady demand — Nepal\'s banking and microfinance sectors keep expanding',
                 'skills' => [
                     'Accounting' => ['importance' => 'essential', 'min_proficiency' => 3],
@@ -285,7 +285,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Network Engineer',
                 'description' => 'Design, install, and maintain network infrastructure for ISPs, telecoms, banks, and data centers. Networking certifications (CCNA/CCNP) are highly valued in Nepal.',
                 'typical_seniority' => 'Entry to Senior',
-                'avg_salary_range' => ['min' => 360000, 'max' => 1800000],
+                'avg_salary_range' => ['min' => 300000, 'max' => 1200000],
                 'growth_outlook' => 'Steady demand — internet penetration and data centers are growing in Nepal',
                 'skills' => [
                     'Networking' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -300,7 +300,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Customer Service Representative',
                 'description' => 'Handle customer queries for banks, telecoms, and BPO/KPO call centers serving international clients. Strong English and Nepali communication is essential.',
                 'typical_seniority' => 'Entry to Mid',
-                'avg_salary_range' => ['min' => 240000, 'max' => 720000],
+                'avg_salary_range' => ['min' => 216000, 'max' => 480000],
                 'growth_outlook' => 'Growing demand — Nepal\'s BPO industry is expanding with international clients',
                 'skills' => [
                     'Customer Service' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -313,7 +313,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Graphic Designer',
                 'description' => 'Create visual assets for brands, agencies, and digital platforms — logos, social media creatives, print materials. Freelancing and agency work are common in Nepal.',
                 'typical_seniority' => 'Entry to Mid',
-                'avg_salary_range' => ['min' => 240000, 'max' => 1080000],
+                'avg_salary_range' => ['min' => 216000, 'max' => 720000],
                 'growth_outlook' => 'Steady demand — advertising and social media marketing keep growing',
                 'skills' => [
                     'Graphic Design' => ['importance' => 'essential', 'min_proficiency' => 4],
@@ -327,7 +327,7 @@ class CareerRoleSeeder extends Seeder
                 'title' => 'Content Writer',
                 'description' => 'Write blogs, website copy, and marketing content for Nepali businesses and international clients. English fluency and SEO knowledge open remote work opportunities.',
                 'typical_seniority' => 'Entry to Mid',
-                'avg_salary_range' => ['min' => 240000, 'max' => 960000],
+                'avg_salary_range' => ['min' => 192000, 'max' => 600000],
                 'growth_outlook' => 'Growing demand — content marketing and remote freelancing are on the rise',
                 'skills' => [
                     'Content Writing' => ['importance' => 'essential', 'min_proficiency' => 4],
