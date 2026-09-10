@@ -16,18 +16,19 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             SkillAliasSeeder::class,
             CareerRoleSeeder::class,
+            CareerPathSeeder::class,
             LearningResourceSeeder::class,
             JobPostingSeeder::class,
         ]);
 
         User::firstOrCreate(
             ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => bcrypt('password'), 'role' => 'user'],
+            ['name' => 'Test User', 'password' => bcrypt('password'), 'role' => 'user', 'email_verified_at' => now()],
         );
 
         User::firstOrCreate(
             ['email' => 'admin@example.com'],
-            ['name' => 'Admin User', 'password' => bcrypt('password'), 'role' => 'admin'],
+            ['name' => 'Admin User', 'password' => bcrypt('password'), 'role' => 'admin', 'email_verified_at' => now()],
         );
     }
 }

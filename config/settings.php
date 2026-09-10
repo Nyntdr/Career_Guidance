@@ -94,5 +94,46 @@ return [
             'group' => 'ML',
             'default' => 0.7,
         ],
+        'recommendation_weights' => [
+            'label' => 'Recommendation score weights',
+            'type' => 'percent_group',
+            'keys' => [
+                'overlap' => 'Skill overlap',
+                'semantic' => 'Semantic similarity',
+            ],
+            'group' => 'Scoring',
+            'default' => [
+                'overlap' => 60,
+                'semantic' => 40,
+            ],
+        ],
+        'recommendation_path_bonus' => [
+            'label' => 'Career-path bonus',
+            'type' => 'number',
+            'min' => 0,
+            'max' => 20,
+            'group' => 'Limits',
+            'default' => 5,
+        ],
+        'llm_rationale' => [
+            'label' => 'AI rationale (LLM)',
+            'type' => 'select',
+            'options' => [
+                'enabled' => 'Enabled',
+                'disabled' => 'Disabled',
+            ],
+            'group' => 'ML',
+            'default' => 'disabled',
+        ],
+        'llm_provider' => [
+            'label' => 'AI rationale provider',
+            'type' => 'select',
+            'options' => [
+                'gemini' => 'Gemini (Google)',
+                'groq' => 'Groq (GPT-OSS)',
+            ],
+            'group' => 'ML',
+            'default' => 'gemini',
+        ],
     ],
 ];

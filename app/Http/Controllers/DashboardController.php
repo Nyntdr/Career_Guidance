@@ -9,8 +9,10 @@ use App\Models\GapAssessment;
 use App\Models\ProgressTracking;
 use App\Models\UserSkill;
 use App\Models\WorkExperience;
+use App\Services\RecommendationEngine;
 use App\Support\Settings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,7 +24,7 @@ class DashboardController extends Controller
 
         if ($role !== 'user') {
             if ($role === 'admin') {
-                return app(\App\Http\Controllers\Admin\DashboardController::class)->__invoke($request);
+                return app(Admin\DashboardController::class)->__invoke($request);
             }
         }
 
@@ -52,7 +54,7 @@ class DashboardController extends Controller
         $gapAssessment = GapAssessment::where('profile_id', $profile->id)
             ->with([
                 'targetRole',
-                'items' => fn($q) => $q->with('skill'),
+                'items' => fn ($q) => $q->with('skill'),
             ])
             ->latest()
             ->first();
@@ -60,51 +62,59 @@ class DashboardController extends Controller
         $progressCount = ProgressTracking::where('profile_id', $profile->id)->count();
 
         if ($recommendations->isEmpty()) {
-            $computed = $this->computeMatches($userSkills, $userSkillIds);
+            $lock = Cache::lock('rec-generate:'.$profile->id, 120);
 
-            $recommendations = collect($computed);
-            $topMatch = $computed[0] ?? null;
-            $careerMatches = $computed;
-            $avgCompatibility = count($computed) > 0
-                ? round(collect($computed)->avg('compatibility'))
-                : 0;
-            $careerPathsCount = count($computed);
-        } else {
-            $topRec = $recommendations->first();
-            $topMatch = $topRec ? [
-                'title' => $topRec->careerRole?->title ?? 'Unknown',
-                'compatibility' => (int) round($topRec->match_score),
-                'description' => $topRec->rationale ?? $topRec->careerRole?->description ?? '',
-                'salaryRange' => $this->formatSalary($topRec->careerRole?->avg_salary_range),
-                'growth' => $topRec->careerRole?->growth_outlook ?? '',
-            ] : null;
+            if ($lock->get()) {
+                app(RecommendationEngine::class)->generate($profile);
+                $lock->release();
+            }
 
-            $careerMatches = $recommendations->map(fn($r) => [
-                'title' => $r->careerRole?->title ?? 'Unknown',
-                'score' => (int) round($r->match_score),
-                'category' => $r->careerRole?->typical_seniority ?? 'General',
-            ])->toArray();
-
-            $avgCompatibility = $recommendations->count() > 0
-                ? (int) round($recommendations->avg('match_score'))
-                : 0;
-            $careerPathsCount = $recommendations->count();
+            $recommendations = CareerRecommendation::where('profile_id', $profile->id)
+                ->with('careerRole')
+                ->orderByDesc('match_score')
+                ->get();
         }
 
+        $topRec = $recommendations->first();
+        $topMatch = $topRec ? [
+            'title' => $topRec->careerRole?->title ?? 'Unknown',
+            'compatibility' => (int) round($topRec->match_score),
+            'description' => $topRec->rationale ?? $topRec->careerRole?->description ?? '',
+            'salaryRange' => $this->formatSalary($topRec->careerRole?->avg_salary_range),
+            'growth' => $topRec->careerRole?->growth_outlook ?? '',
+        ] : null;
+
+        $careerMatches = $recommendations->map(fn ($r) => [
+            'title' => $r->careerRole?->title ?? 'Unknown',
+            'score' => (int) round($r->match_score),
+            'category' => $r->careerRole?->typical_seniority ?? 'General',
+        ])->toArray();
+
+        $avgCompatibility = $recommendations->count() > 0
+            ? (int) round($recommendations->avg('match_score'))
+            : 0;
+        $careerPathsCount = $recommendations->count();
+
+        $hasGapInsights = false;
+
         if ($gapAssessment && $gapAssessment->items->isNotEmpty()) {
-            $skillsToDevelop = $gapAssessment->items->map(fn($item) => [
+            $hasGapInsights = true;
+            $skillsToDevelop = $gapAssessment->items->map(fn ($item) => [
                 'name' => $item->skill?->name ?? 'Unknown',
                 'priority' => $item->priority ?? 'Medium',
                 'current' => min(100, ($item->current_level / max($item->required_level, 1)) * 100),
                 'target' => 100,
             ])->values()->toArray();
-        } else {
+        } elseif ($topRec !== null && (float) $topRec->match_score > 0) {
+            $hasGapInsights = true;
             $skillsToDevelop = $this->computeGaps($userSkills, $userSkillIds);
+        } else {
+            $skillsToDevelop = [];
         }
 
         $profileSummary = [
             'education' => $education->isNotEmpty()
-                ? $education->first()->degree . ' in ' . $education->first()->field_of_study . ' at ' . $education->first()->institution
+                ? $education->first()->degree.' in '.$education->first()->field_of_study.' at '.$education->first()->institution
                 : 'Not specified',
             'interests' => $profile->target_industries ?? $profile->target_roles ?? ['Not specified'],
             'goals' => $profile->headline ?? ($profile->bio ? substr($profile->bio, 0, 100) : 'Set your career goal in your profile'),
@@ -122,64 +132,10 @@ class DashboardController extends Controller
             'topMatch' => $topMatch,
             'careerMatches' => $careerMatches,
             'skillsToDevelop' => $skillsToDevelop,
+            'gapInsights' => $hasGapInsights,
             'profileSummary' => $profileSummary,
             'recentActivity' => $recentActivity,
         ]);
-    }
-
-    private function computeMatches($userSkills, $userSkillIds): array
-    {
-        $userSkillMap = $userSkills->keyBy('skill_id');
-        $roles = CareerRole::with('requiredSkills')->get();
-        $matches = [];
-
-        foreach ($roles as $role) {
-            $required = $role->requiredSkills;
-            if ($required->isEmpty()) {
-                continue;
-            }
-
-            $essential = $required->filter(fn($s) => $s->pivot->importance === 'essential');
-            $preferred = $required->filter(fn($s) => $s->pivot->importance === 'preferred');
-
-            $essentialMatched = 0;
-            $essentialTotal = max($essential->count(), 1);
-            $preferredMatched = 0;
-            $preferredTotal = max($preferred->count(), 1);
-
-            foreach ($essential as $skill) {
-                if ($userSkillMap->has($skill->id)) {
-                    $userProficiency = $userSkillMap->get($skill->id)->proficiency_level;
-                    if ($userProficiency >= $skill->pivot->min_proficiency) {
-                        $essentialMatched++;
-                    }
-                }
-            }
-
-            foreach ($preferred as $skill) {
-                if ($userSkillMap->has($skill->id)) {
-                    $preferredMatched++;
-                }
-            }
-
-            $essentialRate = $essentialMatched / $essentialTotal;
-            $preferredRate = $preferredMatched / $preferredTotal;
-
-            $score = round(($essentialRate * 70 + $preferredRate * 30));
-
-            if ($score > 0) {
-                $matches[] = [
-                    'title' => $role->title,
-                    'score' => $score,
-                    'category' => $role->typical_seniority ?? 'General',
-                    'compatibility' => $score,
-                ];
-            }
-        }
-
-        usort($matches, fn($a, $b) => $b['score'] <=> $a['score']);
-
-        return array_slice($matches, 0, Settings::get('top_matches', 10));
     }
 
     private function computeGaps($userSkills, $userSkillIds): array
@@ -195,7 +151,7 @@ class DashboardController extends Controller
                 $userProf = $hasSkill ? $userSkillMap->get($skill->id)->proficiency_level : 0;
                 $minProf = $skill->pivot->min_proficiency;
 
-                if (!$hasSkill || $userProf < $minProf) {
+                if (! $hasSkill || $userProf < $minProf) {
                     $gap = ($minProf - $userProf) / $minProf;
                     $priority = match ($skill->pivot->importance) {
                         'essential' => 'High',
@@ -213,7 +169,7 @@ class DashboardController extends Controller
             }
         }
 
-        usort($gaps, fn($a, $b) => ['High' => 0, 'Medium' => 1, 'Low' => 2][$a['priority']]
+        usort($gaps, fn ($a, $b) => ['High' => 0, 'Medium' => 1, 'Low' => 2][$a['priority']]
             <=> ['High' => 0, 'Medium' => 1, 'Low' => 2][$b['priority']]);
 
         return array_values(array_slice($gaps, 0, Settings::get('top_matches', 10)));
@@ -225,21 +181,21 @@ class DashboardController extends Controller
 
         foreach ($userSkills as $us) {
             $activities[] = [
-                'action' => 'Added skill: ' . ($us->skill?->name ?? 'Unknown'),
+                'action' => 'Added skill: '.($us->skill?->name ?? 'Unknown'),
                 'date' => $us->created_at->diffForHumans(),
             ];
         }
 
         foreach ($education as $edu) {
             $activities[] = [
-                'action' => 'Added education: ' . $edu->institution,
+                'action' => 'Added education: '.$edu->institution,
                 'date' => $edu->created_at->diffForHumans(),
             ];
         }
 
         foreach ($workExperiences as $work) {
             $activities[] = [
-                'action' => 'Added work experience: ' . $work->title . ' at ' . $work->company,
+                'action' => 'Added work experience: '.$work->title.' at '.$work->company,
                 'date' => $work->created_at->diffForHumans(),
             ];
         }
@@ -256,14 +212,14 @@ class DashboardController extends Controller
             ];
         }
 
-        usort($activities, fn($a, $b) => strtotime($b['date']) <=> strtotime($a['date']));
+        usort($activities, fn ($a, $b) => strtotime($b['date']) <=> strtotime($a['date']));
 
         return array_slice($activities, 0, 8);
     }
 
     private function formatSalary($range): string
     {
-        if (!$range || !isset($range['min'])) {
+        if (! $range || ! isset($range['min'])) {
             return 'Not specified';
         }
 
@@ -271,8 +227,8 @@ class DashboardController extends Controller
         $position = Settings::get('currency_position', 'before');
 
         $fmt = fn ($n) => $position === 'after'
-            ? number_format($n) . $symbol
-            : $symbol . number_format($n);
+            ? number_format($n).$symbol
+            : $symbol.number_format($n);
 
         $min = $fmt($range['min']);
         $max = isset($range['max']) ? $fmt($range['max']) : '';

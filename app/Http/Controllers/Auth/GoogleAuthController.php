@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 
 class GoogleAuthController extends Controller
 {
@@ -26,7 +28,20 @@ class GoogleAuthController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-        } catch (\Exception) {
+        } catch (InvalidStateException $e) {
+            Log::warning('Google OAuth state mismatch', [
+                'error' => $e->getMessage(),
+                'host' => request()->getHttpHost(),
+            ]);
+
+            return redirect()->route('login')
+                ->with('status', 'Unable to sign in with Google. Your session was lost — make sure you open the site at ' . config('app.url') . ' and try again.');
+        } catch (\Exception $e) {
+            Log::warning('Google OAuth callback failed', [
+                'error' => $e->getMessage(),
+                'host' => request()->getHttpHost(),
+            ]);
+
             return redirect()->route('login')
                 ->with('status', 'Unable to sign in with Google. Please try again.');
         }

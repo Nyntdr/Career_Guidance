@@ -54,13 +54,22 @@ class MlTrain extends Command
         $vectorizer = new ResumeLineVectorizer($vocab);
         $vectors = array_map(fn ($line) => $vectorizer->vectorize($line), $samples);
 
+        $meta = [
+            'trained_at' => now()->toDateTimeString(),
+            'corpus_samples' => count($samples),
+            'vocab_size' => count($vocab),
+        ];
+
         if ($model === 'all' || $model === 'classifier') {
-            $this->trainClassifier($vectors, $labels);
+            $meta['classifier_accuracy'] = $this->trainClassifier($vectors, $labels);
         }
 
         if ($model === 'all' || $model === 'clusterer') {
             $this->trainClusterer($vectors);
         }
+
+        $repository->saveMeta($meta);
+        $this->info('Training metadata written to '.$repository->metaPath());
 
         return self::SUCCESS;
     }
@@ -154,7 +163,7 @@ class MlTrain extends Command
      * @param  list<list<float>>  $vectors
      * @param  list<string>  $labels
      */
-    protected function trainClassifier(array $vectors, array $labels): void
+    protected function trainClassifier(array $vectors, array $labels): ?float
     {
         $this->line('Training Random Forest ('.count($vectors).' samples)...');
 
@@ -173,6 +182,8 @@ class MlTrain extends Command
 
         app(ModelRepository::class)->saveClassifier($forest);
         $this->info('Saved resume_section_classifier.model');
+
+        return round($accuracy * 100, 1);
     }
 
     /**

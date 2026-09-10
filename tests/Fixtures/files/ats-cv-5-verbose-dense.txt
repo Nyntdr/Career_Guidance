@@ -1,0 +1,16 @@
+Roshan Tamang
+roshan.tamang@example.com | Bhaktapur, Nepal | +977 9800000005
+
+PROFESSIONAL SUMMARY
+An accomplished full-stack engineering professional possessing comprehensive expertise in the construction and maintenance of large-scale web based software platforms primarily utilizing PHP and Laravel together with substantial operational experience across SQL databases including MySQL, comprehensive API Design incorporating REST principles, meticulous version control practices through Git, along with containerization and deployment orchestration using Docker and AWS infrastructures.
+
+WORK EXPERIENCE
+During my more than seven years of professional engagement in the software development industry I have had the privilege of leading numerous complex initiatives where I was responsible for the comprehensive oversight of engineering teams while simultaneously contributing directly to the architectural decision making process regarding the fundamental design of Laravel applications which necessitated deep familiarity with SQL schema design and API Design standards and the continuous refinement of sophisticated deployment pipelines that leveraged Docker and AWS so as to guarantee exceptional reliability under demanding production conditions.
+
+The principal responsibility that I have consistently shouldered across all of the organizations that I have been affiliated with involved transforming ambiguous business requirements into robust deliverable software functionality built upon the Laravel framework which inevitably required an exhaustive understanding of PHP language semantics and the disciplined utilization of Git as the canonical tool for collaboration, code review, and release management alongside rigorous implementation of RESTful API Design patterns that would ultimately serve multiple internal and external integration partners through clearly documented SQL backed data models hosted on AWS.
+
+EDUCATION
+I was awarded the degree of Bachelor of Engineering in Computer Engineering from Purbanchal University after completing the full period of four years of study during which I developed a foundational understanding of computer science principles that has served as the durable basis for my subsequent professional growth and specialization within the PHP and Laravel technology ecosystem, and in addition to this I have continued to pursue ongoing professional development through a number of advanced certification programs and specialized technical workshops focused on cloud architecture and API Design and SQL optimization.
+
+TECHNICAL SKILLS
+Throughout my career I have accumulated a very broad and versatile set of skills that encompasses PHP, Laravel, SQL, MySQL, PostgreSQL, API Design, REST API, Git, Docker, AWS, Kubernetes, and CI/CD, and I remain committed to continuously refreshing and extending this skill set in alignment with the evolving demands of the technology landscape.

@@ -8,6 +8,8 @@ import { computed, ref } from 'vue';
 
 const emit = defineEmits(['complete']);
 
+const mode = ref('choice');
+
 const step = ref(1);
 const totalSteps = 5;
 
@@ -18,6 +20,37 @@ const steps = [
     { num: 4, label: 'Work' },
     { num: 5, label: 'Done' },
 ];
+
+const valueProps = [
+    'Personalized career matches ranked for your skills',
+    'An ATS resume score against real job postings',
+    'A step-by-step learning roadmap to close your gaps',
+];
+
+const startManual = () => {
+    mode.value = 'wizard';
+};
+
+const startUpload = () => {
+    mode.value = 'upload';
+};
+
+const uploadForm = useForm({
+    resume_file: null,
+    content: '',
+});
+
+const uploadFile = (event) => {
+    uploadForm.resume_file = event.target.files[0] ?? null;
+};
+
+const submitUpload = () => {
+    uploadForm.post(route('resume.store'), {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => emit('complete'),
+    });
+};
 
 const completed = ref(new Set());
 
@@ -142,11 +175,117 @@ const skipAll = () => {
 
 <template>
     <div class="p-6">
+        <!-- Choice: upload a resume or enter details manually -->
+        <div v-if="mode === 'choice'" class="space-y-6">
+            <div class="text-center">
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
+                    <svg class="h-7 w-7 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h2 class="mt-3 text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome! Let's set up your profile</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    In a few minutes you'll get career matches, an ATS resume score, and a personalized learning roadmap.
+                </p>
+            </div>
+
+            <ul class="space-y-2">
+                <li v-for="vp in valueProps" :key="vp" class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <svg class="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {{ vp }}
+                </li>
+            </ul>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+                <button
+                    type="button"
+                    @click="startUpload"
+                    class="flex flex-col items-start gap-1 rounded-xl border-2 border-indigo-300 dark:border-indigo-700 p-4 text-left transition hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+                >
+                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600">
+                        <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                    </span>
+                    <span class="mt-1 font-medium text-gray-900 dark:text-gray-100">Upload my resume</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">We'll extract your skills and sections automatically (.txt, .pdf, .docx)</span>
+                </button>
+
+                <button
+                    type="button"
+                    @click="startManual"
+                    class="flex flex-col items-start gap-1 rounded-xl border-2 border-gray-200 dark:border-gray-600 p-4 text-left transition hover:border-gray-400 dark:hover:border-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
+                        <svg class="h-5 w-5 text-gray-500 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </span>
+                    <span class="mt-1 font-medium text-gray-900 dark:text-gray-100">Enter details manually</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Answer a few short questions about your career</span>
+                </button>
+            </div>
+
+            <div class="text-center">
+                <button type="button" @click="skipAll" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Skip all for now</button>
+            </div>
+        </div>
+
+        <!-- Resume upload -->
+        <div v-else-if="mode === 'upload'" class="space-y-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">Upload your resume</h2>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        We'll parse it into sections and pull out your skills so you're matched instantly.
+                    </p>
+                </div>
+                <button type="button" @click="mode = 'choice'" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">Back</button>
+            </div>
+
+            <form @submit.prevent="submitUpload" class="space-y-4">
+                <div>
+                    <InputLabel for="ow-resume-file" value="Resume file (.txt, .pdf, .docx)" />
+                    <input
+                        id="ow-resume-file"
+                        type="file"
+                        accept=".txt,.pdf,.docx"
+                        @change="uploadFile"
+                        class="mt-1 block w-full text-sm text-gray-600 dark:text-gray-300 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-600 hover:file:bg-indigo-100 dark:file:bg-indigo-900/40 dark:file:text-indigo-400"
+                    />
+                    <InputError :message="uploadForm.errors.resume_file" class="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel for="ow-resume-content" value="Or paste resume text" />
+                    <textarea
+                        id="ow-resume-content"
+                        v-model="uploadForm.content"
+                        rows="4"
+                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        placeholder="Paste the full text of your resume here…"
+                    />
+                    <InputError :message="uploadForm.errors.content" class="mt-2" />
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                    <button type="button" @click="skipAll" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Skip for now</button>
+                    <PrimaryButton :disabled="uploadForm.processing">
+                        {{ uploadForm.processing ? 'Parsing…' : 'Upload & get started' }}
+                    </PrimaryButton>
+                </div>
+            </form>
+        </div>
+
+        <!-- Manual wizard -->
+        <div v-else>
         <!-- Header -->
         <div class="mb-6 text-center">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome! Let's set up your profile</h2>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Help us personalize your career recommendations.
+                Add your career details below — it takes about two minutes.
             </p>
         </div>
 
@@ -345,6 +484,7 @@ const skipAll = () => {
             <div class="mt-8">
                 <PrimaryButton @click="done" class="px-8">Go to Dashboard</PrimaryButton>
             </div>
+        </div>
         </div>
     </div>
 </template>

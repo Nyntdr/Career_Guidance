@@ -31,7 +31,7 @@ class SkillGapAnalyzer
                 ]);
         } else {
             $targetRole = $targetRole ?? $this->defaultTargetRole($profile, $userSkillMap);
-            if (!$targetRole) {
+            if (! $targetRole) {
                 return null;
             }
             $requirements = $targetRole->requiredSkills()
@@ -54,6 +54,8 @@ class SkillGapAnalyzer
             'target_job_posting_id' => $targetJobPosting?->id,
             'overall_readiness_score' => 0,
         ]);
+
+        $this->purgeStaleProgress($profile, $assessment);
 
         $gapSkills = collect();
 
@@ -87,6 +89,7 @@ class SkillGapAnalyzer
 
         $assessment->update([
             'overall_readiness_score' => $this->readinessScore($requirements, $userSkillMap),
+            'skills_fingerprint' => self::fingerprint($userSkillMap),
         ]);
 
         if ($gapSkills->isNotEmpty() && $assessment->items()->exists()) {
@@ -94,6 +97,39 @@ class SkillGapAnalyzer
         }
 
         return $assessment;
+    }
+
+    /**
+     * Signature of the user's current skill map so the roadmap can detect when
+     * an assessment no longer reflects the profile.
+     */
+    public static function fingerprint($userSkillMap): string
+    {
+        $pairs = collect($userSkillMap)
+            ->map(fn ($us) => $us->skill_id.':'.(int) $us->proficiency_level)
+            ->sort()
+            ->values()
+            ->implode('|');
+
+        return md5($pairs);
+    }
+
+    /**
+     * Remove progress rows that belong to previous assessments of the same
+     * profile, so a re-run cannot orphan stale roadmap state.
+     */
+    protected function purgeStaleProgress(Profile $profile, GapAssessment $current): void
+    {
+        $oldItemIds = GapAssessmentItem::query()
+            ->where('gap_assessment_id', '!=', $current->id)
+            ->whereHas('gapAssessment', fn ($q) => $q->where('profile_id', $profile->id))
+            ->pluck('id');
+
+        if ($oldItemIds->isNotEmpty()) {
+            ProgressTracking::where('profile_id', $profile->id)
+                ->whereIn('gap_assessment_item_id', $oldItemIds)
+                ->delete();
+        }
     }
 
     private function defaultTargetRole($profile, $userSkillMap): ?CareerRole
@@ -137,7 +173,7 @@ class SkillGapAnalyzer
             }
         }
 
-        return $best ?? CareerRole::query()->orderBy('title')->first();
+        return $best;
     }
 
     private function readinessScore($requirements, $userSkillMap): float

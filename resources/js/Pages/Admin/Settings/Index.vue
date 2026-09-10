@@ -20,11 +20,18 @@ const form = useForm({
         formatting: props.settings.ats_weights?.formatting ?? 15,
         readability: props.settings.ats_weights?.readability ?? 20,
     },
+    recommendation_weights: {
+        overlap: props.settings.recommendation_weights?.overlap ?? 60,
+        semantic: props.settings.recommendation_weights?.semantic ?? 40,
+    },
     top_matches: props.settings.top_matches ?? 10,
     admin_page_size: props.settings.admin_page_size ?? 20,
+    recommendation_path_bonus: props.settings.recommendation_path_bonus ?? 5,
+    llm_rationale: props.settings.llm_rationale ?? 'disabled',
+    llm_provider: props.settings.llm_provider ?? 'gemini',
 });
 
-const groups = ['Branding', 'Currency', 'Scoring', 'Limits'];
+const groups = ['Branding', 'Currency', 'Scoring', 'Limits', 'ML'];
 
 function keysFor(group) {
     return Object.keys(props.definitions ?? {}).filter(
@@ -36,11 +43,8 @@ function def(key) {
     return props.definitions[key] ?? {};
 }
 
-function weightTotal() {
-    return form.ats_weights.keyword
-        + form.ats_weights.structure
-        + form.ats_weights.formatting
-        + form.ats_weights.readability;
+function weightTotal(key) {
+    return Object.values(form[key] ?? {}).reduce((sum, value) => sum + (Number(value) || 0), 0);
 }
 
 function submit() {
@@ -123,11 +127,11 @@ function submit() {
                                         <InputLabel :value="def(key).label" />
                                         <span
                                             class="rounded-full px-2.5 py-0.5 text-xs font-medium"
-                                            :class="weightTotal() === 100
+                                            :class="weightTotal(key) === 100
                                                 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
                                                 : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'"
                                         >
-                                            Total: {{ weightTotal() }}%
+                                            Total: {{ weightTotal(key) }}%
                                         </span>
                                     </div>
                                     <div class="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

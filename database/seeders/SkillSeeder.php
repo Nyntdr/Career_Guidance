@@ -13,8 +13,9 @@ class SkillSeeder extends Seeder
     {
         $categories = [
             'Programming', 'Data', 'AI/ML', 'Frontend',
-            'Backend', 'Cloud', 'DevOps', 'Tools',
+            'Backend', 'Mobile', 'Cloud', 'DevOps', 'Tools',
             'Process', 'Management', 'Soft Skills',
+            'Marketing', 'Finance', 'Design', 'Healthcare',
         ];
 
         $categoryMap = [];
@@ -56,6 +57,27 @@ class SkillSeeder extends Seeder
             ['name' => 'Problem Solving', 'category' => 'Soft Skills'],
             ['name' => 'Data Analysis', 'category' => 'Data'],
             ['name' => 'API Design', 'category' => 'Backend'],
+            ['name' => 'Flutter', 'category' => 'Mobile'],
+            ['name' => 'Android Development', 'category' => 'Mobile'],
+            ['name' => 'React Native', 'category' => 'Mobile'],
+            ['name' => 'Digital Marketing', 'category' => 'Marketing'],
+            ['name' => 'SEO', 'category' => 'Marketing'],
+            ['name' => 'Social Media Marketing', 'category' => 'Marketing'],
+            ['name' => 'Accounting', 'category' => 'Finance'],
+            ['name' => 'Tally ERP', 'category' => 'Finance'],
+            ['name' => 'Microsoft Excel', 'category' => 'Tools'],
+            ['name' => 'Network Security', 'category' => 'Cloud'],
+            ['name' => 'Networking', 'category' => 'Cloud'],
+            ['name' => 'Graphic Design', 'category' => 'Design'],
+            ['name' => 'UI/UX Design', 'category' => 'Design'],
+            ['name' => 'Figma', 'category' => 'Design'],
+            ['name' => 'Adobe Photoshop', 'category' => 'Design'],
+            ['name' => 'Content Writing', 'category' => 'Marketing'],
+            ['name' => 'Customer Service', 'category' => 'Soft Skills'],
+            ['name' => 'Quality Assurance', 'category' => 'Process'],
+            ['name' => 'AutoCAD', 'category' => 'Design'],
+            ['name' => 'Surveying', 'category' => 'Design'],
+            ['name' => 'Patient Care', 'category' => 'Healthcare'],
         ];
 
         foreach ($skills as $skill) {

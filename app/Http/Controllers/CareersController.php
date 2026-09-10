@@ -52,6 +52,31 @@ class CareersController extends Controller
 
         $skillCount = $careerRole->requiredSkills->count();
 
+        $careerRole->load([
+            'outgoingPaths.toRole',
+            'incomingPaths.fromRole',
+        ]);
+
+        $outgoingPaths = $careerRole->outgoingPaths->map(function ($path) {
+            return [
+                'id' => $path->id,
+                'to_role' => $path->toRole?->title ?? 'Unknown',
+                'to_role_id' => $path->toRole?->id,
+                'typical_years' => $path->typical_years,
+                'notes' => $path->notes,
+            ];
+        })->values();
+
+        $incomingPaths = $careerRole->incomingPaths->map(function ($path) {
+            return [
+                'id' => $path->id,
+                'from_role' => $path->fromRole?->title ?? 'Unknown',
+                'from_role_id' => $path->fromRole?->id,
+                'typical_years' => $path->typical_years,
+                'notes' => $path->notes,
+            ];
+        })->values();
+
         $relatedRoles = CareerRole::query()
             ->where('id', '!=', $careerRole->id)
             ->withCount('requiredSkills')
@@ -64,6 +89,8 @@ class CareersController extends Controller
             'skillsByImportance' => $skillsByImportance,
             'skillCount' => $skillCount,
             'relatedRoles' => $relatedRoles,
+            'outgoingPaths' => $outgoingPaths,
+            'incomingPaths' => $incomingPaths,
         ]);
     }
 }

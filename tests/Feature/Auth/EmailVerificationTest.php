@@ -22,6 +22,15 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_unverified_user_is_redirected_from_dashboard(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->actingAs($user)->get('/dashboard');
+
+        $response->assertRedirect(route('verification.notice'));
+    }
+
     public function test_email_can_be_verified(): void
     {
         $user = User::factory()->unverified()->create();

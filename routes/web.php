@@ -19,6 +19,7 @@ use App\Http\Controllers\GapAssessmentController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\SkillsController;
@@ -68,6 +69,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index');
     Route::patch('/roadmap/progress/{progress}', [RoadmapController::class, 'updateProgress'])->name('roadmap.progress.update');
     Route::post('/assessment/run', [GapAssessmentController::class, 'run'])->name('assessment.run');
+    Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations.index');
+    Route::post('/recommendations/generate', [RecommendationController::class, 'generate'])->name('recommendations.generate');
+    Route::post('/recommendations/{recommendation}/rationale', [RecommendationController::class, 'rationale'])->name('recommendations.rationale');
 
     Route::get('/resumes', [ResumeController::class, 'index'])->name('resume.index');
     Route::post('/resumes', [ResumeController::class, 'store'])->name('resume.store');
