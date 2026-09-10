@@ -32,11 +32,19 @@ class HandleInertiaRequests extends Middleware
     {
         $onboarding = false;
 
-        if ($request->user() && !$request->session()->get('onboarding_skipped')) {
-            $user = $request->user()->load('profile.education', 'profile.workExperience', 'profile.userSkills');
+        if ($request->user() && ! $request->session()->get('onboarding_skipped')) {
+            $user = $request->user()->load(
+                'profile.education',
+                'profile.workExperience',
+                'profile.userSkills',
+                'profile.resumes',
+            );
             $profile = $user->profile;
 
-            if (! $profile || ($profile->education->isEmpty() && $profile->workExperience->isEmpty() && $profile->userSkills->isEmpty())) {
+            if (! $profile || ($profile->education->isEmpty()
+                && $profile->workExperience->isEmpty()
+                && $profile->userSkills->isEmpty()
+                && $profile->resumes->isEmpty())) {
                 $onboarding = true;
             }
         }
@@ -45,6 +53,12 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'warning' => fn () => $request->session()->get('warning'),
+                'info' => fn () => $request->session()->get('info'),
             ],
             'settings' => [
                 'site_name' => Settings::get('site_name'),

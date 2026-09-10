@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
+import FlashMessage from '@/Components/FlashMessage.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
@@ -76,6 +77,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div>
+        <FlashMessage />
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav
                 class="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800"
@@ -101,6 +103,7 @@ onBeforeUnmount(() => {
                                     @click="scrollNav(-1)"
                                     class="absolute -left-3 z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50 dark:bg-gray-700 dark:ring-gray-600 dark:text-gray-300 dark:hover:text-white transition-colors"
                                     title="Scroll left"
+                                    aria-label="Scroll navigation left"
                                 >
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -127,6 +130,7 @@ onBeforeUnmount(() => {
                                     @click="scrollNav(1)"
                                     class="absolute -right-3 z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50 dark:bg-gray-700 dark:ring-gray-600 dark:text-gray-300 dark:hover:text-white transition-colors"
                                     title="Scroll right"
+                                    aria-label="Scroll navigation right"
                                 >
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -141,6 +145,8 @@ onBeforeUnmount(() => {
                                 @click="toggleDark"
                                 class="rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-yellow-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                                 :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+                                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+                                :aria-pressed="isDark"
                             >
                                 <svg v-if="isDark" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -153,13 +159,15 @@ onBeforeUnmount(() => {
                             <!-- Notifications (user only) -->
                             <button
                                 v-if="role === 'user'"
-                                class="relative rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                title="Notifications"
+                                type="button"
+                                disabled
+                                class="relative cursor-not-allowed rounded-lg p-2 text-gray-300 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                title="Notifications are coming soon"
+                                aria-label="Notifications are coming soon"
                             >
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
-                                <span class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">3</span>
                             </button>
 
                             <!-- Settings Dropdown -->
@@ -210,6 +218,9 @@ onBeforeUnmount(() => {
                                         !showingNavigationDropdown
                                 "
                                 class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 dark:text-gray-500 transition duration-150 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-500 dark:hover:text-gray-300 focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-500 dark:focus:text-gray-300 focus:outline-none"
+                                aria-label="Toggle navigation menu"
+                                :aria-expanded="showingNavigationDropdown"
+                                aria-controls="responsive-navigation-menu"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -252,6 +263,7 @@ onBeforeUnmount(() => {
                         hidden: !showingNavigationDropdown,
                     }"
                     class="sm:hidden"
+                    id="responsive-navigation-menu"
                 >
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink

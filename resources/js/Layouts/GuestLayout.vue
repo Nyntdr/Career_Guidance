@@ -1,11 +1,13 @@
 <script setup>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import FlashMessage from '@/Components/FlashMessage.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const siteName = usePage().props.settings?.site_name ?? 'Ujjwol Bato';
 </script>
 
 <template>
+    <FlashMessage />
     <div
         class="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4 py-8"
     >
