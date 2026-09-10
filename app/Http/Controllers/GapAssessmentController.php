@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\CareerRole;
+use App\Models\GapAssessment;
 use App\Models\UserSkill;
 use App\Services\SkillGapAnalyzer;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class GapAssessmentController extends Controller
 {
@@ -14,9 +15,18 @@ class GapAssessmentController extends Controller
     {
         $profile = $request->user()->profile()->firstOrCreate([]);
 
-        $targetRole = $request->filled('target_role_id')
-            ? CareerRole::findOrFail($request->integer('target_role_id'))
-            : null;
+        $targetRole = null;
+        $targetRoleId = $request->input('target_role_id');
+
+        if ($targetRoleId) {
+            $targetRole = CareerRole::findOrFail($targetRoleId);
+        } else {
+            $previous = GapAssessment::where('profile_id', $profile->id)->latest()->first();
+
+            if ($previous?->target_role_id) {
+                $targetRole = CareerRole::find($previous->target_role_id);
+            }
+        }
 
         $userSkills = UserSkill::where('profile_id', $profile->id)
             ->with('skill')
@@ -26,9 +36,9 @@ class GapAssessmentController extends Controller
 
         $assessment = app(SkillGapAnalyzer::class)->run($profile, $userSkillMap, $targetRole);
 
-        if (!$assessment) {
+        if (! $assessment) {
             return redirect()->route('roadmap.index')
-                ->with('error', 'No skill gaps or targets available to assess.');
+                ->with('error', 'Add skills or choose a target career role to run a gap assessment.');
         }
 
         return redirect()->route('roadmap.index')

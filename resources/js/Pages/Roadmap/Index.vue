@@ -13,6 +13,7 @@ const props = defineProps({
     roles: Array,
     stats: Object,
     hasAssessment: Boolean,
+    isStale: Boolean,
 });
 
 const runForm = useForm({
@@ -85,7 +86,7 @@ function formatCost(cost) {
                                 v-model="runForm.target_role_id"
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             >
-                                <option value="">Auto-pick (best match)</option>
+                                <option value="">Best match (based on your skills)</option>
                                 <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.title }}</option>
                             </select>
                             <InputError :message="runForm.errors.target_role_id" class="mt-2" />
@@ -98,6 +99,25 @@ function formatCost(cost) {
 
                 <!-- Assessment present -->
                 <template v-else>
+                    <!-- Stale assessment notice -->
+                    <div v-if="isStale" class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="mt-0.5 h-5 w-5 shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <div>
+                                <p class="text-sm font-medium text-amber-800 dark:text-amber-200">Your skills have changed since this assessment</p>
+                                <p class="mt-0.5 text-xs text-amber-700 dark:text-amber-300">Re-run the assessment to refresh your gaps and recommendations.</p>
+                            </div>
+                        </div>
+                        <button
+                            @click="runForm.post(route('assessment.run'))"
+                            class="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600 transition-colors"
+                        >
+                            Re-run now
+                        </button>
+                    </div>
+
                     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                         <div class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
                             <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Readiness</p>

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CareerRole;
 use App\Models\GapAssessment;
 use App\Models\ProgressTracking;
+use App\Models\UserSkill;
+use App\Services\SkillGapAnalyzer;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -64,6 +67,16 @@ class RoadmapController extends Controller
             ->map(fn ($p) => $p->status)
             ->countBy();
 
+        $isStale = false;
+
+        if ($assessment && $assessment->skills_fingerprint) {
+            $userSkillMap = UserSkill::where('profile_id', $profile->id)
+                ->get()
+                ->keyBy('skill_id');
+
+            $isStale = $assessment->skills_fingerprint !== SkillGapAnalyzer::fingerprint($userSkillMap);
+        }
+
         $stats = [
             'readiness' => $assessment ? (int) round($assessment->overall_readiness_score) : null,
             'gapCount' => count($items),
@@ -77,10 +90,11 @@ class RoadmapController extends Controller
             'roles' => $roles,
             'stats' => $stats,
             'hasAssessment' => (bool) $assessment,
+            'isStale' => $isStale,
         ]);
     }
 
-    public function updateProgress(Request $request, ProgressTracking $progress): \Illuminate\Http\RedirectResponse
+    public function updateProgress(Request $request, ProgressTracking $progress): RedirectResponse
     {
         $validated = $request->validate([
             'status' => ['required', 'in:not_started,in_progress,completed'],
