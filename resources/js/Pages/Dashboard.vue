@@ -10,6 +10,7 @@ const props = defineProps({
     topMatch: Object,
     careerMatches: Array,
     skillsToDevelop: Array,
+    gapInsights: Boolean,
     profileSummary: Object,
     recentActivity: Array,
 });
@@ -245,9 +246,12 @@ const interests = computed(() => {
                                     View roadmap
                                 </Link>
                             </div>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Priority gaps for your top match</p>
+                            <p v-if="gapInsights" class="mt-1 text-sm text-gray-500 dark:text-gray-400">Priority gaps for your top match</p>
+                            <p v-else class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                Add skills or upload a resume to get personalized gap insights.
+                            </p>
 
-                            <div v-if="skillsToDevelop?.length" class="mt-4 space-y-4">
+                            <div v-if="gapInsights && skillsToDevelop?.length" class="mt-4 space-y-4">
                                 <div
                                     v-for="skill in skillsToDevelop"
                                     :key="skill.name"
@@ -270,6 +274,20 @@ const interests = computed(() => {
                                         </div>
                                         <span class="text-xs text-gray-400 dark:text-gray-500">{{ Math.round(skill.current) }}%</span>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div v-else-if="!gapInsights" class="mt-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-4 text-center">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    We need a bit more about you to suggest skills worth building.
+                                </p>
+                                <div class="mt-3 flex items-center justify-center gap-2">
+                                    <Link :href="route('resume.index')" class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors">
+                                        Upload a resume
+                                    </Link>
+                                    <Link :href="route('profile.edit')" class="rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                        Add skills
+                                    </Link>
                                 </div>
                             </div>
 

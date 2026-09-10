@@ -5,6 +5,7 @@ import { ref } from 'vue';
 
 const props = defineProps({
     recommendations: Array,
+    llmEnabled: Boolean,
     stats: Object,
 });
 
@@ -140,10 +141,11 @@ function formatGenerated(value) {
                         <div v-if="rec.rationale" class="mt-4 rounded-xl bg-indigo-50 dark:bg-gray-700/40 p-4 text-sm text-gray-700 dark:text-gray-300">
                             <p>{{ rec.rationale }}</p>
                             <button
-                                v-if="rec.rationale_source !== 'llm'"
+                                v-if="llmEnabled && rec.rationale_source !== 'llm'"
                                 type="button"
                                 @click="explain(rec.id)"
-                                class="mt-3 inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-white px-2.5 py-1 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-100 dark:border-gray-600 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-gray-700"
+                                :disabled="generatingId !== null"
+                                class="mt-3 inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-white px-2.5 py-1 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-gray-700"
                             >
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />

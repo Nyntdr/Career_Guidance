@@ -14,12 +14,12 @@ class RecommendationRationalizer
      * Prefers the LLM provider when it is enabled and configured, otherwise
      * falls back to a deterministic template (also used on any LLM failure).
      *
-     * @param array{score:int, matched:array<int,string>, missing:array<int,string>} $overlap
+     * @param  array{score:int, matched:array<int,string>, missing:array<int,string>}  $overlap
      * @return array{text:string, source:string}
      */
     public function for(Profile $profile, CareerRole $role, array $overlap): array
     {
-        if ($this->llmAvailable()) {
+        if ($this->isEnabled()) {
             try {
                 $text = $this->llm($profile, $role, $overlap);
 
@@ -34,7 +34,11 @@ class RecommendationRationalizer
         return ['text' => $this->template($profile, $role, $overlap), 'source' => 'template'];
     }
 
-    protected function llmAvailable(): bool
+    /**
+     * Whether an LLM provider is configured AND switched on via the Admin
+     * "AI rationale (LLM)" setting.
+     */
+    public function isEnabled(): bool
     {
         if ((string) Settings::get('llm_rationale', config('recommendations.rationale_default', 'disabled')) !== 'enabled') {
             return false;
@@ -65,7 +69,7 @@ class RecommendationRationalizer
     }
 
     /**
-     * @param array{score:int, matched:array<int,string>, missing:array<int,string>} $overlap
+     * @param  array{score:int, matched:array<int,string>, missing:array<int,string>}  $overlap
      */
     protected function llm(Profile $profile, CareerRole $role, array $overlap): ?string
     {
@@ -129,7 +133,7 @@ class RecommendationRationalizer
     }
 
     /**
-     * @param array{score:int, matched:array<int,string>, missing:array<int,string>} $overlap
+     * @param  array{score:int, matched:array<int,string>, missing:array<int,string>}  $overlap
      */
     protected function prompt(Profile $profile, CareerRole $role, array $overlap): string
     {
@@ -150,7 +154,7 @@ class RecommendationRationalizer
     }
 
     /**
-     * @param array{score:int, matched:array<int,string>, missing:array<int,string>} $overlap
+     * @param  array{score:int, matched:array<int,string>, missing:array<int,string>}  $overlap
      */
     public function template(Profile $profile, CareerRole $role, array $overlap): string
     {

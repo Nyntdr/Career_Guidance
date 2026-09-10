@@ -9,6 +9,7 @@ use App\Services\RoleMatchScorer;
 use App\Support\Settings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,7 +27,12 @@ class RecommendationController extends Controller
             ->get();
 
         if ($recommendations->isEmpty() && $userSkillMap->isNotEmpty()) {
-            app(RecommendationEngine::class)->generate($profile);
+            $lock = Cache::lock('rec-generate:'.$profile->id, 120);
+
+            if ($lock->get()) {
+                app(RecommendationEngine::class)->generate($profile);
+                $lock->release();
+            }
 
             $recommendations = CareerRecommendation::where('profile_id', $profile->id)
                 ->with('careerRole.requiredSkills')
@@ -74,6 +80,7 @@ class RecommendationController extends Controller
 
         return Inertia::render('Recommendations/Index', [
             'recommendations' => $items,
+            'llmEnabled' => app(RecommendationRationalizer::class)->isEnabled(),
             'stats' => [
                 'skillsAssessed' => $userSkillMap->count(),
                 'generatedAt' => $recommendations->first()?->generated_at?->toDateTimeString(),
@@ -109,7 +116,23 @@ class RecommendationController extends Controller
 
         $userSkillMap = $profile->userSkills()->with('skill')->get()->keyBy('skill_id');
         $overlap = app(RoleMatchScorer::class)->overlap($userSkillMap, $role);
-        $result = app(RecommendationRationalizer::class)->for($profile, $role, $overlap);
+
+        $rationalizer = app(RecommendationRationalizer::class);
+
+        $lock = Cache::lock('rationalize:'.$profile->id, 10);
+
+        if ($lock->get()) {
+            try {
+                $result = $rationalizer->for($profile, $role, $overlap);
+            } finally {
+                $lock->release();
+            }
+        } else {
+            $result = [
+                'text' => $rationalizer->template($profile, $role, $overlap),
+                'source' => 'template',
+            ];
+        }
 
         $recommendation->update([
             'rationale' => $result['text'],
