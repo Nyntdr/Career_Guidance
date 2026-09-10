@@ -39,6 +39,33 @@ class ModelRepository
         return $this->trainingDirectory().'/'.config('ml.corpus_file', 'section_lines.json');
     }
 
+    public function metaPath(): string
+    {
+        return $this->directory().'/meta.json';
+    }
+
+    public function saveMeta(array $meta): void
+    {
+        $this->ensureDirectories();
+
+        file_put_contents($this->metaPath(), json_encode($meta, JSON_PRETTY_PRINT));
+    }
+
+    public function meta(): array
+    {
+        if (! is_file($this->metaPath())) {
+            return [];
+        }
+
+        try {
+            $decoded = json_decode((string) file_get_contents($this->metaPath()), true);
+        } catch (Throwable) {
+            return [];
+        }
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
     public function isReady(): bool
     {
         return $this->hasClassifier() && $this->hasClusterer() && $this->hasVocab();

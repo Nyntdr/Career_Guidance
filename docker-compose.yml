@@ -57,6 +57,27 @@ services:
     networks:
       - career_guidance
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    restart: unless-stopped
+    environment: *app-env
+    command: php artisan schedule:work
+    volumes:
+      - app_storage:/var/www/html/storage
+      - ./app:/var/www/html/app
+      - ./routes:/var/www/html/routes
+      - ./config:/var/www/html/config
+      - ./database:/var/www/html/database
+      - ./tests:/var/www/html/tests
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - career_guidance
+
   mailpit:
     image: axllent/mailpit
     restart: unless-stopped
