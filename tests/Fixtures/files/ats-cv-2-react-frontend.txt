@@ -1,0 +1,27 @@
+Bibek Maharjan
+bibek.maharjan@example.com | Lalitpur, Nepal | +977 9800000002
+
+SUMMARY
+Frontend developer with 3 years of experience building responsive web applications with React and TypeScript. Eager to grow into a product-focused engineer on healthcare analytics dashboards.
+
+EXPERIENCE
+
+React Developer, Cotiviti Nepal (2023 - Present)
+- Built 15 reusable React components using TypeScript that cut page-load time by 30%.
+- Developed interactive dashboard widgets consuming REST APIs and live data feeds.
+- Improved accessibility to WCAG AA, reaching a 98% Lighthouse score.
+- Collaborated with designers in Figma to ship pixel-perfect UI implementations.
+
+Junior Web Developer, Thulo.com (2021 - 2023)
+- Maintained Vue.js storefront pages and integrated analytics tracking.
+- Fixed 120+ cross-browser bugs and improved mobile layout responsiveness.
+
+EDUCATION
+Kathmandu University, BSc Computer Science (2017 - 2021)
+
+SKILLS
+JavaScript, TypeScript, React, HTML, CSS, Vue.js, Git, REST API, API Design, UI/UX Design, Figma
+
+PROJECTS
+- Personal portfolio site with a blog CMS, reaching 2,000 monthly visitors.
+- TypeScript utility library published on npm with 900 weekly downloads.

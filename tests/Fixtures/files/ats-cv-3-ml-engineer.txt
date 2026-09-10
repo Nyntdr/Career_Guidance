@@ -1,0 +1,33 @@
+Kiran Rai
+kiran.rai@example.com | Kathmandu, Nepal | +977 9800000003
+
+PROFESSIONAL SUMMARY
+Machine learning engineer with 5 years of experience designing and deploying production ML pipelines. Strong background in deep learning, statistical modeling, and containerized ML infrastructure on AWS.
+
+WORK EXPERIENCE
+
+Machine Learning Engineer, Fusemachines (2021 - Present)
+- Deployed 12 production ML models serving 3 million predictions per day on AWS.
+- Designed a deep learning text-classification pipeline that improved accuracy by 18%.
+- Automated model retraining with Docker containers, cutting deployment time 70%.
+- Implemented ML feature stores reducing data preparation effort by 40%.
+- Led statistical evaluation of A/B experiments, increasing conversion 12%.
+- Architected GPU training infrastructure on AWS, lowering costs by 25%.
+
+Data Scientist, Deerwalk Institute (2018 - 2021)
+- Built Python regression and classification models on healthcare claims data.
+- Developed SQL extraction scripts feeding 800+ dashboards for US clients.
+- Conducted statistical analysis that identified 3 fraud patterns worth $50K.
+
+EDUCATION
+Tribhuvan University, MSc Statistics (2016 - 2018)
+
+TECHNICAL SKILLS
+Python, Machine Learning, ML, Deep Learning, Statistics, SQL, Docker, AWS, Git, Data Visualization
+
+PROJECTS
+- Open-source ML starter kit with 5,000 GitHub stars.
+- NLP sentiment pipeline processing 100K customer reviews per month.
+
+CERTIFICATIONS
+- AWS Certified Machine Learning - Specialty

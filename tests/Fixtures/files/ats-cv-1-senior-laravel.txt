@@ -1,0 +1,35 @@
+Anisha Shrestha
+anisha.shrestha@example.com | Kathmandu, Nepal | +977 9800000001
+
+PROFESSIONAL SUMMARY
+Senior PHP developer with 8 years of experience architecting and shipping Laravel applications for fintech and e-commerce clients. Specialist in high-throughput REST APIs, relational database performance, and containerized deployments on AWS.
+
+WORK EXPERIENCE
+
+Senior Laravel Developer, Leapfrog Technology (2020 - Present)
+- Led a team of 5 engineers building a Laravel core platform serving 2 million monthly users.
+- Built 40+ versioned REST APIs that cut payment-reconciliation time by 60%.
+- Architected a modular package system, reducing deployment time from 4 hours to 25 minutes.
+- Implemented queue-based background jobs that lowered email-processing costs by 35%.
+- Reduced slow-query count by 80% through SQL indexing and query optimization.
+- Automated CI/CD with Docker and GitHub Actions, delivering 120 releases last year.
+- Designed schema migrations and seed strategies for a multi-tenant Laravel estate.
+- Improved API response time by 45% with caching and eager loading.
+
+PHP Developer, F1Soft International (2017 - 2020)
+- Developed Laravel backends for an e-banking platform used by 500,000 customers.
+- Created raw SQL reporting modules that generated daily MIS reports for leadership.
+- Integrated payment gateways and secured them with token-based API authentication.
+
+EDUCATION
+Pulchowk Engineering Campus, BE Computer Engineering (2013 - 2017)
+
+TECHNICAL SKILLS
+PHP, Laravel, SQL, MySQL, PostgreSQL, API Design, REST API, Git, Docker, AWS, Kubernetes, CI/CD
+
+PROJECTS
+- Payment reconciliation dashboard reducing manual effort by 40% using Laravel and Vue.
+- Open-source Laravel starter kit downloaded 12,000 times on GitHub.
+
+CERTIFICATIONS
+- AWS Certified Solutions Architect - Associate
