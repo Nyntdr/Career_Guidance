@@ -4,6 +4,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     settings: Object,
@@ -48,6 +51,32 @@ function weightTotal(key) {
 }
 
 function submit() {
+    const valid = validate(form, {
+        site_name: [rules.required(), rules.max(255)],
+        currency_symbol: [rules.required(), rules.max(10)],
+        currency_position: [rules.oneOf(['before', 'after'])],
+        top_matches: [rules.integer(), rules.minValue(1), rules.maxValue(50)],
+        admin_page_size: [rules.integer(), rules.minValue(5), rules.maxValue(100)],
+        recommendation_path_bonus: [rules.numeric(), rules.minValue(0), rules.maxValue(20)],
+    });
+
+    const percentGroups = {
+        ats_weights: 'ATS weights',
+        recommendation_weights: 'Recommendation weights',
+    };
+
+    for (const [key, label] of Object.entries(percentGroups)) {
+        const total = weightTotal(key);
+        if (total !== 100) {
+            form.setError(key, `${label} must sum to 100% (currently ${total}%).`);
+            return;
+        }
+    }
+
+    if (!valid) {
+        return;
+    }
+
     form.put(route('admin.settings.update'));
 }
 </script>

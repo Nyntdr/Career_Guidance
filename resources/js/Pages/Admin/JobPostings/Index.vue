@@ -8,6 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     postings: Object,
@@ -83,7 +86,20 @@ function openCreate() {
     showCreateModal.value = true;
 }
 
+const postingRules = {
+    title: [rules.required(), rules.max(255)],
+    company: [rules.max(255)],
+    location: [rules.max(255)],
+    seniority_level: [rules.max(255)],
+    source: [rules.max(255)],
+    posted_at: [rules.date('Please enter a valid posting date.')],
+};
+
 function submitCreate() {
+    if (!validate(createForm, postingRules)) {
+        return;
+    }
+
     createForm.skills = createSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
     createForm.post(route('admin.job-postings.store'), {
         onSuccess: () => { showCreateModal.value = false; createForm.reset(); },
@@ -110,6 +126,10 @@ function openEdit(posting) {
 }
 
 function submitEdit() {
+    if (!validate(editForm, postingRules)) {
+        return;
+    }
+
     editForm.skills = editSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
     editForm.put(route('admin.job-postings.update', editingPosting.value.id), {
         onSuccess: () => { showEditModal.value = false; editingPosting.value = null; },
@@ -207,7 +227,7 @@ function destroyPosting() {
             <div class="p-6 max-h-[80vh] overflow-y-auto">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Create Job Posting</h3>
                 <form @submit.prevent="submitCreate" class="mt-4 space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="c-title" value="Title" />
                             <TextInput id="c-title" v-model="createForm.title" type="text" class="mt-1 block w-full" autofocus />
@@ -219,7 +239,7 @@ function destroyPosting() {
                             <InputError :message="createForm.errors.company" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="c-location" value="Location" />
                             <TextInput id="c-location" v-model="createForm.location" type="text" class="mt-1 block w-full" />
@@ -237,7 +257,7 @@ function destroyPosting() {
                             <InputError :message="createForm.errors.seniority_level" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="c-posted" value="Posted Date" />
                             <input id="c-posted" v-model="createForm.posted_at" type="date" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
@@ -300,7 +320,7 @@ function destroyPosting() {
             <div class="p-6 max-h-[80vh] overflow-y-auto">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Edit Job Posting</h3>
                 <form @submit.prevent="submitEdit" class="mt-4 space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="e-title" value="Title" />
                             <TextInput id="e-title" v-model="editForm.title" type="text" class="mt-1 block w-full" />
@@ -312,7 +332,7 @@ function destroyPosting() {
                             <InputError :message="editForm.errors.company" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="e-location" value="Location" />
                             <TextInput id="e-location" v-model="editForm.location" type="text" class="mt-1 block w-full" />
@@ -330,7 +350,7 @@ function destroyPosting() {
                             <InputError :message="editForm.errors.seniority_level" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="e-posted" value="Posted Date" />
                             <input id="e-posted" v-model="editForm.posted_at" type="date" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />

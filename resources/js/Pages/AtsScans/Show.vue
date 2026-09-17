@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     scan: Object,
@@ -20,6 +21,22 @@ const severityColors = {
     medium: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
     high: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
 };
+
+const components = computed(() => {
+    const weights = {
+        keyword: props.scan?.weights?.keyword ?? 50,
+        structure: props.scan?.weights?.structure ?? 15,
+        formatting: props.scan?.weights?.formatting ?? 15,
+        readability: props.scan?.weights?.readability ?? 20,
+    };
+
+    return [
+        { label: 'Keyword match', value: props.scan.keyword_match_score, hint: `${weights.keyword}% weight` },
+        { label: 'Structure', value: props.scan.structure_score, hint: `${weights.structure}% weight` },
+        { label: 'Formatting', value: props.scan.formatting_score, hint: `${weights.formatting}% weight` },
+        { label: 'Readability', value: props.scan.readability_score, hint: `${weights.readability}% weight` },
+    ];
+});
 
 const gaugeColor = (score) => {
     if (score >= 80) return 'bg-emerald-500';
@@ -83,12 +100,7 @@ const summary = (score) => {
 
                 <!-- Component scores -->
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div v-for="component in [
-                        { label: 'Keyword match', value: scan.keyword_match_score, hint: '50% weight' },
-                        { label: 'Structure', value: scan.structure_score, hint: '15% weight' },
-                        { label: 'Formatting', value: scan.formatting_score, hint: '15% weight' },
-                        { label: 'Readability', value: scan.readability_score, hint: '20% weight' },
-                    ]" :key="component.label" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
+                    <div v-for="component in components" :key="component.label" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
                         <div class="flex items-baseline justify-between">
                             <p class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ component.label }}</p>
                             <span class="text-2xl font-bold" :class="component.value >= 80 ? 'text-emerald-500' : component.value >= 60 ? 'text-amber-500' : 'text-red-500'">

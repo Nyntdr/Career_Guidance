@@ -4,6 +4,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 defineProps({
     mustVerifyEmail: {
@@ -20,6 +23,17 @@ const form = useForm({
     name: user.name,
     email: user.email,
 });
+
+const updateProfile = () => {
+    if (!validate(form, {
+        name: [rules.required(), rules.max(255)],
+        email: [rules.required(), rules.email(), rules.max(255)],
+    })) {
+        return;
+    }
+
+    form.patch(route('profile.update'));
+};
 </script>
 
 <template>
@@ -35,7 +49,7 @@ const form = useForm({
         </header>
 
         <form
-            @submit.prevent="form.patch(route('profile.update'))"
+            @submit.prevent="updateProfile"
             class="mt-6 space-y-6"
         >
             <div>

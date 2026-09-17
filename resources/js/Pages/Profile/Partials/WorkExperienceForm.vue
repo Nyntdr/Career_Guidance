@@ -2,10 +2,14 @@
 import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { ref } from 'vue';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     profile: Object,
@@ -13,6 +17,7 @@ const props = defineProps({
 
 const editing = ref(null);
 const adding = ref(false);
+const deletingId = ref(null);
 
 const form = useForm({
     company: '',
@@ -48,6 +53,16 @@ const cancel = () => {
 };
 
 const submit = () => {
+    if (!validate(form, {
+        company: [rules.required(), rules.max(255)],
+        title: [rules.required(), rules.max(255)],
+        description: [rules.max(10000)],
+        start_date: [rules.date()],
+        end_date: [rules.date(), rules.afterOrEqualField('start_date', 'End date must be on or after the start date.')],
+    })) {
+        return;
+    }
+
     if (adding.value) {
         form.post(route('profile.work-experience.store'), {
             preserveScroll: true,
@@ -62,11 +77,14 @@ const submit = () => {
 };
 
 const destroy = (work) => {
-    if (confirm('Delete this work experience entry?')) {
-        form.delete(route('profile.work-experience.destroy', work.id), {
-            preserveScroll: true,
-        });
-    }
+    deletingId.value = work.id;
+};
+
+const confirmDestroy = () => {
+    form.delete(route('profile.work-experience.destroy', deletingId.value), {
+        preserveScroll: true,
+        onFinish: () => { deletingId.value = null; },
+    });
 };
 
 const formatDate = (date) => {
@@ -216,5 +234,26 @@ const formatDate = (date) => {
         >
             No work experience entries yet.
         </p>
+
+        <Modal :show="deletingId !== null" @close="deletingId = null">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Delete work experience?</h2>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    This will permanently remove this work experience entry from your profile.
+                </p>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button
+                        type="button"
+                        @click="deletingId = null"
+                        class="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <DangerButton @click="confirmDestroy" :disabled="form.processing">
+                        Delete
+                    </DangerButton>
+                </div>
+            </div>
+        </Modal>
     </section>
 </template>

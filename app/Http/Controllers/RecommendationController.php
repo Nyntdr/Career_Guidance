@@ -30,8 +30,11 @@ class RecommendationController extends Controller
             $lock = Cache::lock('rec-generate:'.$profile->id, 120);
 
             if ($lock->get()) {
-                app(RecommendationEngine::class)->generate($profile);
-                $lock->release();
+                try {
+                    app(RecommendationEngine::class)->generate($profile);
+                } finally {
+                    $lock->release();
+                }
             }
 
             $recommendations = CareerRecommendation::where('profile_id', $profile->id)

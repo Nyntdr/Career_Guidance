@@ -4,7 +4,10 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { router, useForm } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { computed, ref } from 'vue';
+
+const { validate } = useFormValidation();
 
 const emit = defineEmits(['complete']);
 
@@ -45,6 +48,13 @@ const uploadFile = (event) => {
 };
 
 const submitUpload = () => {
+    if (!validate(uploadForm, {
+        resume_file: [rules.eitherOr('content', 'Upload a file or paste your resume text.')],
+        content: [rules.eitherOr('resume_file', 'Upload a file or paste your resume text.'), rules.max(50000)],
+    })) {
+        return;
+    }
+
     uploadForm.post(route('resume.store'), {
         forceFormData: true,
         preserveScroll: true,
@@ -73,6 +83,16 @@ const profileForm = useForm({
 });
 
 const submitProfile = () => {
+    if (!validate(profileForm, {
+        headline: [rules.max(255)],
+        current_title: [rules.max(255)],
+        years_experience: [rules.integer(), rules.minValue(0), rules.maxValue(70)],
+        location: [rules.max(255)],
+        bio: [rules.max(5000)],
+    })) {
+        return;
+    }
+
     profileForm.patch(route('profile.career.update'), {
         ...submitOptions,
         onSuccess: () => {
@@ -93,6 +113,13 @@ const addedSkills = ref([]);
 const proficiencyLabels = { 1: 'Beginner', 2: 'Elementary', 3: 'Intermediate', 4: 'Advanced', 5: 'Expert' };
 
 const addSkill = () => {
+    if (!validate(skillForm, {
+        skill_name: [rules.required(), rules.max(255)],
+        proficiency_level: [rules.minValue(1), rules.maxValue(5)],
+    })) {
+        return;
+    }
+
     skillForm.post(route('profile.skills.store'), {
         ...submitOptions,
         onSuccess: () => {
@@ -123,6 +150,16 @@ const eduForm = useForm({
 });
 
 const submitEducation = () => {
+    if (!validate(eduForm, {
+        institution: [rules.required(), rules.max(255)],
+        degree: [rules.max(255)],
+        field_of_study: [rules.max(255)],
+        start_date: [rules.date()],
+        end_date: [rules.date(), rules.afterOrEqualField('start_date', 'End date must be on or after the start date.')],
+    })) {
+        return;
+    }
+
     eduForm.post(route('profile.education.store'), {
         ...submitOptions,
         onSuccess: () => {
@@ -148,6 +185,16 @@ const workForm = useForm({
 });
 
 const submitWork = () => {
+    if (!validate(workForm, {
+        company: [rules.required(), rules.max(255)],
+        title: [rules.required(), rules.max(255)],
+        description: [rules.max(10000)],
+        start_date: [rules.date()],
+        end_date: [rules.date(), rules.afterOrEqualField('start_date', 'End date must be on or after the start date.')],
+    })) {
+        return;
+    }
+
     workForm.post(route('profile.work-experience.store'), {
         ...submitOptions,
         onSuccess: () => {
@@ -186,6 +233,12 @@ const skipAll = () => {
                 <h2 class="mt-3 text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome! Let's set up your profile</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     In a few minutes you'll get career matches, an ATS resume score, and a personalized learning roadmap.
+                </p>
+                <p class="mt-2 inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Takes about 2 minutes — recommendations appear instantly once you're set up
                 </p>
             </div>
 
@@ -300,14 +353,14 @@ const skipAll = () => {
                 >
                     <div
                         class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors"
-                        :class="s.num <= step.value
+                        :class="s.num <= step
                             ? 'bg-indigo-600 text-white'
                             : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400'"
                     >
                         <span v-if="completed.has(s.num) && s.num < totalSteps">&#10003;</span>
                         <span v-else>{{ s.num }}</span>
                     </div>
-                    <span class="mt-1 text-xs text-gray-500 dark:text-gray-400" :class="{ 'font-medium text-indigo-600 dark:text-indigo-400': s.num === step.value }">
+                    <span class="mt-1 text-xs text-gray-500 dark:text-gray-400" :class="{ 'font-medium text-indigo-600 dark:text-indigo-400': s.num === step }">
                         {{ s.label }}
                     </span>
                 </div>
@@ -317,7 +370,7 @@ const skipAll = () => {
                     v-for="s in steps.slice(0, -1)"
                     :key="s.num"
                     class="h-1 flex-1 rounded-full transition-colors"
-                    :class="s.num <= step.value ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-600'"
+                    :class="s.num <= step ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-600'"
                 />
             </div>
         </div>
@@ -330,7 +383,7 @@ const skipAll = () => {
                     <TextInput id="oh-headline" type="text" class="mt-1 block w-full" v-model="profileForm.headline" placeholder="e.g. Software Engineer with 5 years of experience" />
                     <InputError :message="profileForm.errors.headline" />
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <InputLabel for="oh-title" value="Current Title" />
                         <TextInput id="oh-title" type="text" class="mt-1 block w-full" v-model="profileForm.current_title" placeholder="e.g. Senior Developer" />
@@ -397,7 +450,7 @@ const skipAll = () => {
                     <TextInput id="oh-inst" type="text" class="mt-1 block w-full" v-model="eduForm.institution" required />
                     <InputError :message="eduForm.errors.institution" />
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <InputLabel for="oh-degree" value="Degree" />
                         <TextInput id="oh-degree" type="text" class="mt-1 block w-full" v-model="eduForm.degree" placeholder="e.g. Bachelor of Science" />
@@ -409,7 +462,7 @@ const skipAll = () => {
                         <InputError :message="eduForm.errors.field_of_study" />
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <InputLabel for="oh-edu-start" value="Start Date" />
                         <TextInput id="oh-edu-start" type="date" class="mt-1 block w-full" v-model="eduForm.start_date" />
@@ -432,7 +485,7 @@ const skipAll = () => {
         <div v-if="step === 4">
             <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">Add your current or most recent role.</p>
             <form @submit.prevent="submitWork" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <InputLabel for="oh-company" value="Company" />
                         <TextInput id="oh-company" type="text" class="mt-1 block w-full" v-model="workForm.company" required />
@@ -449,7 +502,7 @@ const skipAll = () => {
                     <textarea id="oh-work-desc" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="workForm.description" rows="3" />
                     <InputError :message="workForm.errors.description" />
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <InputLabel for="oh-work-start" value="Start Date" />
                         <TextInput id="oh-work-start" type="date" class="mt-1 block w-full" v-model="workForm.start_date" />

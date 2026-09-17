@@ -50,11 +50,21 @@ function scoreColor(score) {
                     </div>
                 </div>
 
+                <div v-if="stats.skillsAssessed === 0" class="grid gap-4 sm:grid-cols-4">
+                    <div v-for="n in 4" :key="n" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
+                        <div class="h-3 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                        <div class="mt-2 h-8 w-16 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                    </div>
+                </div>
+
                 <div v-if="stats.skillsAssessed === 0" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-12 text-center">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Add skills to your profile to get job matches</h3>
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Head to your profile to assess your current skills and unlock personalized job recommendations.</p>
                     <Link :href="route('profile.edit')" class="mt-5 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
                         Update my profile
+                    </Link>
+                    <Link :href="route('resume.index')" class="mt-3 inline-flex items-center gap-2 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-gray-700 transition-colors">
+                        Upload a resume instead
                     </Link>
                 </div>
 

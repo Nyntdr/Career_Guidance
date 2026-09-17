@@ -20,7 +20,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <Link :href="href" :class="classes">
+    <Link :href="href" :class="classes" :aria-current="active ? 'page' : undefined">
         <slot />
     </Link>
 </template>

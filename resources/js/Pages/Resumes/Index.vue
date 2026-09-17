@@ -1,14 +1,39 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+import { computed, nextTick, ref } from 'vue';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     resumes: Array,
     jobs: Array,
 });
+
+const isAdmin = computed(() => usePage().props.auth?.user?.role === 'admin');
+
+const scanningId = ref(null);
+const deletingResume = ref(null);
+const deleting = ref(false);
+const scanFocusId = ref(null);
+
+const unscanned = computed(() => props.resumes.find((resume) => !resume.latest_scan) ?? null);
+
+async function focusScan(resume) {
+    scanFocusId.value = resume.id;
+    await nextTick();
+    const el = document.getElementById(`scan-${resume.id}`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el?.querySelector('select')?.focus();
+    window.setTimeout(() => {
+        scanFocusId.value = null;
+    }, 2500);
+}
 
 const uploadForm = useForm({
     resume_file: null,
@@ -37,6 +62,13 @@ const sectionLabels = {
 };
 
 function submitUpload() {
+    if (!validate(uploadForm, {
+        resume_file: [rules.eitherOr('content', 'Upload a file or paste your resume text.')],
+        content: [rules.eitherOr('resume_file', 'Upload a file or paste your resume text.'), rules.max(50000)],
+    })) {
+        return;
+    }
+
     uploadForm.post(route('resume.store'), {
         forceFormData: true,
         onSuccess: () => uploadForm.reset('resume_file', 'content'),
@@ -44,9 +76,19 @@ function submitUpload() {
 }
 
 function runScan(resume) {
-    if (!scanForm.job_posting_id) return;
+    if (!validate(scanForm, {
+        job_posting_id: [rules.required('Please select a job posting to scan against.')],
+    })) {
+        return;
+    }
+
+    if (scanningId.value !== null) return;
+    scanningId.value = resume.id;
     scanForm.post(route('resume.scan', resume.id), {
         onSuccess: () => scanForm.reset('job_posting_id'),
+        onFinish: () => {
+            scanningId.value = null;
+        },
     });
 }
 
@@ -125,6 +167,41 @@ function currentYear() {
                     </form>
                 </div>
 
+                <!-- Next-step prompt -->
+                <div v-if="unscanned" class="rounded-2xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 p-6 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="mt-0.5 h-5 w-5 shrink-0 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <div>
+                                <h3 class="text-sm font-semibold text-indigo-900 dark:text-indigo-100">
+                                    Resume v{{ unscanned.version }} is ready
+                                </h3>
+                                <p class="mt-1 text-sm text-indigo-700 dark:text-indigo-300">
+                                    It parsed {{ unscanned.sections.length }} sections and {{ unscanned.skills.length }} skills.
+                                    Run an ATS scan against a job posting, or see your updated career recommendations.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button
+                                type="button"
+                                @click="focusScan(unscanned)"
+                                class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+                            >
+                                Run ATS scan
+                            </button>
+                            <Link
+                                :href="route('recommendations.index')"
+                                class="inline-flex items-center rounded-lg border border-indigo-300 dark:border-indigo-700 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors"
+                            >
+                                View recommendations
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Resume list -->
                 <div v-if="resumes.length" class="space-y-6">
                     <div
@@ -191,6 +268,12 @@ function currentYear() {
                                 </span>
                             </div>
                         </div>
+                        <div v-else class="mt-5 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-3">
+                            <p class="text-xs font-medium uppercase tracking-wider text-amber-700 dark:text-amber-400">No skills detected</p>
+                            <p class="mt-1 text-xs text-amber-700 dark:text-amber-400">
+                                Automatic skill extraction found nothing. Add a dedicated Skills section to your resume, or add skills manually from your profile.
+                            </p>
+                        </div>
 
                         <!-- Sections peek -->
                         <details class="mt-5">
@@ -214,12 +297,19 @@ function currentYear() {
                         </details>
 
                         <!-- Scan against a job -->
-                        <div class="mt-5 rounded-xl border border-dashed border-indigo-200 dark:border-indigo-800 p-4">
+                        <div
+                            :id="`scan-${resume.id}`"
+                            class="mt-5 rounded-xl border border-dashed p-4 transition-all"
+                            :class="scanFocusId === resume.id
+                                ? 'border-indigo-400 bg-indigo-50/60 dark:border-indigo-500 dark:bg-indigo-900/20 ring-2 ring-indigo-300 dark:ring-indigo-700'
+                                : 'border-indigo-200 dark:border-indigo-800'"
+                        >
                             <p class="text-xs font-medium uppercase tracking-wider text-gray-400">Scan against a job posting</p>
                             <div v-if="jobs.length" class="mt-2 flex flex-wrap items-end gap-3">
                                 <select
                                     v-model="scanForm.job_posting_id"
-                                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 sm:w-80 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    :disabled="scanningId !== null"
+                                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 sm:w-80 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:opacity-50"
                                 >
                                     <option value="">Select a job…</option>
                                     <option v-for="job in jobs" :key="job.id" :value="job.id">
@@ -228,18 +318,32 @@ function currentYear() {
                                 </select>
                                 <button
                                     @click="runScan(resume)"
-                                    :disabled="!scanForm.job_posting_id"
-                                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+                                    :disabled="!scanForm.job_posting_id || scanningId !== null"
+                                    class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
                                 >
-                                    Run ATS scan
+                                    <svg
+                                        v-if="scanningId === resume.id"
+                                        class="h-4 w-4 animate-spin"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    {{ scanningId === resume.id ? 'Scanning…' : 'Run ATS scan' }}
                                 </button>
                             </div>
-                            <p v-else class="mt-2 text-sm text-gray-400 dark:text-gray-500">No job postings available yet.</p>
+                            <p v-else class="mt-2 text-sm text-gray-400 dark:text-gray-500">
+                                No job postings available yet.
+                                <Link v-if="isAdmin" :href="route('admin.job-postings.index')" class="text-indigo-500 hover:text-indigo-600">
+                                    Add one
+                                </Link>.
+                            </p>
                         </div>
 
                         <div class="mt-4 flex justify-end">
                             <button
-                                @click="router.delete(route('resume.destroy', resume.id))"
+                                @click="deletingResume = resume"
                                 class="text-xs font-medium text-red-500 hover:text-red-600"
                             >
                                 Delete resume
@@ -255,5 +359,36 @@ function currentYear() {
                 </div>
             </div>
         </div>
+
+        <Modal :show="deletingResume !== null" @close="deletingResume = null">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Delete resume?</h2>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    This permanently removes the resume and all of its ATS scans. This action cannot be undone.
+                </p>
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <button
+                        type="button"
+                        @click="deletingResume = null"
+                        class="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        @click="deleting = true; router.delete(route('resume.destroy', deletingResume.id), { onFinish: () => { deleting = false; deletingResume = null; } })"
+                        :disabled="deleting"
+                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <svg v-if="deleting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        {{ deleting ? 'Deleting…' : 'Delete resume' }}
+                    </button>
+                </div>
+            </div>
+        </Modal>
     </AuthenticatedLayout>
 </template>

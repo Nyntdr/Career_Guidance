@@ -13,6 +13,10 @@ class GapAssessmentController extends Controller
 {
     public function run(Request $request): RedirectResponse
     {
+        $request->validate([
+            'target_role_id' => ['nullable', 'exists:career_roles,id'],
+        ]);
+
         $profile = $request->user()->profile()->firstOrCreate([]);
 
         $targetRole = null;

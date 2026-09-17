@@ -4,7 +4,10 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { Head, useForm } from '@inertiajs/vue3';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     email: {
@@ -25,6 +28,14 @@ const form = useForm({
 });
 
 const submit = () => {
+    if (!validate(form, {
+        email: [rules.required(), rules.email()],
+        password: [rules.required(), rules.min(8, 'Password must be at least 8 characters.')],
+        password_confirmation: [rules.required(), rules.confirmed('password')],
+    })) {
+        return;
+    }
+
     form.post(route('password.store'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });

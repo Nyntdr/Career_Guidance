@@ -41,7 +41,8 @@ class HandleInertiaRequests extends Middleware
             );
             $profile = $user->profile;
 
-            if (! $profile || ($profile->education->isEmpty()
+            if (! $profile || ($profile->onboarding_skipped_at === null
+                && $profile->education->isEmpty()
                 && $profile->workExperience->isEmpty()
                 && $profile->userSkills->isEmpty()
                 && $profile->resumes->isEmpty())) {

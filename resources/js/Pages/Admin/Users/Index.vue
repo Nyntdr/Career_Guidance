@@ -8,6 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     users: Object,
@@ -49,7 +52,21 @@ function openCreate() {
     showCreateModal.value = true;
 }
 
+const baseUserRules = {
+    name: [rules.required(), rules.max(255)],
+    email: [rules.required(), rules.email(), rules.max(255)],
+    role: [rules.oneOf(['user', 'admin'])],
+};
+
 function submitCreate() {
+    if (!validate(createForm, {
+        ...baseUserRules,
+        password: [rules.required(), rules.min(8, 'Password must be at least 8 characters.')],
+        password_confirmation: [rules.required(), rules.confirmed('password')],
+    })) {
+        return;
+    }
+
     createForm.post(route('admin.users.store'), {
         onSuccess: () => {
             showCreateModal.value = false;
@@ -69,6 +86,14 @@ function openEdit(user) {
 }
 
 function submitEdit() {
+    if (!validate(editForm, {
+        ...baseUserRules,
+        password: [rules.min(8, 'Password must be at least 8 characters.')],
+        password_confirmation: [rules.confirmed('password')],
+    })) {
+        return;
+    }
+
     editForm.put(route('admin.users.update', editingUser.value.id), {
         onSuccess: () => {
             showEditModal.value = false;

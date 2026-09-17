@@ -25,7 +25,7 @@ class UserSkillController extends Controller
         ]);
 
         return $request->boolean('_onboarding')
-            ? redirect()->route('dashboard')
+            ? redirect()->back()
             : redirect()->route('profile.edit');
     }
 

@@ -2,10 +2,16 @@
 
 namespace Tests\Feature\Resume;
 
+use App\Models\CareerRecommendation;
 use App\Models\Profile;
+use App\Models\Resume;
 use App\Models\Skill;
 use App\Models\User;
 use App\Support\Settings;
+use Database\Seeders\CareerPathSeeder;
+use Database\Seeders\CareerRoleSeeder;
+use Database\Seeders\SkillAliasSeeder;
+use Database\Seeders\SkillSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -59,7 +65,7 @@ class ResumeUploadTest extends TestCase
 
         $response->assertSessionHasNoErrors();
 
-        $resume = \App\Models\Resume::query()->firstOrFail();
+        $resume = Resume::query()->firstOrFail();
 
         $this->assertSame('docx', $resume->file_type);
         $this->assertNotEmpty($resume->raw_text);
@@ -86,7 +92,7 @@ class ResumeUploadTest extends TestCase
 
         $response->assertSessionHasNoErrors();
 
-        $resume = \App\Models\Resume::query()->firstOrFail();
+        $resume = Resume::query()->firstOrFail();
 
         $this->assertSame('pdf', $resume->file_type);
         $this->assertStringContainsString('Work Experience', $resume->raw_text);
@@ -105,7 +111,7 @@ class ResumeUploadTest extends TestCase
 
         $response->assertSessionHasNoErrors();
 
-        $resume = \App\Models\Resume::query()->firstOrFail();
+        $resume = Resume::query()->firstOrFail();
 
         $this->assertSame('txt', $resume->file_type);
         $this->assertStringContainsString('Jordan Lee', $resume->raw_text);
@@ -119,5 +125,35 @@ class ResumeUploadTest extends TestCase
             ]);
 
         $response->assertSessionHasErrors('resume_file');
+    }
+
+    public function test_upload_with_new_skills_regenerates_recommendations(): void
+    {
+        $this->seed([
+            SkillSeeder::class,
+            SkillAliasSeeder::class,
+            CareerRoleSeeder::class,
+            CareerPathSeeder::class,
+        ]);
+
+        $user = $this->userWithProfile();
+        $profile = $user->profile;
+
+        $response = $this->actingAs($user)
+            ->post(route('resume.store'), [
+                'resume_file' => $this->fixtureFile(
+                    'upload-sample.docx',
+                    'resume.docx',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                ),
+            ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertNotEmpty(CareerRecommendation::where('profile_id', $profile->id)->get());
+        $this->assertStringContainsString(
+            'recommendations were refreshed',
+            (string) session('success'),
+        );
     }
 }
