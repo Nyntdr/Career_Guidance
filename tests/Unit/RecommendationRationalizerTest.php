@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Models\CareerRole;
-use App\Models\Profile;
 use App\Models\User;
 use App\Services\RecommendationRationalizer;
 use App\Support\Settings;
@@ -124,6 +123,92 @@ class RecommendationRationalizerTest extends TestCase
                 && $request->hasHeader('Authorization', 'Bearer gemini-key')
                 && $request['model'] === 'gemini-3.6-flash'
                 && is_array($request['messages']);
+        });
+    }
+
+    public function test_concise_prompt_version_is_the_default(): void
+    {
+        $endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+
+        config([
+            'recommendations.providers.gemini.endpoint' => $endpoint,
+            'recommendations.providers.gemini.key' => 'gemini-key',
+        ]);
+        Settings::save(['llm_rationale' => 'enabled', 'llm_provider' => 'gemini']);
+
+        Http::fake([
+            $endpoint => Http::response([
+                'choices' => [['message' => ['content' => 'A strong fit.']]],
+            ], 200),
+        ]);
+
+        [$profile, $role, $overlap] = $this->buildContext('Data Analyst');
+        app(RecommendationRationalizer::class)->for($profile, $role, $overlap);
+
+        Http::assertSent(function ($request) {
+            $messages = $request['messages'];
+
+            return $messages[0]['role'] === 'system'
+                && $messages[0]['content'] === 'You are a career counselor. Reply in plain prose with no lists, headings, or markdown.'
+                && str_contains($messages[1]['content'], 'In 2-3 sentences, tell the candidate why this role is a realistic fit');
+        });
+    }
+
+    public function test_detailed_prompt_version_sends_enhanced_context(): void
+    {
+        $endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+
+        config([
+            'recommendations.providers.gemini.endpoint' => $endpoint,
+            'recommendations.providers.gemini.key' => 'gemini-key',
+        ]);
+        Settings::save([
+            'llm_rationale' => 'enabled',
+            'llm_provider' => 'gemini',
+            'llm_prompt_version' => 'detailed',
+        ]);
+
+        Http::fake([
+            $endpoint => Http::response([
+                'choices' => [['message' => ['content' => 'A detailed rationale.']]],
+            ], 200),
+        ]);
+
+        [$profile, $role, $overlap] = $this->buildContext('Data Analyst');
+
+        $profile->update([
+            'headline' => 'Data analyst with 4 years in fintech',
+            'current_title' => 'Junior Data Analyst',
+            'years_experience' => 4,
+            'location' => 'Kathmandu',
+            'target_roles' => ['Data Analyst', 'BI Developer'],
+            'target_industries' => ['Banking'],
+            'bio' => 'Interested in moving from reporting to analytics products.',
+        ]);
+
+        $profile->education()->create([
+            'institution' => 'Tribhuvan University',
+            'degree' => 'B.Sc.',
+            'field_of_study' => 'Statistics',
+            'end_date' => '2022-07-01',
+        ]);
+
+        app(RecommendationRationalizer::class)->for($profile, $role, $overlap);
+
+        Http::assertSent(function ($request) {
+            $messages = $request['messages'];
+
+            return $messages[0]['role'] === 'system'
+                && str_contains($messages[0]['content'], 'career counselor and labor-market analyst')
+                && str_contains($messages[1]['content'], 'NPR 288,000 – 960,000 per year')
+                && str_contains($messages[1]['content'], 'Required skills:')
+                && str_contains($messages[1]['content'], 'Preferred (nice-to-have) skills:')
+                && str_contains($messages[1]['content'], '--- The role ---')
+                && str_contains($messages[1]['content'], '--- Candidate profile ---')
+                && str_contains($messages[1]['content'], '--- Task ---')
+                && str_contains($messages[1]['content'], '4-6 plain-prose sentences')
+                && str_contains($messages[1]['content'], 'Years of experience: 4')
+                && str_contains($messages[1]['content'], 'Education background: Statistics');
         });
     }
 

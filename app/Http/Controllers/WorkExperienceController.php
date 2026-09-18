@@ -16,7 +16,7 @@ class WorkExperienceController extends Controller
         $profile->workExperience()->create($request->validated());
 
         return $request->boolean('_onboarding')
-            ? redirect()->route('dashboard')
+            ? redirect()->back()
             : redirect()->route('profile.edit');
     }
 

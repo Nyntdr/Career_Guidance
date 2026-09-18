@@ -135,5 +135,15 @@ return [
             'group' => 'ML',
             'default' => 'gemini',
         ],
+        'llm_prompt_version' => [
+            'label' => 'AI rationale prompt',
+            'type' => 'select',
+            'options' => [
+                'concise' => 'Concise (current)',
+                'detailed' => 'Detailed (enhanced)',
+            ],
+            'group' => 'ML',
+            'default' => 'concise',
+        ],
     ],
 ];

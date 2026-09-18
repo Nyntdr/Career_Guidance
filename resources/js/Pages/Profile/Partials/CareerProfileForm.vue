@@ -3,7 +3,10 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { useForm } from '@inertiajs/vue3';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     profile: Object,
@@ -18,6 +21,16 @@ const form = useForm({
 });
 
 const submit = () => {
+    if (!validate(form, {
+        headline: [rules.max(255)],
+        current_title: [rules.max(255)],
+        years_experience: [rules.integer(), rules.minValue(0), rules.maxValue(70)],
+        location: [rules.max(255)],
+        bio: [rules.max(5000)],
+    })) {
+        return;
+    }
+
     form.patch(route('profile.career.update'), {
         preserveScroll: true,
     });

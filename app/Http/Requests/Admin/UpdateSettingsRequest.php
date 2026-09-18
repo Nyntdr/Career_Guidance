@@ -31,6 +31,7 @@ class UpdateSettingsRequest extends FormRequest
             'recommendation_path_bonus' => ['required', 'numeric', 'min:0', 'max:20'],
             'llm_rationale' => ['required', Rule::in(['enabled', 'disabled'])],
             'llm_provider' => ['required', Rule::in(['gemini', 'groq'])],
+            'llm_prompt_version' => ['required', Rule::in(['concise', 'detailed'])],
         ];
     }
 

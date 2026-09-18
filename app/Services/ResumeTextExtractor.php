@@ -5,6 +5,14 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use PhpOffice\PhpWord\Element\AbstractContainer;
 use PhpOffice\PhpWord\Element\AbstractElement;
+use PhpOffice\PhpWord\Element\Link;
+use PhpOffice\PhpWord\Element\ListItem;
+use PhpOffice\PhpWord\Element\Table;
+use PhpOffice\PhpWord\Element\Text;
+use PhpOffice\PhpWord\Element\TextRun;
+use PhpOffice\PhpWord\Element\Title;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
 use RuntimeException;
 use Smalot\PdfParser\Parser as PdfParser;
 use Throwable;
@@ -39,7 +47,7 @@ class ResumeTextExtractor
     private function fromPdf(UploadedFile $file): string
     {
         try {
-            $text = (new PdfParser())
+            $text = (new PdfParser)
                 ->parseFile($file->getRealPath() ?: (string) $file)
                 ->getText();
         } catch (Throwable $e) {
@@ -57,9 +65,9 @@ class ResumeTextExtractor
     private function fromDocx(UploadedFile $file): string
     {
         try {
-            $document = \PhpOffice\PhpWord\IOFactory::load($file->getRealPath() ?: (string) $file);
+            $document = IOFactory::load($file->getRealPath() ?: (string) $file);
             $text = '';
-            if ($document instanceof \PhpOffice\PhpWord\PhpWord) {
+            if ($document instanceof PhpWord) {
                 foreach ($document->getSections() as $section) {
                     foreach ($section->getElements() as $element) {
                         $this->walk($element, $text);
@@ -80,18 +88,18 @@ class ResumeTextExtractor
 
     private function walk(AbstractElement $element, string &$text): void
     {
-        if ($element instanceof \PhpOffice\PhpWord\Element\Text
-            || $element instanceof \PhpOffice\PhpWord\Element\ListItem
-            || $element instanceof \PhpOffice\PhpWord\Element\Link
-            || $element instanceof \PhpOffice\PhpWord\Element\Title
+        if ($element instanceof Text
+            || $element instanceof ListItem
+            || $element instanceof Link
+            || $element instanceof Title
         ) {
             $text .= $element->getText()."\n";
-        } elseif ($element instanceof \PhpOffice\PhpWord\Element\TextRun) {
+        } elseif ($element instanceof TextRun) {
             foreach ($element->getElements() as $child) {
-                $text .= ($child instanceof \PhpOffice\PhpWord\Element\Text) ? $child->getText() : '';
+                $text .= ($child instanceof Text) ? $child->getText() : '';
             }
             $text .= "\n";
-        } elseif ($element instanceof \PhpOffice\PhpWord\Element\Table) {
+        } elseif ($element instanceof Table) {
             foreach ($element->getRows() as $row) {
                 foreach ($row->getCells() as $cell) {
                     foreach ($cell->getElements() as $child) {
@@ -112,6 +120,17 @@ class ResumeTextExtractor
     {
         $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/u', '', $text) ?? '';
         $text = preg_replace('/[ \t]+/', ' ', $text) ?? '';
+
+        // Strip non-Latin scripts (Cyrillic, Arabic, Devanagari, CJK, Hangul, Thai, etc.) to
+        // avoid skill-extraction false positives from non-Latin resumes.
+        $text = preg_replace(
+            '/[\x{0400}-\x{052F}\x{0590}-\x{08FF}\x{0900}-\x{097F}\x{0A80}-\x{0AFF}'
+            .'\x{0B00}-\x{0B7F}\x{0C00}-\x{0C7F}\x{0D00}-\x{0D7F}\x{0E00}-\x{0E7F}'
+            .'\x{1100}-\x{11FF}\x{1E00}-\x{1FFF}\x{2E80}-\x{2EFF}\x{3000}-\x{30FF}'
+            .'\x{3400}-\x{4DBF}\x{4E00}-\x{9FFF}\x{AC00}-\x{D7AF}\x{F900}-\x{FAFF}]/u',
+            '',
+            $text,
+        ) ?? '';
 
         return $text;
     }

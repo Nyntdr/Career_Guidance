@@ -5,11 +5,14 @@
 
 ## Summary verdict
 
-**Partially working as intended — High-severity issues resolved (2026-09-09).**
+**All 8 High, 15 Medium, and 12 of 13 Low issues resolved (2026-09-09 → 2026-09-11).**
 
 The deterministic recommendation core (skill overlap + TF-IDF cosine + career-path BFS)
-works, is explainable, and is well-tested (69 tests green). All 8 High issues below were
-fixed and re-verified on the audit date; Medium and Low items remain open.
+works, is explainable, and is well-tested. All 8 High issues were fixed and re-verified on
+the audit date (2026-09-09); the 15 Medium items were fixed 2026-09-11 (see the Medium
+resolution log below); 12 of the 13 Low items are fixed 2026-09-11, with #33 (`embedding`
+columns) explicitly deferred as a documented seam — the operative semantic tier is
+deterministic TF-IDF cosine in `app/Services/Ml/SkillSimilarity.php`.
 
 Three structural problems originally identified:
 
@@ -92,6 +95,32 @@ These degrade trust, actability, and mobile/async quality but don't block first-
 | 22 | **No feedback when resume parsing extracts zero skills** — "parsed successfully" with nothing found | UX / Backend | Resume | `app/Http/Controllers/ResumeController.php:90`, `Resumes/Index.vue:182` |
 | 23 | Cold-start picks an arbitrary role on the roadmap — results presented as personalized | Backend | Gap Analysis | `SkillGapAnalyzer.php:140` (see #4 — same root) |
 
+### Medium — resolution log (2026-09-11)
+
+All 15 Medium items resolved and verified (12 changed, 3 verified already correct in code).
+Full test suite green (82/83) on 2026-09-11, `vite build` clean. Details in
+`docs/progress-2026-09-11-low-fixes.md` (same day's batch context) and the commit history.
+
+| # | Fixed | What was done |
+|---|---|---|
+| 9 | ✅ | Onboarding choice screen now shows a concrete time-to-value pill ("what you'll get") |
+| 10 | ✅* | Verified already fixed — onboarding dismissal keys off `profile.resumes`, not extracted skill count |
+| 11 | ✅ | Skip is persisted, not session-only: new `profiles.onboarding_skipped_at` column (migration applied 2026-09-11); `/onboarding/skip` writes the profile; `HandleInertiaRequests` checks the profile flag |
+| 12 | ✅ | Onboarding step POSTs now `redirect()->back()` instead of bouncing to `/dashboard` |
+| 13 | ✅ | ATS formatting suggestions generated — bullets < 8, action verbs < 5, quantified achievements < 3, each with a suggestion |
+| 14 | ✅ | ATS scan button has a spinner + "Scanning…" + disabled select/button during a run |
+| 15 | ✅ | Recommendations show a "How we match you" explainer banner + per-card `rationale_source` badge (AI-generated vs standard) |
+| 16 | ✅* | Verified already fixed — `SkillGapAnalyzer::purgeStaleProgress()` cleans orphaned rows on re-run |
+| 17 | ✅ | "Regenerate" shows a spinner; "Explain with AI" disables per-card (was a global disable bug) |
+| 18 | ✅ | Decorative notification bell removed from `AuthenticatedLayout` |
+| 19 | ✅ | Debounced global search (JSON `GET /search` + navbar dropdown component) |
+| 20 | ✅ | Admin CRUD + onboarding grids use `grid-cols-1 sm:grid-cols-2` on small screens |
+| 21 | ✅ | Resume auto-import flash names the detected skills (up to 5) |
+| 22 | ✅ | Zero-skill resume upload now flash-warns and shows an amber fallback card |
+| 23 | ✅* | Verified already fixed — `defaultTargetRole()` returns null for zero-skill users and the controller flashes an error |
+
+\* Already correct in code when the batch ran; verified by inspection + tests rather than changed.
+
 ### Low — polish / nice-to-have
 
 Fix opportunistically; minimal risk.
@@ -111,6 +140,28 @@ Fix opportunistically; minimal risk.
 | 34 | `InputError` uses `v-show` → empty error elements remain in DOM for screen readers | UX / A11y | Components | `resources/js/Components/InputError.vue:10` |
 | 35 | `TextInput` has no explicit `id`/`type` prop definitions (relies on fragile attr fallthrough) | UX / A11y | Components | `resources/js/Components/TextInput.vue:21-25` |
 | 36 | Resume text `clean()` does not strip non-Latin scripts → possible skill-extraction false positives | Backend | Resume | `app/Services/ResumeTextExtractor.php:111-117`, `app/Services/ResumeParser.php:117` |
+
+### Low — resolution log (2026-09-11)
+
+12 of 13 Low items fixed; #33 deliberately deferred. Full suite green (83/84, only the
+pre-existing untrained-ML failure), `vite build` clean. Details in
+`docs/progress-2026-09-11-low-fixes.md`.
+
+| # | Fixed | What was done |
+|---|---|---|
+| 24 | ✅ | Dashboard hides the stats row until `hasData`; shows `animate-pulse` skeleton cards on first visit |
+| 25 | ✅ | Recommendations + Jobs empty states also offer "Upload a resume instead" → `resume.index` |
+| 26 | ✅ | ATS weight hints come from `AtsScanner::weights()` (settings-backed) and are passed to the view — no more hardcoded strings |
+| 27 | ✅ | Admins get an "Add one" link to `admin.job-postings.index` when no postings exist to scan against |
+| 28 | ✅ | Roadmap status toggle is optimistic (instant feedback, reconciles with the server response) |
+| 29 | ✅ | Re-run card now has a target-role picker (pre-filled with the current assessment's role) |
+| 30 | ✅ | Lightweight pulse skeleton placeholders on the first-visit / zero-skill states |
+| 31 | ✅ | Dark-mode variants added to Welcome + all 6 auth pages |
+| 32 | ✅ | Resume deletion now requires a confirmation modal |
+| 33 | ⏳ | **Deferred** — `embedding` JSON columns remain a documented seam; deterministic TF-IDF cosine is the operative semantic tier. No UX impact today |
+| 34 | ✅ | `InputError` uses `v-if` (no empty error nodes in the a11y tree) |
+| 35 | ✅ | `TextInput` declares explicit `id` + `type` props (fallback-safe) |
+| 36 | ✅ | `clean()` strips non-Latin script ranges (Cyrillic/Arabic/Devanagari/CJK/Hangul/Thai/etc.); regression test added |
 
 ---
 

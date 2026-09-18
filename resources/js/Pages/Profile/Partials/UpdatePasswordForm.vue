@@ -4,7 +4,10 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { ref } from 'vue';
+
+const { validate } = useFormValidation();
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
@@ -16,6 +19,14 @@ const form = useForm({
 });
 
 const updatePassword = () => {
+    if (!validate(form, {
+        current_password: [rules.required()],
+        password: [rules.required(), rules.min(8, 'New password must be at least 8 characters.')],
+        password_confirmation: [rules.required(), rules.confirmed('password')],
+    })) {
+        return;
+    }
+
     form.put(route('password.update'), {
         preserveScroll: true,
         onSuccess: () => form.reset(),

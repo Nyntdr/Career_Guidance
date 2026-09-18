@@ -19,9 +19,15 @@ const userName = computed(() => usePage().props.auth.user?.name ?? 'there');
 const onboarding = computed(() => usePage().props.onboarding ?? false);
 const showOnboarding = ref(onboarding.value);
 const hasData = computed(() => props.stats?.skillsAssessed > 0 || props.stats?.careerPaths > 0);
+const regenerating = ref(false);
 
 function regenerate() {
-    router.post(route('recommendations.generate'), {}, { preserveScroll: true });
+    if (regenerating.value) return;
+    regenerating.value = true;
+    router.post(route('recommendations.generate'), {}, {
+        preserveScroll: true,
+        onFinish: () => { regenerating.value = false; },
+    });
 }
 
 const priorityColors = {
@@ -64,7 +70,7 @@ const interests = computed(() => {
         <div class="bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Stats -->
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div v-if="hasData" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
                         <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Career paths</p>
                         <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">{{ stats.careerPaths }}+</p>
@@ -84,6 +90,13 @@ const interests = computed(() => {
                         <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Roadmap steps</p>
                         <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">{{ stats.roadmapSteps }}</p>
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">In your action plan</p>
+                    </div>
+                </div>
+                <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div v-for="n in 4" :key="n" class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
+                        <div class="h-3 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                        <div class="mt-2 h-8 w-16 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                        <div class="mt-1 h-2 w-20 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
                     </div>
                 </div>
 
@@ -161,12 +174,17 @@ const interests = computed(() => {
                                     <button
                                         type="button"
                                         @click="regenerate"
-                                        class="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 dark:border-indigo-700 px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
+                                        :disabled="regenerating"
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 dark:border-indigo-700 px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg v-if="regenerating" class="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                        </svg>
+                                        <svg v-else class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                         </svg>
-                                        Regenerate
+                                        {{ regenerating ? 'Regenerating…' : 'Regenerate' }}
                                     </button>
                                     <Link
                                         :href="route('recommendations.index')"

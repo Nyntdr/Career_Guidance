@@ -5,7 +5,10 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+
+const { validate } = useFormValidation();
 
 defineProps({
     canResetPassword: {
@@ -23,6 +26,13 @@ const form = useForm({
 });
 
 const submit = () => {
+    if (!validate(form, {
+        email: [rules.required(), rules.email()],
+        password: [rules.required()],
+    })) {
+        return;
+    }
+
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
     });
@@ -34,19 +44,19 @@ const submit = () => {
         <Head title="Log in" />
 
         <div class="mb-6 text-center">
-            <h1 class="text-2xl font-bold text-gray-900">Welcome back</h1>
-            <p class="mt-2 text-sm text-gray-500">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome back</h1>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 Sign in to continue your career journey
             </p>
         </div>
 
-        <div v-if="status" class="mb-4 rounded-lg bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+        <div v-if="status" class="mb-4 rounded-lg bg-green-50 dark:bg-green-900/20 px-4 py-3 text-sm font-medium text-green-700 dark:text-green-300">
             {{ status }}
         </div>
 
         <a
             :href="route('auth.google')"
-            class="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
             <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -71,10 +81,10 @@ const submit = () => {
 
         <div class="relative my-6">
             <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-200" />
+                <div class="w-full border-t border-gray-200 dark:border-gray-700" />
             </div>
             <div class="relative flex justify-center text-sm">
-                <span class="bg-white px-3 text-gray-500">Or continue with email</span>
+                <span class="bg-white dark:bg-gray-800 px-3 text-gray-500 dark:text-gray-400">Or continue with email</span>
             </div>
         </div>
 
@@ -115,13 +125,13 @@ const submit = () => {
             <div class="flex items-center justify-between">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-300">Remember me</span>
                 </label>
 
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-sm text-indigo-600 underline hover:text-indigo-800"
+                    class="text-sm text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300"
                 >
                     Forgot password?
                 </Link>
@@ -137,7 +147,7 @@ const submit = () => {
         </form>
 
         <p class="mt-6 text-center text-sm text-gray-500">
-            <Link :href="route('register')" class="text-indigo-600 underline hover:text-indigo-800">
+            <Link :href="route('register')" class="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-800 dark:hover:text-indigo-300">
                 Create an account
             </Link>
         </p>

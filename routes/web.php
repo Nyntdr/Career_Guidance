@@ -83,6 +83,13 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/onboarding/skip', function (\Illuminate\Http\Request $r) {
         $r->session()->put('onboarding_skipped', true);
+
+        if ($r->user()) {
+            $r->user()->profile()->updateOrCreate([], [
+                'onboarding_skipped_at' => now(),
+            ]);
+        }
+
         return redirect()->back();
     })->name('onboarding.skip');
 

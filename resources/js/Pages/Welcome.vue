@@ -15,11 +15,11 @@ const siteName = settings.site_name ?? 'Ujjwol Bato';
 <template>
     <Head :title="siteName" />
 
-    <div class="min-h-screen bg-white text-gray-900">
+    <div class="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
         <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
             <div class="flex items-center gap-3">
                 <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-lg font-bold text-indigo-700"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/40 text-lg font-bold text-indigo-700 dark:text-indigo-300"
                 >
                     {{ brandInitials(siteName) }}
                 </div>
@@ -53,7 +53,7 @@ const siteName = settings.site_name ?? 'Ujjwol Bato';
                             career path
                         </span>
                     </h1>
-                    <p class="mt-6 max-w-xl text-lg leading-relaxed text-gray-600">
+                    <p class="mt-6 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-300">
                         {{ siteName }} analyzes your skills, interests, and goals to deliver
                         personalized career recommendations, skill gap insights, and actionable
                         roadmaps — all in one place.
@@ -78,38 +78,38 @@ const siteName = settings.site_name ?? 'Ujjwol Bato';
 
                 <div class="relative">
                     <div
-                        class="absolute -inset-4 rounded-3xl bg-gradient-to-r from-violet-200 to-indigo-200 blur-2xl"
+                        class="absolute -inset-4 rounded-3xl bg-gradient-to-r from-violet-200 to-indigo-200 dark:from-violet-900/40 dark:to-indigo-900/40 blur-2xl"
                     />
                     <div
-                        class="relative rounded-3xl border border-gray-200 bg-white p-8 shadow-lg"
+                        class="relative rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-8 shadow-lg"
                     >
                         <div class="space-y-4">
-                            <div class="rounded-2xl bg-indigo-50 p-4">
-                                <p class="text-sm text-gray-600">Suggested career match</p>
-                                <p class="mt-1 text-2xl font-bold text-gray-900">Data Scientist</p>
-                                <div class="mt-3 h-2 overflow-hidden rounded-full bg-indigo-100">
+                            <div class="rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 p-4">
+                                <p class="text-sm text-gray-600 dark:text-indigo-300">Suggested career match</p>
+                                <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">Data Scientist</p>
+                                <div class="mt-3 h-2 overflow-hidden rounded-full bg-indigo-100 dark:bg-indigo-900/50">
                                     <div class="h-full w-[87%] rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" />
                                 </div>
-                                <p class="mt-2 text-sm text-gray-600">87% compatibility</p>
+                                <p class="mt-2 text-sm text-gray-600 dark:text-indigo-300">87% compatibility</p>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
-                                <div class="rounded-2xl bg-indigo-50 p-4">
-                                    <p class="text-2xl font-bold text-gray-900">12+</p>
-                                    <p class="text-sm text-gray-600">Career paths</p>
+                                <div class="rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 p-4">
+                                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">12+</p>
+                                    <p class="text-sm text-gray-600 dark:text-indigo-300">Career paths</p>
                                 </div>
-                                <div class="rounded-2xl bg-indigo-50 p-4">
-                                    <p class="text-2xl font-bold text-gray-900">AI</p>
-                                    <p class="text-sm text-gray-600">Powered insights</p>
+                                <div class="rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 p-4">
+                                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">AI</p>
+                                    <p class="text-sm text-gray-600 dark:text-indigo-300">Powered insights</p>
                                 </div>
                             </div>
 
-                            <div class="rounded-2xl bg-indigo-50 p-4">
-                                <p class="text-sm font-medium text-gray-600">Top skills to develop</p>
+                            <div class="rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 p-4">
+                                <p class="text-sm font-medium text-gray-600 dark:text-indigo-300">Top skills to develop</p>
                                 <div class="mt-3 flex flex-wrap gap-2">
-                                    <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs text-indigo-700">Python</span>
-                                    <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs text-indigo-700">Machine Learning</span>
-                                    <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs text-indigo-700">Statistics</span>
+                                    <span class="rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-3 py-1 text-xs text-indigo-700 dark:text-indigo-300">Python</span>
+                                    <span class="rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-3 py-1 text-xs text-indigo-700 dark:text-indigo-300">Machine Learning</span>
+                                    <span class="rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-3 py-1 text-xs text-indigo-700 dark:text-indigo-300">Statistics</span>
                                 </div>
                             </div>
                         </div>
@@ -119,37 +119,37 @@ const siteName = settings.site_name ?? 'Ujjwol Bato';
 
             <section id="features" class="mt-28">
                 <h2 class="text-center text-3xl font-bold">How it works</h2>
-                <p class="mx-auto mt-4 max-w-2xl text-center text-gray-600">
+                <p class="mx-auto mt-4 max-w-2xl text-center text-gray-600 dark:text-gray-400">
                     Three simple steps to discover a career that fits you.
                 </p>
 
                 <div class="mt-12 grid gap-6 sm:grid-cols-3">
-                    <div class="rounded-2xl border border-gray-200 bg-gray-50 p-6">
-                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-xl font-bold text-indigo-700">
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-6">
+                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/40 text-xl font-bold text-indigo-700 dark:text-indigo-300">
                             1
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Share your profile</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-gray-600">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Share your profile</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                             Tell us about your education, skills, interests, and career goals.
                         </p>
                     </div>
 
-                    <div class="rounded-2xl border border-gray-200 bg-gray-50 p-6">
-                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-xl font-bold text-indigo-700">
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-6">
+                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/40 text-xl font-bold text-indigo-700 dark:text-indigo-300">
                             2
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">AI analysis</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-gray-600">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">AI analysis</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                             Our AI engine matches your profile against thousands of career paths and market trends.
                         </p>
                     </div>
 
-                    <div class="rounded-2xl border border-gray-200 bg-gray-50 p-6">
-                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-xl font-bold text-indigo-700">
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-6">
+                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/40 text-xl font-bold text-indigo-700 dark:text-indigo-300">
                             3
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Get your roadmap</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-gray-600">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Get your roadmap</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                             Receive personalized recommendations, skill gaps, and a step-by-step action plan.
                         </p>
                     </div>
@@ -157,7 +157,7 @@ const siteName = settings.site_name ?? 'Ujjwol Bato';
             </section>
         </main>
 
-        <footer class="border-t border-gray-200 py-8 text-center text-sm text-gray-500">
+        <footer class="border-t border-gray-200 dark:border-gray-800 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
             &copy; {{ new Date().getFullYear() }} {{ siteName }}. All rights reserved.
         </footer>
     </div>

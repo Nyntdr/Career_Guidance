@@ -6,7 +6,10 @@ import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { nextTick, ref } from 'vue';
+
+const { validate } = useFormValidation();
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref(null);
@@ -22,6 +25,12 @@ const confirmUserDeletion = () => {
 };
 
 const deleteUser = () => {
+    if (!validate(form, {
+        password: [rules.required()],
+    })) {
+        return;
+    }
+
     form.delete(route('profile.destroy'), {
         preserveScroll: true,
         onSuccess: () => closeModal(),

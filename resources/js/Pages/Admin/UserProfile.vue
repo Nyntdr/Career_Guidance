@@ -40,9 +40,9 @@ const p = props.targetUser.profile;
 
                 <!-- Skills -->
                 <div class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-4">Skills ({{ p?.skills?.length ?? 0 }})</h3>
-                    <div v-if="p?.skills?.length" class="flex flex-wrap gap-2">
-                        <span v-for="us in p.skills" :key="us.id" class="inline-flex items-center gap-1 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-3 py-1 text-sm">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-4">Skills ({{ p?.user_skills?.length ?? 0 }})</h3>
+                    <div v-if="p?.user_skills?.length" class="flex flex-wrap gap-2">
+                        <span v-for="us in p.user_skills" :key="us.id" class="inline-flex items-center gap-1 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-3 py-1 text-sm">
                             {{ us.skill?.name ?? 'Unknown' }}
                             <span class="text-xs opacity-70">({{ us.proficiency_level }}/5)</span>
                         </span>
@@ -56,7 +56,7 @@ const p = props.targetUser.profile;
                     <div v-if="p?.education?.length" class="space-y-3">
                         <div v-for="edu in p.education" :key="edu.id" class="border-b border-gray-100 dark:border-gray-700 pb-3 last:border-0 last:pb-0">
                             <p class="font-medium text-gray-900 dark:text-gray-100">{{ edu.degree }} in {{ edu.field_of_study }}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ edu.institution }} &middot; {{ edu.start_year }} - {{ edu.end_year ?? 'Present' }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ edu.institution }} &middot; {{ edu.start_date }} - {{ edu.end_date ?? 'Present' }}</p>
                         </div>
                     </div>
                     <p v-else class="text-sm text-gray-500 dark:text-gray-400">No education entries.</p>

@@ -14,6 +14,10 @@ const props = defineProps({
         type: String,
         default: 'py-1 bg-white dark:bg-gray-800',
     },
+    up: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const closeOnEscape = (e) => {
@@ -33,11 +37,15 @@ const widthClass = computed(() => {
 
 const alignmentClasses = computed(() => {
     if (props.align === 'left') {
-        return 'ltr:origin-top-left rtl:origin-top-right start-0';
+        return props.up
+            ? 'ltr:origin-bottom-left rtl:origin-bottom-right start-0'
+            : 'ltr:origin-top-left rtl:origin-top-right start-0';
     } else if (props.align === 'right') {
-        return 'ltr:origin-top-right rtl:origin-top-left end-0';
+        return props.up
+            ? 'ltr:origin-bottom-right rtl:origin-bottom-left end-0'
+            : 'ltr:origin-top-right rtl:origin-top-left end-0';
     } else {
-        return 'origin-top';
+        return props.up ? 'origin-bottom' : 'origin-top';
     }
 });
 
@@ -67,8 +75,8 @@ const open = ref(false);
         >
             <div
                 v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg"
-                :class="[widthClass, alignmentClasses]"
+                class="absolute z-50 rounded-md shadow-lg"
+                :class="[widthClass, alignmentClasses, props.up ? 'bottom-full mb-2' : 'mt-2']"
                 style="display: none"
                 @click="open = false"
             >

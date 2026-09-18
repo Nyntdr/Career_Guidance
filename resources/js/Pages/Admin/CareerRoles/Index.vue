@@ -8,6 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     roles: Object,
@@ -80,7 +83,42 @@ function openCreate() {
     showCreateModal.value = true;
 }
 
+function validateCareerRole(form) {
+    const valid = validate(form, {
+        title: [rules.required(), rules.max(255)],
+        description: [rules.required()],
+        typical_seniority: [rules.required()],
+        growth_outlook: [rules.required(), rules.max(255)],
+    });
+
+    const minRaw = form.salary_min;
+    const maxRaw = form.salary_max;
+    const min = minRaw === '' ? null : Number(minRaw);
+    const max = maxRaw === '' ? null : Number(maxRaw);
+
+    let salaryOk = true;
+
+    if (min !== null && (Number.isNaN(min) || !Number.isInteger(min) || min < 0)) {
+        form.setError('avg_salary_range.min', 'Minimum salary must be a whole number of at least 0.');
+        salaryOk = false;
+    }
+    if (max !== null && (Number.isNaN(max) || !Number.isInteger(max) || max < 0)) {
+        form.setError('avg_salary_range.max', 'Maximum salary must be a whole number of at least 0.');
+        salaryOk = false;
+    }
+    if (salaryOk && min !== null && max !== null && max < min) {
+        form.setError('avg_salary_range.max', 'Maximum salary must be at least the minimum.');
+        salaryOk = false;
+    }
+
+    return valid && salaryOk;
+}
+
 function submitCreate() {
+    if (!validateCareerRole(createForm)) {
+        return;
+    }
+
     createForm.avg_salary_range = { min: parseInt(createForm.salary_min) || 0, max: parseInt(createForm.salary_max) || 0 };
     createForm.skills = createSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
     createForm.post(route('admin.career-roles.store'), {
@@ -108,6 +146,10 @@ function openEdit(role) {
 }
 
 function submitEdit() {
+    if (!validateCareerRole(editForm)) {
+        return;
+    }
+
     editForm.avg_salary_range = { min: parseInt(editForm.salary_min) || 0, max: parseInt(editForm.salary_max) || 0 };
     editForm.skills = editSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
     editForm.put(route('admin.career-roles.update', editingRole.value.id), {
@@ -212,7 +254,7 @@ function destroyRole() {
                         <textarea id="c-desc" v-model="createForm.description" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
                         <InputError :message="createForm.errors.description" />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="c-seniority" value="Typical Seniority" />
                             <select id="c-seniority" v-model="createForm.typical_seniority" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -224,7 +266,7 @@ function destroyRole() {
                             </select>
                             <InputError :message="createForm.errors.typical_seniority" />
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div>
                                 <InputLabel for="c-salary-min" :value="`Min Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
                                 <TextInput id="c-salary-min" v-model="createForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />
@@ -293,7 +335,7 @@ function destroyRole() {
                         <textarea id="e-desc" v-model="editForm.description" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
                         <InputError :message="editForm.errors.description" />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="e-seniority" value="Typical Seniority" />
                             <select id="e-seniority" v-model="editForm.typical_seniority" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -305,7 +347,7 @@ function destroyRole() {
                             </select>
                             <InputError :message="editForm.errors.typical_seniority" />
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div>
                                 <InputLabel for="e-salary-min" :value="`Min Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
                                 <TextInput id="e-salary-min" v-model="editForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />

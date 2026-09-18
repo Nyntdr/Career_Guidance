@@ -8,6 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     resources: Object,
@@ -50,7 +53,20 @@ function openCreate() {
     showCreateModal.value = true;
 }
 
+const resourceRules = {
+    title: [rules.required(), rules.max(255)],
+    provider: [rules.max(255)],
+    url: [rules.url(), rules.max(2048)],
+    resource_type: [rules.oneOf(['course', 'article', 'video', 'book', 'certification', 'other'])],
+    duration_hours: [rules.numeric(), rules.minValue(0)],
+    cost: [rules.numeric(), rules.minValue(0)],
+};
+
 function submitCreate() {
+    if (!validate(createForm, resourceRules)) {
+        return;
+    }
+
     createForm.post(route('admin.learning-resources.store'), {
         onSuccess: () => { showCreateModal.value = false; createForm.reset(); },
     });
@@ -71,6 +87,10 @@ function openEdit(r) {
 }
 
 function submitEdit() {
+    if (!validate(editForm, resourceRules)) {
+        return;
+    }
+
     editForm.put(route('admin.learning-resources.update', editingResource.value.id), {
         onSuccess: () => { showEditModal.value = false; editingResource.value = null; },
     });
@@ -190,7 +210,7 @@ const typeBadge = (t) => ({
                         <TextInput id="c-title" v-model="createForm.title" type="text" class="mt-1 block w-full" autofocus />
                         <InputError :message="createForm.errors.title" />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="c-type" value="Type" />
                             <select id="c-type" v-model="createForm.resource_type" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -214,7 +234,7 @@ const typeBadge = (t) => ({
                         <TextInput id="c-url" v-model="createForm.url" type="url" class="mt-1 block w-full" placeholder="https://..." />
                         <InputError :message="createForm.errors.url" />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="c-duration" value="Duration (hours)" />
                             <TextInput id="c-duration" v-model="createForm.duration_hours" type="number" step="0.5" min="0" class="mt-1 block w-full" />
@@ -258,7 +278,7 @@ const typeBadge = (t) => ({
                         <TextInput id="e-title" v-model="editForm.title" type="text" class="mt-1 block w-full" />
                         <InputError :message="editForm.errors.title" />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="e-type" value="Type" />
                             <select id="e-type" v-model="editForm.resource_type" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -282,7 +302,7 @@ const typeBadge = (t) => ({
                         <TextInput id="e-url" v-model="editForm.url" type="url" class="mt-1 block w-full" placeholder="https://..." />
                         <InputError :message="editForm.errors.url" />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <InputLabel for="e-duration" value="Duration (hours)" />
                             <TextInput id="e-duration" v-model="editForm.duration_hours" type="number" step="0.5" min="0" class="mt-1 block w-full" />

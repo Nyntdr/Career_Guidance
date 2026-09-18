@@ -83,6 +83,7 @@ class RoadmapController extends Controller
             'inProgress' => $counts->get('in_progress', 0),
             'completed' => $counts->get('completed', 0),
             'targetRole' => $assessment?->targetRole?->title ?? null,
+            'targetRoleId' => $assessment?->target_role_id ?? null,
         ];
 
         return Inertia::render('Roadmap/Index', [

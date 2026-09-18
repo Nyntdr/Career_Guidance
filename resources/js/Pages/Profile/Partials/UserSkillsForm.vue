@@ -2,10 +2,14 @@
 import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { ref } from 'vue';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     profile: Object,
@@ -16,6 +20,7 @@ const proficiencyLabels = { 1: 'Beginner', 2: 'Elementary', 3: 'Intermediate', 4
 const adding = ref(false);
 const editingId = ref(null);
 const editValue = ref(1);
+const deletingId = ref(null);
 
 const form = useForm({
     skill_name: '',
@@ -42,6 +47,13 @@ const startEdit = (skill) => {
 };
 
 const submit = () => {
+    if (!validate(form, {
+        skill_name: [rules.required(), rules.max(255)],
+        proficiency_level: [rules.minValue(1), rules.maxValue(5)],
+    })) {
+        return;
+    }
+
     form.post(route('profile.skills.store'), {
         preserveScroll: true,
         onSuccess: () => cancel(),
@@ -59,11 +71,14 @@ const updateLevel = (skill) => {
 };
 
 const destroy = (skill) => {
-    if (confirm('Remove this skill?')) {
-        form.delete(route('profile.skills.destroy', skill.id), {
-            preserveScroll: true,
-        });
-    }
+    deletingId.value = skill.id;
+};
+
+const confirmDestroy = () => {
+    form.delete(route('profile.skills.destroy', deletingId.value), {
+        preserveScroll: true,
+        onFinish: () => { deletingId.value = null; },
+    });
 };
 </script>
 
@@ -181,5 +196,26 @@ const destroy = (skill) => {
         >
             No skills added yet.
         </p>
+
+        <Modal :show="deletingId !== null" @close="deletingId = null">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Remove skill?</h2>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    This will remove the skill from your profile. You can re-add it later.
+                </p>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button
+                        type="button"
+                        @click="deletingId = null"
+                        class="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <DangerButton @click="confirmDestroy" :disabled="form.processing">
+                        Remove
+                    </DangerButton>
+                </div>
+            </div>
+        </Modal>
     </section>
 </template>

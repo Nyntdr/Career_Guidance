@@ -4,7 +4,10 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+
+const { validate } = useFormValidation();
 
 const form = useForm({
     name: '',
@@ -14,6 +17,15 @@ const form = useForm({
 });
 
 const submit = () => {
+    if (!validate(form, {
+        name: [rules.required(), rules.max(255)],
+        email: [rules.required(), rules.email(), rules.max(255)],
+        password: [rules.required(), rules.min(8, 'Password must be at least 8 characters.')],
+        password_confirmation: [rules.required(), rules.confirmed('password')],
+    })) {
+        return;
+    }
+
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
@@ -95,7 +107,7 @@ const submit = () => {
             <div class="mt-4 flex items-center justify-end">
                 <Link
                     :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-sm text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Already registered?
                 </Link>

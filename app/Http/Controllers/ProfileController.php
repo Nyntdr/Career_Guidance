@@ -48,7 +48,7 @@ class ProfileController extends Controller
         $profile->update($request->validated());
 
         return $request->boolean('_onboarding')
-            ? Redirect::route('dashboard')
+            ? Redirect::back()
             : Redirect::route('profile.edit');
     }
 

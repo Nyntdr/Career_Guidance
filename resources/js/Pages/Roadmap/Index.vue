@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
+import { reactive } from 'vue';
 import { formatMoney } from '@/lib/format';
 
 const settings = usePage().props.settings ?? {};
@@ -17,8 +18,10 @@ const props = defineProps({
 });
 
 const runForm = useForm({
-    target_role_id: '',
+    target_role_id: props.stats?.targetRoleId ?? '',
 });
+
+const optimisticStatuses = reactive({});
 
 const priorityColors = {
     High: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
@@ -34,12 +37,23 @@ const statusLabels = {
 };
 
 function submitRun() {
-    runForm.post(route('assessment.run'));
+    runForm.post(route('assessment.run'), { preserveScroll: true });
+}
+
+function statusOf(item) {
+    return optimisticStatuses[item.id] ?? item.status;
 }
 
 function setStatus(item, status) {
-    if (!item.progress_id || item.status === status) return;
-    router.patch(route('roadmap.progress.update', item.progress_id), { status });
+    if (!item.progress_id || statusOf(item) === status) return;
+
+    optimisticStatuses[item.id] = status;
+
+    router.patch(route('roadmap.progress.update', item.progress_id), { status }, {
+        preserveScroll: true,
+        onSuccess: () => delete optimisticStatuses[item.id],
+        onError: () => delete optimisticStatuses[item.id],
+    });
 }
 
 function formatCost(cost) {
@@ -111,10 +125,11 @@ function formatCost(cost) {
                             </div>
                         </div>
                         <button
-                            @click="runForm.post(route('assessment.run'))"
-                            class="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600 transition-colors"
+                            @click="submitRun"
+                            :disabled="runForm.processing"
+                            class="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600 disabled:opacity-50 transition-colors"
                         >
-                            Re-run now
+                            {{ runForm.processing ? 'Re-running…' : 'Re-run now' }}
                         </button>
                     </div>
 
@@ -138,11 +153,23 @@ function formatCost(cost) {
                         </div>
                         <div class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm flex flex-col">
                             <p class="flex-1 text-sm font-medium text-indigo-600 dark:text-indigo-400">Re-run assessment</p>
-                            <button
-                                @click="runForm.post(route('assessment.run'))"
-                                class="mt-2 inline-flex w-fit items-center gap-2 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors"
+                            <label class="mt-2 block text-xs text-gray-500 dark:text-gray-400" for="rerun_target_role">
+                                Target career role
+                            </label>
+                            <select
+                                id="rerun_target_role"
+                                v-model="runForm.target_role_id"
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             >
-                                Run again
+                                <option value="">Auto (best match)</option>
+                                <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.title }}</option>
+                            </select>
+                            <button
+                                @click="submitRun"
+                                :disabled="runForm.processing"
+                                class="mt-2 inline-flex w-fit items-center gap-2 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                            >
+                                {{ runForm.processing ? 'Running…' : 'Run against this role' }}
                             </button>
                         </div>
                     </div>
@@ -152,7 +179,7 @@ function formatCost(cost) {
                             v-for="item in items"
                             :key="item.id"
                             class="rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm"
-                            :class="{ 'opacity-60': item.status === 'completed' }"
+                            :class="{ 'opacity-60': statusOf(item) === 'completed' }"
                         >
                             <div class="flex flex-wrap items-start justify-between gap-4">
                                 <div>
@@ -173,7 +200,7 @@ function formatCost(cost) {
                                         :key="status"
                                         @click="setStatus(item, status)"
                                         class="px-3 py-1.5 text-xs font-medium transition-colors"
-                                        :class="item.status === status
+                                        :class="statusOf(item) === status
                                             ? (status === 'completed' ? 'bg-emerald-600 text-white' : status === 'in_progress' ? 'bg-amber-500 text-white' : 'bg-gray-400 text-white')
                                             : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'"
                                     >

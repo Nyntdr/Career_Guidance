@@ -8,6 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     skills: Object,
@@ -43,7 +46,16 @@ function openCreate() {
     showCreateModal.value = true;
 }
 
+const skillRules = {
+    name: [rules.required(), rules.max(255)],
+    category_id: [rules.required('Please select a category.')],
+};
+
 function submitCreate() {
+    if (!validate(createForm, skillRules)) {
+        return;
+    }
+
     createForm.post(route('admin.skills.store'), {
         onSuccess: () => { showCreateModal.value = false; createForm.reset(); },
     });
@@ -59,6 +71,10 @@ function openEdit(skill) {
 }
 
 function submitEdit() {
+    if (!validate(editForm, skillRules)) {
+        return;
+    }
+
     editForm.put(route('admin.skills.update', editingSkill.value.id), {
         onSuccess: () => { showEditModal.value = false; editingSkill.value = null; },
     });
@@ -72,6 +88,12 @@ function openImport() {
 }
 
 function submitImport() {
+    if (!validate(importForm, {
+        csv: [rules.required('Please choose a CSV file to import.')],
+    })) {
+        return;
+    }
+
     importForm.post(route('admin.skills.import'), {
         onSuccess: () => { showImportModal.value = false; importForm.reset(); },
     });

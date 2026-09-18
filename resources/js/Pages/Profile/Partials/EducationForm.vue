@@ -2,10 +2,14 @@
 import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { ref } from 'vue';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     profile: Object,
@@ -13,6 +17,7 @@ const props = defineProps({
 
 const editing = ref(null);
 const adding = ref(false);
+const deletingId = ref(null);
 
 const form = useForm({
     institution: '',
@@ -46,6 +51,16 @@ const cancel = () => {
 };
 
 const submit = () => {
+    if (!validate(form, {
+        institution: [rules.required(), rules.max(255)],
+        degree: [rules.max(255)],
+        field_of_study: [rules.max(255)],
+        start_date: [rules.date()],
+        end_date: [rules.date(), rules.afterOrEqualField('start_date', 'End date must be on or after the start date.')],
+    })) {
+        return;
+    }
+
     if (adding.value) {
         form.post(route('profile.education.store'), {
             preserveScroll: true,
@@ -60,11 +75,14 @@ const submit = () => {
 };
 
 const destroy = (edu) => {
-    if (confirm('Delete this education entry?')) {
-        form.delete(route('profile.education.destroy', edu.id), {
-            preserveScroll: true,
-        });
-    }
+    deletingId.value = edu.id;
+};
+
+const confirmDestroy = () => {
+    form.delete(route('profile.education.destroy', deletingId.value), {
+        preserveScroll: true,
+        onFinish: () => { deletingId.value = null; },
+    });
 };
 </script>
 
@@ -197,5 +215,26 @@ const destroy = (edu) => {
         >
             No education entries yet.
         </p>
+
+        <Modal :show="deletingId !== null" @close="deletingId = null">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Delete education entry?</h2>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    This will permanently remove this education entry from your profile.
+                </p>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button
+                        type="button"
+                        @click="deletingId = null"
+                        class="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <DangerButton @click="confirmDestroy" :disabled="form.processing">
+                        Delete
+                    </DangerButton>
+                </div>
+            </div>
+        </Modal>
     </section>
 </template>

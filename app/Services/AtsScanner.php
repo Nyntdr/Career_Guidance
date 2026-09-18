@@ -27,7 +27,8 @@ class AtsScanner
 
         [$keywordScore, $keywords] = $this->keywordScore($resumeText, $jdText, $jobPosting);
         $structureScore = $this->structureScore($resume);
-        $formattingScore = $this->formattingScore($resumeText);
+        $formatting = $this->formattingBreakdown($resumeText);
+        $formattingScore = $this->formattingScore($formatting);
         $grade = app(Readability::class)->gradeLevel($resumeText);
         $readabilityScore = $this->readabilityScore($grade);
         $weights = $this->weights();
@@ -59,7 +60,7 @@ class AtsScanner
             ]);
         }
 
-        $this->writeDetails($scan, $keywords, $resume, $grade);
+        $this->writeDetails($scan, $keywords, $resume, $grade, $formatting);
 
         return $scan->load(['matchedKeywords', 'details']);
     }
@@ -129,7 +130,7 @@ class AtsScanner
         return (int) round(($found / count($expected)) * 100);
     }
 
-    private function formattingScore(string $resumeText): int
+    private function formattingBreakdown(string $resumeText): array
     {
         $lines = preg_split('/\r\n|\r|\n/', $resumeText) ?: [];
 
@@ -144,6 +145,19 @@ class AtsScanner
         preg_match_all('/[$%]|\b\d{2,4}\b/', $resumeText, $matches);
         $quantified = count($matches[0]);
 
+        return [
+            'bullets' => $bullets,
+            'verb_hits' => $verbHits,
+            'quantified' => $quantified,
+        ];
+    }
+
+    private function formattingScore(array $formatting): int
+    {
+        $bullets = $formatting['bullets'];
+        $verbHits = $formatting['verb_hits'];
+        $quantified = $formatting['quantified'];
+
         return (int) round((min(1, $bullets / 8) * 40) + (min(1, $verbHits / 5) * 30) + (min(1, $quantified / 3) * 30));
     }
 
@@ -156,7 +170,7 @@ class AtsScanner
         return (int) round(max(20, min(95, 100 - max(0, $grade - 7) * 5)));
     }
 
-    private function weights(): array
+    public function weights(): array
     {
         $default = [
             'keyword' => 50,
@@ -191,7 +205,7 @@ class AtsScanner
         return count($matches[0]);
     }
 
-    private function writeDetails(AtsScan $scan, array $keywords, Resume $resume, float $grade): void
+    private function writeDetails(AtsScan $scan, array $keywords, Resume $resume, float $grade, array $formatting): void
     {
         foreach ($keywords as $keyword) {
             if ($keyword['matched']) {
@@ -226,6 +240,39 @@ class AtsScanner
                 'detail' => 'Missing ' . $label . '.',
                 'severity' => 'high',
                 'suggestion' => $suggestion,
+            ]);
+        }
+
+        $formattingTips = [];
+
+        if ($formatting['bullets'] < 8) {
+            $formattingTips[] = [
+                'detail' => 'Too few bullet points (found ' . $formatting['bullets'] . ' of 8+ recommended).',
+                'suggestion' => 'Break each achievement into its own bullet point so ATS parsers and recruiters can skim it.',
+            ];
+        }
+
+        if ($formatting['verb_hits'] < 5) {
+            $formattingTips[] = [
+                'detail' => 'Few action verbs detected (found ' . $formatting['verb_hits'] . ' of 5+ recommended).',
+                'suggestion' => 'Start bullets with strong action verbs such as "led", "built", "improved", "increased", or "automated".',
+            ];
+        }
+
+        if ($formatting['quantified'] < 3) {
+            $formattingTips[] = [
+                'detail' => 'Few quantified achievements (found ' . $formatting['quantified'] . ' of 3+ recommended).',
+                'suggestion' => 'Add concrete numbers, percentages, or dollar amounts to show measurable impact (e.g. "cut processing time by 20%").',
+            ];
+        }
+
+        foreach ($formattingTips as $tip) {
+            AtsScanDetail::create([
+                'ats_scan_id' => $scan->id,
+                'category' => 'formatting',
+                'detail' => $tip['detail'],
+                'severity' => 'medium',
+                'suggestion' => $tip['suggestion'],
             ]);
         }
 

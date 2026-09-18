@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\AtsScan;
+use App\Services\AtsScanner;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AtsScanController extends Controller
 {
-    public function show(Request $request, AtsScan $scan): Response
+    public function show(Request $request, AtsScanner $scanner, AtsScan $scan): Response
     {
         $profile = $request->user()->profile()->firstOrCreate([]);
 
@@ -35,6 +36,7 @@ class AtsScanController extends Controller
                 'structure_score' => (int) round($scan->structure_score),
                 'formatting_score' => (int) round($scan->formatting_score),
                 'readability_score' => (int) round($scan->readability_score),
+                'weights' => $scanner->weights(),
                 'created_at' => $scan->created_at?->toDateTimeString(),
                 'resume' => [
                     'id' => $scan->resume?->id,

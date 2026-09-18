@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
     public function show(User $user): Response
     {
-        $user->load(['profile.education', 'profile.workExperience', 'profile.skills.skill']);
+        $user->load(['profile.education', 'profile.workExperience', 'profile.userSkills.skill']);
 
         return Inertia::render('Admin/UserProfile', [
             'targetUser' => $user,

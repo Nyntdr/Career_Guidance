@@ -7,6 +7,7 @@ use App\Models\Skill;
 use App\Models\SkillAlias;
 use App\Models\User;
 use App\Services\ResumeParser;
+use App\Services\ResumeTextExtractor;
 use App\Support\Settings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -70,5 +71,27 @@ class ResumeParserTest extends TestCase
         $this->assertSame(1, $first->version);
         $this->assertSame(2, $second->version);
         $this->assertSame(['contact', 'skills'], $second->sections->sortBy('order_index')->pluck('section_type')->values()->all());
+    }
+
+    public function test_clean_strips_non_latin_scripts(): void
+    {
+        $extractor = app(ResumeTextExtractor::class);
+
+        $cleaned = $this->invokeClean($extractor, "Skills: Python, SQL\n\nНавыки: Питон\n\nSkills 추가: 자바스크립트\nРезюме\n");
+
+        $this->assertStringNotContainsString('Навыки', $cleaned);
+        $this->assertStringNotContainsString('Питон', $cleaned);
+        $this->assertStringNotContainsString('자바스크립트', $cleaned);
+        $this->assertStringNotContainsString('Резюме', $cleaned);
+        $this->assertStringContainsString('Skills', $cleaned);
+        $this->assertStringContainsString('Python', $cleaned);
+        $this->assertStringContainsString('SQL', $cleaned);
+    }
+
+    private function invokeClean(ResumeTextExtractor $extractor, string $text): string
+    {
+        $method = new \ReflectionMethod($extractor, 'clean');
+
+        return $method->invoke($extractor, $text);
     }
 }

@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\JobPosting;
 use App\Models\Resume;
 use App\Services\AtsScanner;
+use App\Services\RecommendationEngine;
 use App\Services\ResumeParser;
 use App\Services\ResumeTextExtractor;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -63,7 +64,7 @@ class ResumeController extends Controller
         $fileType = 'text';
         $fileName = null;
 
-        if (!empty($validated['resume_file'])) {
+        if (! empty($validated['resume_file'])) {
             $file = $validated['resume_file'];
             $stored = $file->store('resumes', 'local');
             $fileName = $file->getClientOriginalName();
@@ -81,13 +82,52 @@ class ResumeController extends Controller
             $rawText = $validated['content'];
         }
 
-        if (!$rawText || trim($rawText) === '') {
+        if (! $rawText || trim($rawText) === '') {
             return redirect()->route('resume.index')->with('error', 'The resume text is empty.');
         }
 
-        app(ResumeParser::class)->parseAndStore($profile, $rawText, $fileName, $fileUrl, $fileType);
+        $beforeSkillIds = $profile->userSkills()->pluck('skill_id')->all();
 
-        return redirect()->route('resume.index')->with('success', 'Resume uploaded and parsed successfully.');
+        $resume = app(ResumeParser::class)->parseAndStore($profile, $rawText, $fileName, $fileUrl, $fileType);
+
+        $parsedSkills = $resume->parsed_json['skills'] ?? [];
+
+        $addedSkills = array_diff($profile->userSkills()->pluck('skill_id')->all(), $beforeSkillIds);
+
+        if (empty($parsedSkills)) {
+            return redirect()->route('resume.index')->with(
+                'warning',
+                'Resume uploaded and sections were found, but no skills were detected. '
+                .'Add a dedicated Skills section, or add skills manually from your profile. '
+                .'Next: run an ATS scan against a job, or view your recommendations.'
+            );
+        }
+
+        $names = array_slice(array_column($parsedSkills, 'name'), 0, 5);
+        $summary = count($parsedSkills) > 5
+            ? implode(', ', $names).' and more'
+            : implode(', ', $names);
+
+        $refreshNote = '';
+
+        if (! empty($addedSkills)) {
+            $matched = app(RecommendationEngine::class)->generate($profile)
+                ->pluck('career_role_id')
+                ->count();
+
+            if ($matched > 0) {
+                $refreshNote = ' Your career recommendations were refreshed with the updated skill set.';
+            }
+        }
+
+        return redirect()->route('resume.index')->with(
+            'success',
+            'Resume uploaded and parsed successfully. '.count($parsedSkills)
+            .' skill'.(count($parsedSkills) === 1 ? '' : 's')
+            ." detected and added to your profile ({$summary})."
+            .$refreshNote
+            .' Next: run an ATS scan against a job, or view your recommendations.'
+        );
     }
 
     public function markPrimary(Request $request, Resume $resume): RedirectResponse
@@ -106,11 +146,11 @@ class ResumeController extends Controller
         $profile = $request->user()->profile()->firstOrCreate([]);
         $this->authorizeOwnership($profile, $resume);
 
-        abort_if(!$resume->file_url, 404);
+        abort_if(! $resume->file_url, 404);
 
         $path = Storage::disk('local')->path($resume->file_url);
 
-        abort_if(!file_exists($path), 404);
+        abort_if(! file_exists($path), 404);
 
         $fileName = $resume->parsed_json['source_filename'] ?? 'resume.txt';
 
@@ -142,7 +182,7 @@ class ResumeController extends Controller
 
         $job = JobPosting::findOrFail($validated['job_posting_id']);
 
-        if (!$resume->raw_text) {
+        if (! $resume->raw_text) {
             return redirect()->route('resume.index')->with('error', 'This resume has no parseable text.');
         }
 

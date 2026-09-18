@@ -14,10 +14,15 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    title: {
+        type: String,
+        default: '',
+    },
 });
 
 const emit = defineEmits(['close']);
 const dialog = ref();
+const titleId = ref(`modal-title-${Math.random().toString(36).slice(2, 8)}`);
 const showSlot = ref(props.show);
 
 watch(
@@ -40,12 +45,6 @@ watch(
     { immediate: true },
 );
 
-onMounted(() => {
-    if (props.show) {
-        dialog.value?.showModal();
-    }
-});
-
 const close = () => {
     if (props.closeable) {
         emit('close');
@@ -59,6 +58,13 @@ const closeOnEscape = (e) => {
         if (props.show) {
             close();
         }
+    }
+};
+
+const onCancel = (e) => {
+    e.preventDefault();
+    if (props.closeable && props.show) {
+        close();
     }
 };
 
@@ -92,10 +98,11 @@ const maxWidthClass = computed(() => {
         class="z-50 m-0 min-h-full min-w-full overflow-y-auto bg-transparent backdrop:bg-transparent"
         ref="dialog"
         aria-modal="true"
+        :aria-labelledby="title ? titleId : undefined"
+        @cancel="onCancel"
     >
         <div
             class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:px-0"
-            scroll-region
         >
             <Transition
                 enter-active-class="ease-out duration-300"
@@ -129,7 +136,10 @@ const maxWidthClass = computed(() => {
                     class="mb-6 transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-xl transition-all sm:mx-auto sm:w-full"
                     :class="maxWidthClass"
                 >
-                    <slot v-if="showSlot" />
+                    <template v-if="showSlot">
+                        <h3 v-if="title" :id="titleId" class="px-6 pt-6 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ title }}</h3>
+                        <slot />
+                    </template>
                 </div>
             </Transition>
         </div>

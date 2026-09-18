@@ -8,6 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
+
+const { validate } = useFormValidation();
 
 const props = defineProps({
     categories: Object,
@@ -38,7 +41,15 @@ function openCreate() {
     showCreateModal.value = true;
 }
 
+const categoryRules = {
+    name: [rules.required(), rules.max(255)],
+};
+
 function submitCreate() {
+    if (!validate(createForm, categoryRules)) {
+        return;
+    }
+
     createForm.post(route('admin.skill-categories.store'), {
         onSuccess: () => { showCreateModal.value = false; createForm.reset(); },
     });
@@ -53,6 +64,10 @@ function openEdit(category) {
 }
 
 function submitEdit() {
+    if (!validate(editForm, categoryRules)) {
+        return;
+    }
+
     editForm.put(route('admin.skill-categories.update', editingCategory.value.id), {
         onSuccess: () => { showEditModal.value = false; editingCategory.value = null; },
     });
