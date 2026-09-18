@@ -32,6 +32,7 @@ const form = useForm({
     recommendation_path_bonus: props.settings.recommendation_path_bonus ?? 5,
     llm_rationale: props.settings.llm_rationale ?? 'disabled',
     llm_provider: props.settings.llm_provider ?? 'gemini',
+    llm_prompt_version: props.settings.llm_prompt_version ?? 'concise',
 });
 
 const groups = ['Branding', 'Currency', 'Scoring', 'Limits', 'ML'];
@@ -58,6 +59,7 @@ function submit() {
         top_matches: [rules.integer(), rules.minValue(1), rules.maxValue(50)],
         admin_page_size: [rules.integer(), rules.minValue(5), rules.maxValue(100)],
         recommendation_path_bonus: [rules.numeric(), rules.minValue(0), rules.maxValue(20)],
+        llm_prompt_version: [rules.oneOf(['concise', 'detailed'])],
     });
 
     const percentGroups = {

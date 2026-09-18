@@ -77,16 +77,7 @@ class RecommendationRationalizer
 
         $payload = [
             'model' => (string) $provider['model'],
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => 'You are a career counselor. Reply in plain prose with no lists, headings, or markdown.',
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $this->prompt($profile, $role, $overlap),
-                ],
-            ],
+            'messages' => $this->messages($profile, $role, $overlap),
             'temperature' => 0.4,
             'max_tokens' => (int) config('recommendations.max_tokens', 1024),
         ];
@@ -133,6 +124,43 @@ class RecommendationRationalizer
     }
 
     /**
+     * Build the system + user messages for the active prompt version.
+     * Admins pick between the concise and detailed variants in
+     * Settings -> ML -> "AI rationale prompt".
+     *
+     * @param  array{score:int, matched:array<int,string>, missing:array<int,string>}  $overlap
+     * @return array<int, array{role:string, content:string}>
+     */
+    protected function messages(Profile $profile, CareerRole $role, array $overlap): array
+    {
+        $detailed = (string) Settings::get('llm_prompt_version', 'concise') === 'detailed';
+
+        if ($detailed) {
+            return [
+                [
+                    'role' => 'system',
+                    'content' => 'You are a career counselor and labor-market analyst. Write clear, plain prose in 4-6 sentences — no lists, headings, bullets, or markdown. Be specific and personalized to the candidate\'s actual profile. Ground every claim only in the facts provided; never invent skills, salary figures, or industries not given.',
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $this->promptDetailed($profile, $role, $overlap),
+                ],
+            ];
+        }
+
+        return [
+            [
+                'role' => 'system',
+                'content' => 'You are a career counselor. Reply in plain prose with no lists, headings, or markdown.',
+            ],
+            [
+                'role' => 'user',
+                'content' => $this->prompt($profile, $role, $overlap),
+            ],
+        ];
+    }
+
+    /**
      * @param  array{score:int, matched:array<int,string>, missing:array<int,string>}  $overlap
      */
     protected function prompt(Profile $profile, CareerRole $role, array $overlap): string
@@ -150,6 +178,77 @@ class RecommendationRationalizer
             'Candidate target roles: '.($profile->target_roles ? implode(', ', $profile->target_roles) : 'Not specified'),
             '',
             'In 2-3 sentences, tell the candidate why this role is a realistic fit and the single most useful next step.',
+        ]);
+    }
+
+    /**
+     * Detailed prompt: richer candidate + role context (salary, seniority,
+     * market outlook, required vs preferred skills, education, experience).
+     *
+     * @param  array{score:int, matched:array<int,string>, missing:array<int,string>}  $overlap
+     */
+    protected function promptDetailed(Profile $profile, CareerRole $role, array $overlap): string
+    {
+        $byId = $role->requiredSkills->keyBy('id');
+
+        $matched = collect($overlap['matched'])
+            ->mapWithKeys(fn ($id) => [$id => $byId->get($id)])
+            ->filter();
+
+        $missing = collect($overlap['missing'])
+            ->mapWithKeys(fn ($id) => [$id => $byId->get($id)])
+            ->filter();
+
+        $roleRequired = $this->listify(
+            $byId->filter(fn ($skill) => $skill->pivot?->importance === 'required')->pluck('name')
+        ) ?: 'None listed';
+
+        $rolePreferred = $this->listify(
+            $byId->filter(fn ($skill) => $skill->pivot?->importance !== 'required')->pluck('name')
+        ) ?: 'None listed';
+
+        $salary = $role->avg_salary_range;
+        $salaryText = is_array($salary) && isset($salary['min'], $salary['max'])
+            ? 'NPR '.number_format((int) $salary['min']).' – '.number_format((int) $salary['max']).' per year'
+            : null;
+
+        $education = $profile->education()->orderByDesc('end_date')->first();
+        $educationText = null;
+
+        if ($education) {
+            $pieces = array_filter([$education->field_of_study, $education->degree, $education->institution]);
+            $educationText = $pieces === [] ? null : implode(', ', $pieces);
+        }
+
+        return implode("\n", [
+            '--- The role ---',
+            'Role to evaluate: '.$role->title,
+            'What this role is: '.($role->description ?: 'Not provided'),
+            'Typical seniority level: '.($role->typical_seniority ?: 'Not stated'),
+            'Salary range (NPR/year): '.($salaryText ?? 'Not stated'),
+            'Market outlook: '.($role->growth_outlook ?: 'Not stated'),
+            'Required skills: '.$roleRequired,
+            'Preferred (nice-to-have) skills: '.$rolePreferred,
+            '',
+            '--- Candidate profile ---',
+            'Headline: '.($profile->headline ?: 'Not provided'),
+            'Current title: '.($profile->current_title ?: 'Not provided'),
+            'Years of experience: '.($profile->years_experience ?? 'Not stated'),
+            'Location: '.($profile->location ?: 'Not stated'),
+            'Target roles: '.($profile->target_roles ? implode(', ', $profile->target_roles) : 'Not specified'),
+            'Target industries: '.($profile->target_industries ? implode(', ', $profile->target_industries) : 'Not specified'),
+            'Education background: '.($educationText ?? 'Not provided'),
+            'Career goals/interests: '.($profile->bio ?: 'Not provided'),
+            'Skills the candidate already has (of those this role needs): '.($this->listify($matched->pluck('name')) ?: 'None'),
+            'Skills the candidate is still missing for this role: '.($this->listify($missing->pluck('name')) ?: 'None'),
+            '',
+            '--- Task ---',
+            'Write a concise career recommendation (4-6 plain-prose sentences) covering:',
+            "1. Why this role is a realistic fit given the candidate's skills, background, and goals.",
+            '2. What the candidate already brings to the table — lead with their strongest matches.',
+            '3. The most important gaps and a realistic way to close them (name concrete paths: project types, certifications, or portfolio work).',
+            '4. The single most useful next step, specific enough to act on this week.',
+            'Use only the facts above; if something is missing, skip that angle — do not invent it.',
         ]);
     }
 
