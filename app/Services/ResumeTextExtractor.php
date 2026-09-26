@@ -21,16 +21,11 @@ class ResumeTextExtractor
 {
     public const SUPPORTED_EXTENSIONS = ['txt', 'pdf', 'docx'];
 
-    public function supports(UploadedFile $file): bool
-    {
-        return in_array(strtolower($file->getClientOriginalExtension()), self::SUPPORTED_EXTENSIONS, true);
-    }
-
     public function typeFor(UploadedFile $file): string
     {
         $extension = strtolower($file->getClientOriginalExtension());
 
-        return in_array($extension, ['pdf', 'docx', 'txt'], true) ? $extension : 'txt';
+        return in_array($extension, self::SUPPORTED_EXTENSIONS, true) ? $extension : 'txt';
     }
 
     public function extract(UploadedFile $file): string
@@ -116,7 +111,13 @@ class ResumeTextExtractor
         }
     }
 
-    private function clean(string $text): string
+    /**
+     * Normalise extracted text before parsing: strip control characters,
+     * collapse whitespace, and drop non-Latin scripts so they cannot trigger
+     * skill-extraction false positives. Applied to every ingestion path,
+     * including pasted text.
+     */
+    public function clean(string $text): string
     {
         $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/u', '', $text) ?? '';
         $text = preg_replace('/[ \t]+/', ' ', $text) ?? '';
