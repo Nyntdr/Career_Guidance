@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
+use App\Models\Skill;
 use App\Models\UserSkill;
+use App\Services\RoleMatchScorer;
 use App\Support\Settings;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -43,6 +45,8 @@ class JobsController extends Controller
     private function scoreJobs($postings, $userSkillMap): array
     {
         $jobs = [];
+        $scorer = app(RoleMatchScorer::class);
+        $skillsById = Skill::with('aliases')->get()->keyBy('id');
 
         foreach ($postings as $posting) {
             $required = $posting->requiredSkills;
@@ -50,44 +54,20 @@ class JobsController extends Controller
                 continue;
             }
 
-            $hard = $required->filter(fn ($s) => $s->importance === 'required');
-            $soft = $required->filter(fn ($s) => $s->importance === 'preferred');
-
-            $hardMatched = 0;
-            $hardTotal = max($hard->count(), 1);
-            $softMatched = 0;
-            $softTotal = max($soft->count(), 1);
-            $matched = [];
-            $missing = [];
-
-            foreach ($hard as $req) {
-                $skill = $req->skill;
-                $user = $userSkillMap->get($req->skill_id);
-
-                if ($user && $user->proficiency_level >= $req->min_proficiency) {
-                    $hardMatched++;
-                    $matched[] = $skill->name;
-                } else {
-                    $missing[] = $skill->name;
-                }
-            }
-
-            foreach ($soft as $req) {
-                $skill = $req->skill;
-                $user = $userSkillMap->get($req->skill_id);
-
-                if ($user) {
-                    $softMatched++;
-                    $matched[] = $skill->name;
-                }
-            }
-
-            $hardRate = $hardMatched / $hardTotal;
-            $softRate = $softMatched / $softTotal;
-
-            $score = (int) round($hardRate * 70 + $softRate * 30);
+            $result = $scorer->score($userSkillMap, $required);
+            $score = $result['score'];
 
             if ($score > 0) {
+                $matched = [];
+                $missing = [];
+
+                foreach ($result['matched'] as $skillId) {
+                    $matched[] = $skillsById[$skillId]->name ?? $skillId;
+                }
+                foreach ($result['missing'] as $skillId) {
+                    $missing[] = $skillsById[$skillId]->name ?? $skillId;
+                }
+
                 $jobs[] = [
                     'id' => $posting->id,
                     'title' => $posting->title,
@@ -97,8 +77,8 @@ class JobsController extends Controller
                     'posted_at' => $posting->posted_at?->toDateString(),
                     'score' => $score,
                     'compatibility' => $score,
-                    'matched_skills' => array_values(array_unique($matched)),
-                    'missing_skills' => array_values(array_unique($missing)),
+                    'matched_skills' => $matched,
+                    'missing_skills' => $missing,
                 ];
             }
         }
