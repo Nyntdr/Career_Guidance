@@ -12,13 +12,6 @@ class Skill extends Model
 
     protected $guarded = [];
 
-    protected function casts(): array
-    {
-        return [
-            'embedding' => 'json',
-        ];
-    }
-
     public function category()
     {
         return $this->belongsTo(SkillCategory::class, 'category_id');
