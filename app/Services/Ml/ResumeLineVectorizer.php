@@ -5,11 +5,6 @@ namespace App\Services\Ml;
 class ResumeLineVectorizer
 {
     /**
-     * Fixed trailing features appended after the vocabulary bag.
-     */
-    public const SCALAR_FEATURES = 8;
-
-    /**
      * Strong heading-indicator words always kept in the vocabulary so a
      * freshly trained model never loses them, even on a small corpus.
      */
@@ -38,16 +33,6 @@ class ResumeLineVectorizer
         }
 
         $this->vocab = array_values(array_unique($vocab));
-    }
-
-    public function vocab(): array
-    {
-        return $this->vocab;
-    }
-
-    public function vectorSize(): int
-    {
-        return count($this->vocab) + self::SCALAR_FEATURES;
     }
 
     /**
@@ -100,9 +85,18 @@ class ResumeLineVectorizer
      * Build a stable vocabulary from a corpus of lines: single words plus
      * frequent words pairs/triples, which capture multi-word headings such
      * as "work experience" and "areas of expertise".
+     *
+     * BASE_VOCAB is always retained, so the remaining budget is spent on the
+     * most frequent learned terms. Ranking must be by frequency: sorting the
+     * terms alphabetically and then truncating keeps whichever terms happen to
+     * sort first, which on a large corpus silently drops every useful term
+     * after "c".
      */
-    public static function buildVocabulary(iterable $lines, int $cap = 220): array
+    public static function buildVocabulary(iterable $lines, ?int $cap = null): array
     {
+        $cap ??= (int) config('ml.vocab_cap', 220);
+        $minCount = (int) config('ml.vocab_min_count', 2);
+
         $counts = [];
 
         foreach ($lines as $line) {
@@ -123,12 +117,25 @@ class ResumeLineVectorizer
             }
         }
 
-        $frequent = array_keys(array_filter($counts, fn ($c) => $c >= 2));
-        sort($frequent);
+        // Most frequent first; ties broken alphabetically so the vocabulary is
+        // reproducible across runs.
+        $counts = array_filter($counts, fn ($c) => $c >= $minCount);
+        uksort($counts, function ($a, $b) use ($counts) {
+            return $counts[$b] <=> $counts[$a] ?: strcmp((string) $a, (string) $b);
+        });
 
-        $vocab = array_values(array_unique(array_merge(self::BASE_VOCAB, $frequent)));
+        $base = array_values(array_unique(self::BASE_VOCAB));
+        $budget = max($cap - count($base), 0);
 
-        return array_slice($vocab, 0, $cap);
+        $learned = [];
+        foreach (array_keys($counts) as $term) {
+            if (count($learned) >= $budget) {
+                break;
+            }
+            $learned[] = $term;
+        }
+
+        return array_values(array_unique(array_merge($base, $learned)));
     }
 
     /**
