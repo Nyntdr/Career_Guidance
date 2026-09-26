@@ -1,6 +1,9 @@
 # Resume Parsing — ML Tuning Phase (real-world corpus)
 
-> Phase status: **completed** upload support, fixture corpus, test-env fix, and ML tuning from real resumes; full suite green. **Pending:** corpus v3 enrichment + retrain, and (optional) admin ML settings UI.
+> Phase status: **completed** upload support, fixture corpus, test-env fix, ML tuning from
+> real resumes, seeded/reproducible training, and `--from-fixtures` corpus mining; full
+> suite green (94 tests, 391 assertions). **Pending:** corpus v3 enrichment, an
+> out-of-distribution eval set, and the (optional) admin ML settings UI.
 
 ## Context
 
@@ -86,17 +89,32 @@ Result: full suite green (38 tests → now 40).
 
 ## Next steps
 
-1. **Corpus v3 enrichment + retrain (core).** Mine ~30–60 confirmed examples from the 246 fixtures into `database/ml/section_lines.json`: fuzzy heading positives (`AREAS OF EXPERTISE`, `TECHNICAL SKILL-SET:`, `Work History`, …) and short title-case *content* negatives (`Customer Service`, `Critical Thinking`, `Methodologies`, `Accounting`, …). Then `php artisan ml:train` and re-run `ml:diagnose` to watch the 93 differ `Δ` and spot-check changed files.
+1. **Corpus v3 enrichment (core, still open).** The shipped 149-line corpus is too small for
+   13-way heading classification and measures **17.1%** holdout accuracy. Fixture mining
+   (`--from-fixtures`) raises this to **32–36%**, but the weak labels it produces are
+   *section content*, not heading candidates, and models beyond ~150 samples per label
+   exhaust the 256 MB ceiling (see `docs/report-algorithms.md` §1.5). The open problem is
+   therefore not "more lines" but "**true heading candidates**" — mine heading lines
+   specifically (fuzzy heading positives such as `AREAS OF EXPERTISE`,
+   `TECHNICAL SKILL-SET:`, `Work History`, and short title-case *content* negatives such as
+   `Customer Service`, `Critical Thinking`, `Methodologies`) rather than section bodies.
 2. **De-duplicate the heading-shape logic.** `ml:diagnose`'s global `isHeadingLikeStandalone()` should call the segmenter's gate so the tool can't drift from production; then keep or delete the command (it's phase tooling).
-3. **Optional — admin ML settings UI.** The `ML` settings group (`ml_min_confidence`, `ml_cluster_purity`) is read at parse time but not exposed on the Admin → Settings page or in `UpdateSettingsRequest` rules; wiring it lets admins tune without config deploys.
-4. **Optional — eval script.** Track a miscategorization rate over the fixtures (`ml:diagnose --json`) to spot RF regressions on retrains.
+3. **Optional — admin ML settings UI.** The `ML` settings group (`ml_min_confidence`, `ml_cluster_purity`) is read at parse time but not exposed on the Admin → Settings page or in `UpdateSettingsRequest` rules; wiring it lets admins tune without config deploys. Same for the new drift reporting in `ml:status` (`ml_drift_window`, `ml_min_cluster_size`).
+4. **Optional — eval script.** Track a miscategorization rate over the fixtures (`ml:diagnose --json`) to spot RF regressions on retrains. This matters more now that training is deterministic: the model changes only when the corpus or seed changes, so regressions will be reproducible rather than intermittent.
 5. **Deploy/watch-outs.** Container `composer.json`/`composer.lock` are baked images, not bind-mounted — to change deps: edit on host → `docker compose cp` → `composer install` (preserves dev deps). `phpunit.xml` is now mounted. Tests use `RefreshDatabase` against the container MySQL, so the dev DB schema is recreated per test run.
 
 ## How to run
 
 ```bash
-# train models from database/ml/section_lines.json
+# train models from database/ml/section_lines.json (seeded, reproducible)
 docker compose exec -T app php artisan ml:train
+
+# mine the 246 test fixtures for weak labels, then train (capped at 150/label — the
+# largest cap that still loads under the app's 256 MB limit)
+docker compose exec -T app php artisan ml:train --from-fixtures
+
+# inspect vocabulary size, accuracy, drift, and model health
+docker compose exec -T app php artisan ml:status
 
 # compare dictionary vs ML across the 246 fixtures
 docker compose exec -T app php artisan ml:diagnose

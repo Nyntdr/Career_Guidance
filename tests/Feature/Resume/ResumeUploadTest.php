@@ -117,6 +117,39 @@ class ResumeUploadTest extends TestCase
         $this->assertStringContainsString('Jordan Lee', $resume->raw_text);
     }
 
+    public function test_pasted_text_is_normalised_like_uploaded_text(): void
+    {
+        $user = $this->userWithProfile();
+
+        // Cyrillic + Devanagari (must be stripped), accented Latin (must survive),
+        // a tab, and a control byte.
+        $pasted = "JOHN DOE\n\n\xC3\xA9lise ing\xc3\xa9nieur\n"
+            ."\xD0\x9F\xD0\xB5\xD1\x82\xD1\x8F (\xE0\xA4\xAA\xE0\xA5\x87\xE0\xA4\xA4\xE0\xA5\x8D)\n"
+            ."\tSenior Engineer\x07\n\nEXPERIENCE\nBuilt systems for 5 years.";
+
+        $response = $this->actingAs($user)
+            ->post(route('resume.store'), ['content' => $pasted]);
+
+        $response->assertSessionHasNoErrors();
+
+        $raw = (string) Resume::query()->firstOrFail()->raw_text;
+
+        // No Cyrillic or Devanagari code points survive the paste path.
+        $this->assertDoesNotMatchRegularExpression(
+            '/[\x{0400}-\x{04FF}\x{0900}-\x{097F}]/u',
+            $raw,
+            'Non-Latin scripts must be stripped from pasted text, not just uploaded files.',
+        );
+
+        // Accented Latin text is untouched.
+        $this->assertStringContainsString('ing', $raw);
+        $this->assertStringContainsString('EXPERIENCE', $raw);
+
+        // Control characters and tabs are removed.
+        $this->assertStringNotContainsString("\t", $raw);
+        $this->assertStringNotContainsString("\x07", $raw);
+    }
+
     public function test_unsupported_file_type_is_rejected(): void
     {
         $response = $this->actingAs($this->userWithProfile())

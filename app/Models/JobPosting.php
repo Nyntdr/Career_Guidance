@@ -15,8 +15,6 @@ class JobPosting extends Model
     protected function casts(): array
     {
         return [
-            'parsed_requirements' => 'json',
-            'embedding' => 'json',
             'posted_at' => 'datetime',
         ];
     }

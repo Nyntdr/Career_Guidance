@@ -13,9 +13,16 @@ class SkillSimilarity
      * percentage. When no reliable signal exists the result is 0 — the same
      * behavior as an ML model whose embedding is unavailable.
      *
-     * @param Collection $userSkillMap
+     * The user's proficiency only contributes when it meets the role's minimum
+     * for that skill, mirroring RoleMatchScorer so the two tiers agree on what
+     * "has this skill" means.
+     *
+     * @param  Collection  $userSkillMap
+     * @param  array{df: array<string, int>, count: int}|null  $corpus  Pre-built
+     *                                                                  corpus statistics from corpus(). Pass this when scoring many roles
+     *                                                                  against the same corpus to avoid recomputing document frequencies.
      */
-    public function score($userSkillMap, CareerRole $role, ?Collection $roleDocs = null): float
+    public function score($userSkillMap, CareerRole $role, ?Collection $roleDocs = null, ?array $corpus = null): float
     {
         $required = $role->requiredSkills;
 
@@ -23,9 +30,9 @@ class SkillSimilarity
             return 0.0;
         }
 
-        $documents = $roleDocs ?? collect([$role]);
-        $df = $this->documentFrequencies($documents);
-        $documentCount = max($documents->count(), 1);
+        $corpus ??= $this->corpus($roleDocs ?? collect([$role]));
+        $df = $corpus['df'];
+        $documentCount = $corpus['count'];
 
         $roleVector = [];
         $userVector = [];
@@ -35,12 +42,14 @@ class SkillSimilarity
             $occurrences = max($df[$term] ?? 1, 1);
             $idf = 1 + log(max($documentCount, 1) / $occurrences);
 
+            $minProficiency = (int) $skill->pivot->min_proficiency;
             $importance = $skill->pivot->importance === 'essential' ? 2 : 1;
-            $roleTermWeight = $importance * (int) $skill->pivot->min_proficiency;
+            $roleTermWeight = $importance * $minProficiency;
             $roleVector[$term] = max($roleVector[$term] ?? 0.0, $roleTermWeight * $idf);
 
             $user = $userSkillMap->get($skill->id);
-            $userTermWeight = $user ? (int) $user->proficiency_level : 0;
+            $userProficiency = $user ? (int) $user->proficiency_level : 0;
+            $userTermWeight = $userProficiency >= $minProficiency ? $userProficiency : 0;
             $userVector[$term] = max($userVector[$term] ?? 0.0, $userTermWeight * $idf);
         }
 
@@ -48,10 +57,30 @@ class SkillSimilarity
     }
 
     /**
+     * Document frequencies and corpus size for a set of roles, computed once
+     * and reusable across every role scored against that corpus.
+     *
+     * @return array{df: array<string, int>, count: int}
+     */
+    public function corpus(iterable $roles): array
+    {
+        $df = $this->documentFrequencies($roles);
+        $count = 0;
+
+        foreach ($roles as $role) {
+            if ($role instanceof CareerRole) {
+                $count++;
+            }
+        }
+
+        return ['df' => $df, 'count' => max($count, 1)];
+    }
+
+    /**
      * Cosine similarity between two term-weight vectors.
      *
-     * @param array<string, float> $a
-     * @param array<string, float> $b
+     * @param  array<string, float>  $a
+     * @param  array<string, float>  $b
      */
     public function cosine(array $a, array $b): float
     {

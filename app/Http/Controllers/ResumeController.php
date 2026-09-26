@@ -52,7 +52,12 @@ class ResumeController extends Controller
         $profile = $request->user()->profile()->firstOrCreate([]);
 
         $validated = $request->validate([
-            'resume_file' => ['nullable', 'file', 'mimes:txt,pdf,docx', 'max:5120'],
+            'resume_file' => [
+                'nullable',
+                'file',
+                'mimes:'.implode(',', ResumeTextExtractor::SUPPORTED_EXTENSIONS),
+                'max:5120',
+            ],
             'content' => ['nullable', 'string', 'max:50000'],
         ]);
 
@@ -79,7 +84,9 @@ class ResumeController extends Controller
                 return redirect()->route('resume.index')->with('error', $e->getMessage());
             }
         } else {
-            $rawText = $validated['content'];
+            // Pasted text bypasses the extractor, so normalise it here to keep
+            // the non-Latin-script guard and whitespace collapsing in effect.
+            $rawText = app(ResumeTextExtractor::class)->clean($validated['content']);
         }
 
         if (! $rawText || trim($rawText) === '') {

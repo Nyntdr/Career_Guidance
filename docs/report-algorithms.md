@@ -11,9 +11,12 @@ configured.
 
 > **Accuracy note.** The only models in the system are the resume-section Random Forest
 > and K-Means. The recommendation, matching, ATS, and gap subsystems are **not**
-> model-driven — they are deterministic, explainable math. Documented classifier holdout
-> accuracy is ~20%, which is acceptable only because dictionary/structural heuristics
-> carry resume parsing.
+> model-driven — they are deterministic, explainable math. The shipped model measures
+> **17.1%** holdout accuracy (seeded, reproducible — see §1.3), and the classifier is a
+> genuine weak signal: 13-way heading classification from a 149-line corpus is close to
+> guessing, and ~20–36% is the realistic band. This is acceptable only because
+> dictionary/structural heuristics carry resume parsing, and because the ML path is
+> additive — it can only refine a dictionary segmentation, never invent a resume.
 
 ---
 
@@ -32,7 +35,10 @@ configured.
 
 Training is triggered manually: `php artisan ml:train`. The shipped corpus lives in
 `database/ml/section_lines.json`; the `--include-resumes` flag additionally harvests
-*weak labels* (auto-parsed resume sections) for incremental retraining.
+*weak labels* (auto-parsed resume sections) for incremental retraining, and
+`--from-fixtures` mines the 246 test fixtures (**43,602 nonblank lines**) with the same
+weak-label scheme, capped at `--max-per-class` (default **150**) samples per label to
+bound memory and class imbalance.
 
 **Prediction.** For each resume line, the forest returns a per-class probability
 distribution via `proba()`; the argmax label is assigned and its probability is kept as
@@ -73,8 +79,14 @@ v(line) = [ tf(w₁), …, tf(w_V), s₁, …, s₈ ]
 ```
 
 - **Vocabulary `V`**: a fixed base vocabulary of section-heading indicators (e.g.
-  *experience, skills, education*, 70+ terms) merged with frequent **unigrams,
-  bigrams, and trigrams** observed ≥ 2 times in the corpus, capped at **220 terms**.
+  *experience, skills, education*, 79 terms) merged with **unigrams, bigrams, and
+  trigrams** observed ≥ `vocab_min_count` (default 2) times in the corpus, ranked
+  **most-frequent-first** and capped at `vocab_cap` (default 220) terms. Ranking by
+  frequency rather than alphabetically is what makes the cap meaningful: on the shipped
+  corpus it raises mean holdout accuracy from **18.1% to 23.8%** (averaged over
+  200/500/800-tree forests), because alphabetical truncation was effectively discarding
+  the corpus's most predictive terms. On the 149-line corpus the cap is not binding
+  (only 144 terms qualify), so the gain comes from ordering, not size.
 - **Term frequency**: raw counts normalized to a 0–1 scale as `min(1, count/3)`;
   multi-word phrase features are matched against the raw lowercased line.
 - **8 scalar features**: normalized word count (`min(1, words/8)`), title-case ratio,
@@ -84,6 +96,49 @@ v(line) = [ tf(w₁), …, tf(w_V), s₁, …, s₈ ]
 These vectors feed both the Random Forest and the K-Means clusterer, so the two models
 an act on identical geometry.
 
+### 1.4 Reproducibility (seeded training)
+
+Rubix's `RandomForest` draws its bootstrap samples via `array_rand()`/`rand()`, and
+`KMeans` seeds its centroids through k-means++, which also uses the global PHP RNG. Rubix
+2.5 exposes no injectable seed. Left unseeded, **retraining the identical corpus produced
+a different model every run**, with holdout accuracy swinging **17.1%–25.7%** and the
+artifact checksums changing on each build.
+
+That matters in production because `ml:train` is scheduled: the model would silently
+change underneath a running app, and "17.1%" or "25.7%" would be an accident of run order
+rather than a property of the data. `ml:train` now calls `mt_srand()`/`srand()` with
+`config('ml.train_seed')` (default `20260926`) before fitting, which makes a given corpus
+and configuration reproduce **byte-for-byte** — verified over three consecutive builds
+(identical classifier and clusterer checksums, identical reported accuracy). Set
+`ml.train_seed` to `null` to opt back into unseeded training.
+
+Note that seeding fixes *reproducibility*, not *quality*: it makes the 17.1% stable and
+honest rather than a variable 17–26%. Raising the corpus size is the only lever that moved
+accuracy materially — harvesting the fixtures lifts it into the **32–36%** band, but only
+at sample counts small enough to stay loadable (see §1.5).
+
+### 1.5 Model size ceiling (why the corpus is capped)
+
+The forest is loaded inside a normal web/CLI request sharing the application's **256 MB**
+memory ceiling, and Rubix's `Native` serializer materialises the whole model on load. This
+creates a hard ceiling on training-set size, measured on the fixture corpus:
+
+| `--max-per-class` | samples | holdout accuracy | artifact | load under 256 MB |
+|---|---|---|---|---|
+| 60 | ~510 | 31.5% | 552 KB | ok |
+| 100 | ~1,000 | 21.8% | 848 KB | ok |
+| 150 | 1,360 | 31.9% | 1,270 KB | ok |
+| 300 | 2,560 | 35.7% | 2,366 KB | **fails in-app** (ok in isolation) |
+| 600 | 4,891 | 37.2% | 4,428 KB | **fails** — memory exhausted |
+
+The `--max-per-class` default of **150** is the largest value measured to stay loadable
+in the full application; passing anything higher trades a better holdout score for a model
+that fatal-errors on every resume parse. This is a latent trap rather than a hypothetical:
+the scheduled `ml:train --include-resumes` job takes this default, and a typical resume
+contributes 8–12 lines to `experience`/`skills`, so a database holding ~60–80 parsed
+resumes is enough to cross the ceiling on its own. Any corpus change must re-check both
+`php artisan ml:status` and the test suite, not just the reported accuracy.
+
 ---
 
 ## Section 2 — Career recommendation engine
@@ -91,15 +146,32 @@ an act on identical geometry.
 ### 2.1 Weighted skill-overlap score
 
 For each career role, the user's declared skills are matched against the role's required
-skills. Essential skills carry **70%** weight, preferred **30%**; a skill counts as
-matched only when the user's proficiency meets the role's minimum for it.
+skills. Essential skills carry **70%** weight, preferred **30%**. The two tiers use
+different match tests: an **essential** skill counts as matched only when the user's
+proficiency meets the role's minimum for it, whereas a **preferred** skill counts as
+matched as soon as the user holds it at any level.
 
 ```
 overlap(role) = (E_matched / E_total)·70  +  (P_matched / P_total)·30
 ```
 
-where `E` = essential and `P` = preferred sets (each denominator floored at 1). This is
-the same scorer used for **job-post matching** (`RoleMatchScorer`).
+where `E` = essential and `P` = preferred sets (each denominator floored at 1). The
+`missing` list reports unmet **essential** requirements only — an unmet preferred skill
+dilutes the score but is not surfaced as a gap.
+
+`RoleMatchScorer` is the single implementation behind every deterministic skill-match
+score, so the subsystems cannot drift apart:
+
+| Caller | "Satisfied" means | Aggregation |
+| --- | --- | --- |
+| `RoleMatchScorer::overlap()` — role matching, cold-start target pick | user holds the skill (proficiency-gated when essential) | shared |
+| `RoleMatchScorer::score()` — job-post matching | user holds the skill (proficiency-gated when essential) | shared |
+| `AtsScanner::keywordScore()` — ATS keyword score | the term or an alias appears in the resume text | shared |
+| `SkillGapAnalyzer::defaultTargetRole()` — cold-start target pick | via `overlap()` | shared |
+
+The weights live in `config/scoring.php` (`essential_weight`, `preferred_weight`). They
+are deliberately config-only rather than an admin setting: changing them shifts every
+stored and displayed score, and there is no backfill to re-score historical data.
 
 ### 2.2 TF-IDF weighted cosine similarity
 
@@ -272,7 +344,7 @@ when models are absent:
 | Random Forest (500 trees, ratio 0.3) | Supervised ML | Resume line → 13 section labels | `app/Services/Ml/SectionClassifier.php`, `Console/Commands/MlTrain.php` |
 | K-Means (k=6) + majority-vote purity | Unsupervised ML | Heading smoothing / segmentation | `app/Services/Ml/SectionClusterer.php` |
 | Bag-of-words n-grams + 8 scalars | Feature engineering | Line vectorization for both models | `app/Services/Ml/ResumeLineVectorizer.php` |
-| Weighted skill overlap (70/30) | Deterministic scoring | Role & job matching | `app/Services/RoleMatchScorer.php` |
+| Weighted skill overlap (70/30) | Deterministic scoring | Role, job & ATS matching | `app/Services/RoleMatchScorer.php`, `config/scoring.php` |
 | TF-IDF weighted cosine similarity | Lexical similarity | Semantic role–user similarity | `app/Services/Ml/SkillSimilarity.php` |
 | BFS (≤2 hops) + hop-decayed bonus | Graph traversal | Career-path adjacency boost | `app/Services/RecommendationEngine.php` |
 | Flesch–Kincaid grade level | Text metric | Resume readability | `app/Services/Readability.php` |

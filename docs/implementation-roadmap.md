@@ -32,7 +32,7 @@ Score `job_postings` against the candidate's `user_skills`.
 | `job_required_skills` (job_posting_id, skill_id, importance, min_proficiency) |
 | `user_skills` (profile_id, skill_id, proficiency_level) |
 
-- Reuses the **existing essential/preferred weighting** (essential 70% / preferred 30%, proficiency gate) that historically lived in `DashboardController::computeMatches` and is now extracted into `app/Services/RoleMatchScorer` (phase H). Job importance values are `required` (→ 70% weight) and `preferred` (→ 30% weight).
+- Reuses the **existing essential/preferred weighting** (essential 70% / preferred 30%) that historically lived in `DashboardController::computeMatches` and is now extracted into `app/Services/RoleMatchScorer` (phase H) and shared with job matching, the ATS keyword score, and cold-start target selection. The weights are config-only, in `config/scoring.php` — deliberately not an admin setting, since changing them shifts every stored score and there is no re-scoring backfill. Job importance values are `required` (→ essential tier, 70% weight) and `preferred` (→ 30% weight).
 - **Shipped:** `JobsController` (+ `scoreJobs()`), `Pages/Jobs/Index.vue` (stats row, match % badges, matched vs. missing skill chips), route `jobs.index`, navbar **Jobs** link, `JobPostingSeeder` (12 postings across the seeded domains).
 - **No dependencies.**
 
@@ -85,7 +85,7 @@ Pick a `job_posting` + the user's primary resume and compute + persist a scan.
 - **Deliverable:** scan service + results page with breakdown and suggestions.
 - **No dependencies.**
 - **✅ COMPLETED:**
-  - **Shipped:** `app/Services/Readability.php` (pure Flesch-Kincaid grade → 0–100 rescaled score); `app/Services/AtsScanner.php` (`scan()` persists `ats_scans` + `ats_matched_keywords` + `ats_scan_details`; keyword score = required 70% / preferred 30% of JD-skill overlap with alias-aware term frequency; structure = expected sections present; formatting = bullets/action-verbs/quantified points; readability = Flesch-Kincaid; overall = 50/15/15/20 weighted). `AtsScanController@show` (`GET /ats-scans/{scan}`, ownership check); `Pages/AtsScans/Show.vue` (overall gauge, 4 component bars, per-keyword Found/Missing + frequencies, required vs preferred skill chips, severity-coded suggestions).
+  - **Shipped:** `app/Services/Readability.php` (pure Flesch-Kincaid grade → 0–100 rescaled score); `app/Services/AtsScanner.php` (`scan()` persists `ats_scans` + `ats_matched_keywords` + `ats_scan_details`; keyword score = shared essential/preferred 70/30 weighting (`RoleMatchScorer::aggregate`) over JD-skill overlap with alias-aware term frequency; structure = expected sections present; formatting = bullets/action-verbs/quantified points; readability = Flesch-Kincaid; overall = 50/15/15/20 weighted). `AtsScanController@show` (`GET /ats-scans/{scan}`, ownership check); `Pages/AtsScans/Show.vue` (overall gauge, 4 component bars, per-keyword Found/Missing + frequencies, required vs preferred skill chips, severity-coded suggestions).
   - **Notes:** verified end-to-end in Docker — sample Data Scientist resume parsed into 5 sections / 8 skills, scan vs Senior Data Scientist = overall 73 (keyword 68, structure 100, formatting 63, readability 73) with correct missing-keyword details (Statistics, Deep Learning).
 
 ### F. Career pathways — ✅ COMPLETED

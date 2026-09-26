@@ -6,7 +6,6 @@ use App\Models\CareerRole;
 use App\Models\GapAssessment;
 use App\Models\GapAssessmentItem;
 use App\Models\GapRecommendation;
-use App\Models\JobPosting;
 use App\Models\LearningResource;
 use App\Models\Profile;
 use App\Models\ProgressTracking;
@@ -17,32 +16,20 @@ class SkillGapAnalyzer
         Profile $profile,
         $userSkillMap,
         ?CareerRole $targetRole = null,
-        ?JobPosting $targetJobPosting = null,
     ): ?GapAssessment {
-        if ($targetJobPosting) {
-            $requirements = $targetJobPosting->requiredSkills()
-                ->with('skill')
-                ->get()
-                ->map(fn ($req) => [
-                    'skill_id' => $req->skill_id,
-                    'skill_name' => $req->skill?->name,
-                    'required_level' => $req->min_proficiency,
-                    'importance' => $req->importance === 'required' ? 'essential' : 'preferred',
-                ]);
-        } else {
-            $targetRole = $targetRole ?? $this->defaultTargetRole($profile, $userSkillMap);
-            if (! $targetRole) {
-                return null;
-            }
-            $requirements = $targetRole->requiredSkills()
-                ->get()
-                ->map(fn ($skill) => [
-                    'skill_id' => $skill->id,
-                    'skill_name' => $skill->name,
-                    'required_level' => $skill->pivot->min_proficiency,
-                    'importance' => $skill->pivot->importance,
-                ]);
+        $targetRole = $targetRole ?? $this->defaultTargetRole($profile, $userSkillMap);
+        if (! $targetRole) {
+            return null;
         }
+
+        $requirements = $targetRole->requiredSkills()
+            ->get()
+            ->map(fn ($skill) => [
+                'skill_id' => $skill->id,
+                'skill_name' => $skill->name,
+                'required_level' => $skill->pivot->min_proficiency,
+                'importance' => $skill->pivot->importance,
+            ]);
 
         if ($requirements->isEmpty()) {
             return null;
@@ -50,8 +37,7 @@ class SkillGapAnalyzer
 
         $assessment = GapAssessment::create([
             'profile_id' => $profile->id,
-            'target_role_id' => $targetJobPosting ? null : $targetRole?->id,
-            'target_job_posting_id' => $targetJobPosting?->id,
+            'target_role_id' => $targetRole->id,
             'overall_readiness_score' => 0,
         ]);
 
@@ -92,7 +78,7 @@ class SkillGapAnalyzer
             'skills_fingerprint' => self::fingerprint($userSkillMap),
         ]);
 
-        if ($gapSkills->isNotEmpty() && $assessment->items()->exists()) {
+        if ($gapSkills->isNotEmpty()) {
             $this->rankRecommendations($assessment, $gapSkills);
         }
 
@@ -135,39 +121,18 @@ class SkillGapAnalyzer
     private function defaultTargetRole($profile, $userSkillMap): ?CareerRole
     {
         $roles = CareerRole::with('requiredSkills')->get();
+        $scorer = app(RoleMatchScorer::class);
         $best = null;
-        $bestScore = -1;
+        $bestScore = 0;
 
         foreach ($roles as $role) {
-            $required = $role->requiredSkills;
-            if ($required->isEmpty()) {
+            if ($role->requiredSkills->isEmpty()) {
                 continue;
             }
 
-            $essential = $required->filter(fn ($s) => $s->pivot->importance === 'essential');
-            $preferred = $required->filter(fn ($s) => $s->pivot->importance === 'preferred');
+            $score = $scorer->overlap($userSkillMap, $role)['score'];
 
-            $essentialMatched = 0;
-            $essentialTotal = max($essential->count(), 1);
-            $preferredMatched = 0;
-            $preferredTotal = max($preferred->count(), 1);
-
-            foreach ($essential as $skill) {
-                $user = $userSkillMap->get($skill->id);
-                if ($user && $user->proficiency_level >= $skill->pivot->min_proficiency) {
-                    $essentialMatched++;
-                }
-            }
-
-            foreach ($preferred as $skill) {
-                if ($userSkillMap->has($skill->id)) {
-                    $preferredMatched++;
-                }
-            }
-
-            $score = round(($essentialMatched / $essentialTotal) * 70 + ($preferredMatched / $preferredTotal) * 30);
-
-            if ($score > $bestScore && $score > 0) {
+            if ($score > $bestScore) {
                 $bestScore = $score;
                 $best = $role;
             }

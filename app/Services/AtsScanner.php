@@ -69,39 +69,32 @@ class AtsScanner
     {
         $requirements = $jobPosting->requiredSkills()->with('skill.aliases')->get();
         $keywords = [];
-        $hardMatched = 0;
-        $hardTotal = 0;
-        $softMatched = 0;
-        $softTotal = 0;
+        $satisfied = [];
 
         foreach ($requirements as $req) {
             $skill = $req->skill;
-            if (!$skill) {
+            if (! $skill) {
                 continue;
             }
 
             $needle = strtolower($skill->name);
             $freqResume = $this->countOccurrences($resumeText, $needle);
+            $freqJd = $this->countOccurrences($jdText, $needle);
             $matched = $freqResume > 0;
 
             foreach ($skill->aliases as $alias) {
-                $aliasFreq = $this->countOccurrences($resumeText, strtolower($alias->alias));
+                $aliasNeedle = strtolower($alias->alias);
+                $aliasFreq = $this->countOccurrences($resumeText, $aliasNeedle);
                 $freqResume += $aliasFreq;
                 $matched = $matched || $aliasFreq > 0;
+
+                // The JD may use the alias ("K8s") rather than the canonical
+                // name ("Kubernetes"), so count it here too.
+                $freqJd += $this->countOccurrences($jdText, $aliasNeedle);
             }
 
-            $freqJd = $this->countOccurrences($jdText, $needle);
-
-            if ($req->importance === 'required') {
-                $hardTotal++;
-                if ($matched) {
-                    $hardMatched++;
-                }
-            } else {
-                $softTotal++;
-                if ($matched) {
-                    $softMatched++;
-                }
+            if ($matched) {
+                $satisfied[$skill->id] = true;
             }
 
             $keywords[] = [
@@ -112,10 +105,9 @@ class AtsScanner
             ];
         }
 
-        $score = round(
-            ($hardTotal > 0 ? ($hardMatched / $hardTotal) * 70 : 0)
-            + ($softTotal > 0 ? ($softMatched / $softTotal) * 30 : 0),
-        );
+        // Shares the essential/preferred weighting with role and job matching;
+        // only the "is it satisfied" test differs (resume text, not proficiency).
+        $score = app(RoleMatchScorer::class)->aggregate($requirements, $satisfied)['score'];
 
         return [$score, $keywords];
     }
@@ -200,7 +192,7 @@ class AtsScanner
             return 0;
         }
 
-        preg_match_all('/\b' . preg_quote($needle, '/') . '\b/i', $haystack, $matches);
+        preg_match_all('/\b'.preg_quote($needle, '/').'\b/i', $haystack, $matches);
 
         return count($matches[0]);
     }
@@ -215,9 +207,9 @@ class AtsScanner
             AtsScanDetail::create([
                 'ats_scan_id' => $scan->id,
                 'category' => 'keyword',
-                'detail' => 'Missing keyword: ' . $keyword['keyword'],
+                'detail' => 'Missing keyword: '.$keyword['keyword'],
                 'severity' => 'medium',
-                'suggestion' => 'Mention "' . $keyword['keyword'] . '" specifically using the phrasing from the job description.',
+                'suggestion' => 'Mention "'.$keyword['keyword'].'" specifically using the phrasing from the job description.',
             ]);
         }
 
@@ -237,7 +229,7 @@ class AtsScanner
             AtsScanDetail::create([
                 'ats_scan_id' => $scan->id,
                 'category' => 'structure',
-                'detail' => 'Missing ' . $label . '.',
+                'detail' => 'Missing '.$label.'.',
                 'severity' => 'high',
                 'suggestion' => $suggestion,
             ]);
@@ -247,21 +239,21 @@ class AtsScanner
 
         if ($formatting['bullets'] < 8) {
             $formattingTips[] = [
-                'detail' => 'Too few bullet points (found ' . $formatting['bullets'] . ' of 8+ recommended).',
+                'detail' => 'Too few bullet points (found '.$formatting['bullets'].' of 8+ recommended).',
                 'suggestion' => 'Break each achievement into its own bullet point so ATS parsers and recruiters can skim it.',
             ];
         }
 
         if ($formatting['verb_hits'] < 5) {
             $formattingTips[] = [
-                'detail' => 'Few action verbs detected (found ' . $formatting['verb_hits'] . ' of 5+ recommended).',
+                'detail' => 'Few action verbs detected (found '.$formatting['verb_hits'].' of 5+ recommended).',
                 'suggestion' => 'Start bullets with strong action verbs such as "led", "built", "improved", "increased", or "automated".',
             ];
         }
 
         if ($formatting['quantified'] < 3) {
             $formattingTips[] = [
-                'detail' => 'Few quantified achievements (found ' . $formatting['quantified'] . ' of 3+ recommended).',
+                'detail' => 'Few quantified achievements (found '.$formatting['quantified'].' of 3+ recommended).',
                 'suggestion' => 'Add concrete numbers, percentages, or dollar amounts to show measurable impact (e.g. "cut processing time by 20%").',
             ];
         }
@@ -280,7 +272,7 @@ class AtsScanner
             AtsScanDetail::create([
                 'ats_scan_id' => $scan->id,
                 'category' => 'readability',
-                'detail' => 'Resume reads at grade ' . round($grade, 1) . ', which is hard to parse quickly.',
+                'detail' => 'Resume reads at grade '.round($grade, 1).', which is hard to parse quickly.',
                 'severity' => 'low',
                 'suggestion' => 'Use shorter sentences and simpler wording where possible.',
             ]);

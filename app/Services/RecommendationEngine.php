@@ -16,8 +16,7 @@ class RecommendationEngine
         protected RoleMatchScorer $scorer,
         protected SkillSimilarity $similarity,
         protected RecommendationRationalizer $rationalizer,
-    ) {
-    }
+    ) {}
 
     /**
      * Regenerate career recommendations for a profile. The stored snapshot is
@@ -47,10 +46,11 @@ class RecommendationEngine
         $weightSemantic = (float) ($weights['semantic'] ?? 40) / 100;
 
         $scored = [];
+        $corpus = $this->similarity->corpus($roles);
 
         foreach ($roles as $role) {
             $overlap = $this->scorer->overlap($userSkillMap, $role);
-            $semantic = $this->similarity->score($userSkillMap, $role, $roles);
+            $semantic = $this->similarity->score($userSkillMap, $role, $roles, $corpus);
 
             $scored[$role->id] = [
                 'role' => $role,
@@ -99,7 +99,7 @@ class RecommendationEngine
      * the best direct matches. This surfaces "next step" roles without
      * polluting already-strong matches.
      *
-     * @param array<int, array{score: float}> $scored
+     * @param  array<int, array{score: float}>  $scored
      */
     protected function applyPathBoost(array &$scored): void
     {
@@ -140,8 +140,8 @@ class RecommendationEngine
      * Breadth-first reachability (max two hops) over the career path graph.
      * Seeds themselves are excluded so direct matches keep their raw score.
      *
-     * @param array<int, mixed> $seeds
-     * @param array<int, array<int, string>> $adjacency
+     * @param  array<int, mixed>  $seeds
+     * @param  array<int, array<int, string>>  $adjacency
      * @return array<int, int> role id => hop distance
      */
     protected function reachable(array $seeds, array $adjacency): array

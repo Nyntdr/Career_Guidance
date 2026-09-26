@@ -124,8 +124,12 @@ class RecommendationController extends Controller
 
         $lock = Cache::lock('rationalize:'.$profile->id, 10);
 
-        if ($lock->get()) {
+        $lockAcquired = (bool) $lock->get();
+        $llmEnabled = false;
+
+        if ($lockAcquired) {
             try {
+                $llmEnabled = $rationalizer->isEnabled();
                 $result = $rationalizer->for($profile, $role, $overlap);
             } finally {
                 $lock->release();
@@ -142,12 +146,28 @@ class RecommendationController extends Controller
             'rationale_source' => $result['source'],
         ]);
 
-        return redirect()->back()->with(
-            $result['source'] === 'llm' ? 'success' : 'error',
-            $result['source'] === 'llm'
-                ? 'AI explanation generated for '.$role->title.'.'
-                : 'The AI provider is busy right now (free-tier rate limit) — showing the standard explanation. Try again in a minute.'
-        );
+        [$flashKey, $flashMessage] = match (true) {
+            $result['source'] === 'llm' => [
+                'success',
+                'AI explanation generated for '.$role->title.'.',
+            ],
+            // Lock was held by a concurrent request; no provider call was made.
+            ! $lockAcquired => [
+                'info',
+                'An AI explanation for '.$role->title.' is already being generated — try again in a moment.',
+            ],
+            // Enabled and configured, yet we still fell back: the provider failed.
+            $llmEnabled => [
+                'warning',
+                'The AI provider is unavailable right now — showing the standard explanation. Try again shortly.',
+            ],
+            default => [
+                'info',
+                'AI explanations are turned off. Enable them under Admin → Settings → ML, or set a provider key.',
+            ],
+        };
+
+        return redirect()->back()->with($flashKey, $flashMessage);
     }
 
     private function formatSalary($range): string

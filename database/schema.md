@@ -181,7 +181,6 @@
 | name | varchar(255) | NO | UNI | |
 | category | varchar(255) | YES | | |
 | taxonomy_source | varchar(255) | YES | | e.g. ESCO, O*NET |
-| embedding | json | YES | | Vector embedding for semantic search |
 | created_at | timestamp | YES | | |
 | updated_at | timestamp | YES | | |
 
@@ -464,10 +463,8 @@
 | title | varchar(255) | NO | | |
 | company | varchar(255) | YES | | |
 | raw_description | text | YES | | |
-| parsed_requirements | json | YES | | |
 | seniority_level | varchar(255) | YES | | |
 | location | varchar(255) | YES | | |
-| embedding | json | YES | | Vector embedding |
 | posted_at | timestamp | YES | | |
 | created_at | timestamp | YES | | |
 | updated_at | timestamp | YES | | |
