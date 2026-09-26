@@ -13,29 +13,14 @@ class Readability
             return 0;
         }
 
+        // sentenceCount() floors at 1, so both divisors are non-zero here.
         $sentences = $this->sentenceCount($text);
         $syllables = array_sum(array_map(fn ($word) => $this->syllableCount($word), $words));
-
-        if ($sentences === 0 || $wordCount === 0) {
-            return 0;
-        }
 
         // Flesch-Kincaid Grade Level
         $score = 0.39 * ($wordCount / $sentences) + 11.8 * ($syllables / $wordCount) - 15.59;
 
         return max(0, round($score, 1));
-    }
-
-    public function score(string $text): int
-    {
-        $grade = $this->gradeLevel($text);
-
-        if ($grade === 0) {
-            return 50;
-        }
-
-        // Easier to read = better for recruiters. ~90 at grade 5, tapering off.
-        return (int) round(max(20, min(95, 100 - max(0, $grade - 5) * 7)));
     }
 
     private function sentenceCount(string $text): int

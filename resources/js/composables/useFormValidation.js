@@ -94,14 +94,6 @@ export const validation = {
         };
     },
 
-    // Numeric: this field's value must be >= another field's value (e.g. salary_max >= salary_min).
-    gteField(other, message = 'Must be at least the minimum value.') {
-        return (value, form) => {
-            if (isEmpty(value) || isEmpty(form[other])) return null;
-            return Number(value) < Number(form[other]) ? message : null;
-        };
-    },
-
     url(message = 'Please enter a valid URL.') {
         return (value) => {
             if (isEmpty(value)) return null;

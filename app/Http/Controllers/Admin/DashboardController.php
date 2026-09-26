@@ -8,7 +8,6 @@ use App\Models\Skill;
 use App\Models\SkillCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
