@@ -123,9 +123,9 @@ class ResumeUploadTest extends TestCase
 
         // Cyrillic + Devanagari (must be stripped), accented Latin (must survive),
         // a tab, and a control byte.
-        $pasted = "JOHN DOE\n\n\xC3\xA9lise ing\xc3\xa9nieur\n"
+        $pasted = "JOHN DOE\njohn.doe@example.com | +1 555-0199\n\n\xC3\xA9lise ing\xc3\xa9nieur\n"
             ."\xD0\x9F\xD0\xB5\xD1\x82\xD1\x8F (\xE0\xA4\xAA\xE0\xA5\x87\xE0\xA4\xA4\xE0\xA5\x8D)\n"
-            ."\tSenior Engineer\x07\n\nEXPERIENCE\nBuilt systems for 5 years.";
+            ."\tSenior Engineer\x07\n\nEXPERIENCE\nSenior Engineer at Acme Corp (2019 - Present)\nBuilt systems for 5 years.\n\nEDUCATION\nUniversity Degree in Science.";
 
         $response = $this->actingAs($user)
             ->post(route('resume.store'), ['content' => $pasted]);
@@ -148,6 +148,19 @@ class ResumeUploadTest extends TestCase
         // Control characters and tabs are removed.
         $this->assertStringNotContainsString("\t", $raw);
         $this->assertStringNotContainsString("\x07", $raw);
+    }
+
+    public function test_non_resume_file_is_rejected_and_deleted_from_disk(): void
+    {
+        $file = UploadedFile::fake()->createWithContent('prose.txt', str_repeat('Lorem ipsum dolor sit amet, consectetur adipiscing elit. ', 10));
+
+        $response = $this->actingAs($this->userWithProfile())
+            ->post(route('resume.store'), [
+                'resume_file' => $file,
+            ]);
+
+        $response->assertSessionHasErrors('resume_file');
+        $this->assertDatabaseCount('resumes', 0);
     }
 
     public function test_unsupported_file_type_is_rejected(): void

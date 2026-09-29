@@ -4,7 +4,7 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-import { formatMoney } from '@/lib/format';
+import { formatMoney, scoreColor } from '@/lib/format';
 
 const settings = usePage().props.settings ?? {};
 
@@ -71,12 +71,21 @@ function formatSalary(range) {
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                 {{ role.title }}
                             </h3>
-                            <span
-                                class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                                :class="seniorityColors[role.typical_seniority] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'"
-                            >
-                                {{ role.typical_seniority }}
-                            </span>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span
+                                    v-if="role.user_match_score !== null && role.user_match_score !== undefined"
+                                    class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                                    :class="scoreColor(role.user_match_score)"
+                                >
+                                    {{ role.user_match_score }}% Match
+                                </span>
+                                <span
+                                    class="rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                    :class="seniorityColors[role.typical_seniority] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'"
+                                >
+                                    {{ role.typical_seniority }}
+                                </span>
+                            </div>
                         </div>
 
                         <p class="mt-2 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">

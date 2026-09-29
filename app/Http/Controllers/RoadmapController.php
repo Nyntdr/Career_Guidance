@@ -18,32 +18,52 @@ class RoadmapController extends Controller
     {
         $profile = $request->user()->profile()->firstOrCreate([]);
 
-        $assessment = GapAssessment::where('profile_id', $profile->id)
-            ->with([
-                'targetRole',
+        $roleId = $request->query('role');
+        $selectedRole = null;
+
+        if ($roleId !== null && $roleId !== '') {
+            $selectedRole = CareerRole::findOrFail($roleId);
+        }
+
+        $allAssessments = GapAssessment::where('profile_id', $profile->id)
+            ->with('targetRole:id,title')
+            ->withCount('items')
+            ->latest()
+            ->get();
+
+        $assessment = null;
+        if ($selectedRole) {
+            $assessment = $allAssessments->firstWhere('target_role_id', $selectedRole->id);
+        } else {
+            $assessment = $allAssessments->first();
+            $selectedRole = $assessment?->targetRole;
+        }
+
+        $items = [];
+        $progressMap = collect();
+
+        if ($assessment) {
+            $assessment->load([
                 'items' => fn ($q) => $q
                     ->with(['skill', 'recommendations.learningResource'])
                     ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
                     ->orderBy('gap_size', 'desc'),
-            ])
-            ->latest()
-            ->first();
+            ]);
 
-        $progress = ProgressTracking::where('profile_id', $profile->id)
-            ->whereIn('gap_assessment_item_id', collect($assessment?->items)->pluck('id'))
-            ->get()
-            ->mapWithKeys(fn ($p) => [$p->gap_assessment_item_id => $p]);
+            $progressMap = ProgressTracking::where('profile_id', $profile->id)
+                ->whereIn('gap_assessment_item_id', $assessment->items->pluck('id'))
+                ->get()
+                ->mapWithKeys(fn ($p) => [$p->gap_assessment_item_id => $p]);
 
-        $items = $assessment
-            ? $assessment->items->map(fn ($item) => [
+            $items = $assessment->items->map(fn ($item) => [
                 'id' => $item->id,
                 'skill' => $item->skill?->name ?? 'Unknown',
                 'required_level' => $item->required_level,
                 'current_level' => $item->current_level,
                 'gap_size' => $item->gap_size,
                 'priority' => ucfirst($item->priority),
-                'status' => $progress->get($item->id)?->status ?? 'not_started',
-                'progress_id' => $progress->get($item->id)?->id,
+                'status' => $progressMap->get($item->id)?->status ?? 'not_started',
+                'progress_id' => $progressMap->get($item->id)?->id,
                 'recommendations' => $item->recommendations->map(fn ($rec) => [
                     'title' => $rec->learningResource?->title ?? 'Unknown resource',
                     'provider' => $rec->learningResource?->provider,
@@ -51,8 +71,8 @@ class RoadmapController extends Controller
                     'cost' => $rec->learningResource?->cost,
                     'duration_hours' => $rec->learningResource?->duration_hours,
                 ])->values(),
-            ])->values()
-            : [];
+            ])->values();
+        }
 
         $roles = CareerRole::query()
             ->withCount('requiredSkills')
@@ -63,7 +83,7 @@ class RoadmapController extends Controller
                 'title' => $role->title,
             ]);
 
-        $counts = collect($progress)
+        $counts = $progressMap
             ->map(fn ($p) => $p->status)
             ->countBy();
 
@@ -82,24 +102,34 @@ class RoadmapController extends Controller
             'gapCount' => count($items),
             'inProgress' => $counts->get('in_progress', 0),
             'completed' => $counts->get('completed', 0),
-            'targetRole' => $assessment?->targetRole?->title ?? null,
-            'targetRoleId' => $assessment?->target_role_id ?? null,
+            'targetRole' => $selectedRole?->title ?? $assessment?->targetRole?->title ?? null,
+            'targetRoleId' => $selectedRole?->id ?? $assessment?->target_role_id ?? null,
         ];
+
+        $assessmentsList = $allAssessments->map(fn ($a) => [
+            'id' => $a->id,
+            'target_role_id' => $a->target_role_id,
+            'role_title' => $a->targetRole?->title ?? 'Unknown Role',
+            'readiness' => (int) round($a->overall_readiness_score),
+            'created_at' => $a->created_at?->toISOString(),
+            'item_count' => $a->items_count,
+        ])->values();
 
         return Inertia::render('Roadmap/Index', [
             'items' => $items,
             'roles' => $roles,
             'stats' => $stats,
+            'assessments' => $assessmentsList,
+            'selectedAssessmentId' => $assessment?->id ?? null,
+            'selectedRoleId' => $selectedRole?->id ?? null,
             'hasAssessment' => (bool) $assessment,
             'isStale' => $isStale,
         ]);
     }
 
-    public function updateProgress(Request $request, ProgressTracking $progress): RedirectResponse
+    public function updateProgress(\App\Http\Requests\RoadmapProgressUpdateRequest $request, ProgressTracking $progress): RedirectResponse
     {
-        $validated = $request->validate([
-            'status' => ['required', 'in:not_started,in_progress,completed'],
-        ]);
+        $validated = $request->validated();
 
         if ($progress->profile_id !== $request->user()->profile()->firstOrCreate([])->id) {
             abort(403);

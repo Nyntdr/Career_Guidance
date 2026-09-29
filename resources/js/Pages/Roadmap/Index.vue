@@ -3,8 +3,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import AiLoadingOverlay from '@/Components/AiLoadingOverlay.vue';
+import SpinnerIcon from '@/Components/SpinnerIcon.vue';
+import { useAsyncStatus } from '@/composables/useAsyncStatus';
+import useFormValidation, { validation as rules } from '@/composables/useFormValidation';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { formatMoney } from '@/lib/format';
 
 const settings = usePage().props.settings ?? {};
@@ -12,6 +16,12 @@ const settings = usePage().props.settings ?? {};
 const props = defineProps({
     items: Array,
     roles: Array,
+    assessments: {
+        type: Array,
+        default: () => [],
+    },
+    selectedAssessmentId: [Number, String],
+    selectedRoleId: [Number, String],
     stats: Object,
     hasAssessment: Boolean,
     isStale: Boolean,
@@ -20,6 +30,10 @@ const props = defineProps({
 const runForm = useForm({
     target_role_id: props.stats?.targetRoleId ?? '',
 });
+
+const { validate } = useFormValidation();
+const asyncStatus = useAsyncStatus();
+const isRunning = ref(false);
 
 const optimisticStatuses = reactive({});
 
@@ -36,8 +50,43 @@ const statusLabels = {
     completed: 'Completed',
 };
 
+function switchRole(roleId) {
+    router.get(
+        route('roadmap.index'),
+        { role: roleId },
+        { preserveState: true, preserveScroll: true }
+    );
+}
+
 function submitRun() {
-    runForm.post(route('assessment.run'), { preserveScroll: true });
+    if (isRunning.value) return;
+
+    if (!validate(runForm, { target_role_id: [rules.required('Please select a career role')] })) {
+        return;
+    }
+
+    isRunning.value = true;
+    asyncStatus.run(
+        () => new Promise((resolve) => {
+            runForm.post(route('assessment.run'), {
+                preserveScroll: true,
+                onFinish: () => {
+                    isRunning.value = false;
+                    resolve();
+                },
+            });
+        }),
+        {
+            label: 'Running your skill-gap assessment',
+            messages: [
+                'Loading your skills…',
+                'Comparing against the role requirements…',
+                'Scoring each gap…',
+                'Finding learning resources…',
+                'Almost there…',
+            ],
+        }
+    );
 }
 
 function statusOf(item) {
@@ -80,6 +129,31 @@ function formatCost(cost) {
 
         <div class="bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+                <!-- Role Switcher Tabs -->
+                <div v-if="assessments.length" class="flex flex-wrap items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-2">Your Roadmaps:</span>
+                    <button
+                        v-for="a in assessments"
+                        :key="a.id"
+                        type="button"
+                        @click="switchRole(a.target_role_id)"
+                        class="inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all border"
+                        :class="a.target_role_id === selectedRoleId
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600'"
+                    >
+                        <span>{{ a.role_title }}</span>
+                        <span
+                            class="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            :class="a.target_role_id === selectedRoleId
+                                ? 'bg-indigo-500 text-white'
+                                : 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'"
+                        >
+                            {{ a.readiness }}%
+                        </span>
+                    </button>
+                </div>
+
                 <!-- Empty state: run an assessment -->
                 <div v-if="!hasAssessment" class="mx-auto max-w-xl rounded-2xl border border-indigo-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-8 text-center shadow-sm">
                     <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
@@ -188,6 +262,9 @@ function formatCost(cost) {
                                         <span class="rounded-full px-2.5 py-0.5 text-xs font-medium" :class="priorityColors[item.priority] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'">
                                             {{ item.priority }}
                                         </span>
+                                        <Link v-if="selectedRoleId" :href="route('careers.show', selectedRoleId)" class="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            View role →
+                                        </Link>
                                     </div>
                                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                         Level {{ item.current_level }} / {{ item.required_level }} required
@@ -254,5 +331,13 @@ function formatCost(cost) {
                 </template>
             </div>
         </div>
+
+        <AiLoadingOverlay
+            :visible="asyncStatus.visible.value"
+            :messages="asyncStatus.messages.value"
+            :label="asyncStatus.label.value"
+            :role="asyncStatus.role.value"
+            @dismiss="asyncStatus.dismiss"
+        />
     </AuthenticatedLayout>
 </template>

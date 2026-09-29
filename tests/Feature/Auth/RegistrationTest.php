@@ -47,4 +47,17 @@ class RegistrationTest extends TestCase
 
         Notification::assertSentTo($user, VerifyEmail::class);
     }
+
+    public function test_registration_fails_if_name_contains_non_alphabet_characters(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Test User 123!',
+            'email' => 'testinvalid@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $response->assertSessionHasErrors(['name']);
+        $this->assertGuest();
+    }
 }
