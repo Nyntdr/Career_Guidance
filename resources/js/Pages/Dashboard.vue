@@ -1,6 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import AiLoadingOverlay from '@/Components/AiLoadingOverlay.vue';
+import SpinnerIcon from '@/Components/SpinnerIcon.vue';
+import { useAsyncStatus } from '@/composables/useAsyncStatus';
 import OnboardingWizard from './Dashboard/Partials/OnboardingWizard.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -20,14 +23,31 @@ const onboarding = computed(() => usePage().props.onboarding ?? false);
 const showOnboarding = ref(onboarding.value);
 const hasData = computed(() => props.stats?.skillsAssessed > 0 || props.stats?.careerPaths > 0);
 const regenerating = ref(false);
+const asyncStatus = useAsyncStatus();
 
 function regenerate() {
     if (regenerating.value) return;
     regenerating.value = true;
-    router.post(route('recommendations.generate'), {}, {
-        preserveScroll: true,
-        onFinish: () => { regenerating.value = false; },
-    });
+    asyncStatus.run(
+        () => new Promise((resolve) => {
+            router.post(route('recommendations.generate'), {}, {
+                preserveScroll: true,
+                onFinish: () => {
+                    regenerating.value = false;
+                    resolve();
+                },
+            });
+        }),
+        {
+            label: 'Rebuilding your recommendations',
+            messages: [
+                'Ranking roles against your skills…',
+                'Scoring skill overlap…',
+                'Adding a career-path bonus…',
+                'Almost there…',
+            ],
+        }
+    );
 }
 
 const priorityColors = {
@@ -177,10 +197,7 @@ const interests = computed(() => {
                                         :disabled="regenerating"
                                         class="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 dark:border-indigo-700 px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <svg v-if="regenerating" class="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                        </svg>
+                                        <SpinnerIcon v-if="regenerating" size="h-3.5 w-3.5" />
                                         <svg v-else class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                         </svg>
@@ -338,5 +355,13 @@ const interests = computed(() => {
                 </div>
             </div>
         </div>
+
+        <AiLoadingOverlay
+            :visible="asyncStatus.visible.value"
+            :messages="asyncStatus.messages.value"
+            :label="asyncStatus.label.value"
+            :role="asyncStatus.role.value"
+            @dismiss="asyncStatus.dismiss"
+        />
     </AuthenticatedLayout>
 </template>

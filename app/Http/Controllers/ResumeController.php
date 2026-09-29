@@ -44,30 +44,19 @@ class ResumeController extends Controller
         return Inertia::render('Resumes/Index', [
             'resumes' => $resumes,
             'jobs' => $jobs,
+            'resumeLikeness' => session('resume_likeness'),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(\App\Http\Requests\StoreResumeRequest $request): RedirectResponse
     {
         $profile = $request->user()->profile()->firstOrCreate([]);
-
-        $validated = $request->validate([
-            'resume_file' => [
-                'nullable',
-                'file',
-                'mimes:'.implode(',', ResumeTextExtractor::SUPPORTED_EXTENSIONS),
-                'max:5120',
-            ],
-            'content' => ['nullable', 'string', 'max:50000'],
-        ]);
-
-        if (empty($validated['resume_file']) && empty($validated['content'])) {
-            return redirect()->route('resume.index')->with('error', 'Upload a .txt, .pdf, or .docx file, or paste your resume text.');
-        }
+        $validated = $request->validated();
 
         $fileUrl = null;
         $fileType = 'text';
         $fileName = null;
+        $stored = null;
 
         if (! empty($validated['resume_file'])) {
             $file = $validated['resume_file'];
@@ -81,7 +70,7 @@ class ResumeController extends Controller
             } catch (RuntimeException $e) {
                 Storage::disk('local')->delete($stored);
 
-                return redirect()->route('resume.index')->with('error', $e->getMessage());
+                return redirect()->back()->withErrors(['resume_file' => $e->getMessage()]);
             }
         } else {
             // Pasted text bypasses the extractor, so normalise it here to keep
@@ -90,7 +79,27 @@ class ResumeController extends Controller
         }
 
         if (! $rawText || trim($rawText) === '') {
-            return redirect()->route('resume.index')->with('error', 'The resume text is empty.');
+            if ($stored) {
+                Storage::disk('local')->delete($stored);
+            }
+
+            return redirect()->back()->withErrors(['resume_file' => 'The resume text is empty.']);
+        }
+
+        $verdict = app(\App\Services\ResumeValidator::class)->assess($rawText);
+
+        if ($verdict['band'] === 'not_a_resume') {
+            if ($stored) {
+                Storage::disk('local')->delete($stored);
+            }
+
+            $message = $verdict['reasons'][0] ?? "That file doesn't look like a resume — we couldn't find any experience, education, or skills sections. Check you uploaded the right document.";
+
+            return redirect()->back()->withErrors(['resume_file' => $message]);
+        }
+
+        if ($verdict['band'] === 'borderline') {
+            session()->flash('resume_likeness', $verdict);
         }
 
         $beforeSkillIds = $profile->userSkills()->pluck('skill_id')->all();
@@ -178,14 +187,12 @@ class ResumeController extends Controller
         return redirect()->route('resume.index')->with('success', 'Resume deleted.');
     }
 
-    public function scan(Request $request, Resume $resume): RedirectResponse
+    public function scan(\App\Http\Requests\StoreAtsScanRequest $request, Resume $resume): RedirectResponse
     {
         $profile = $request->user()->profile()->firstOrCreate([]);
         $this->authorizeOwnership($profile, $resume);
 
-        $validated = $request->validate([
-            'job_posting_id' => ['required', 'exists:job_postings,id'],
-        ]);
+        $validated = $request->validated();
 
         $job = JobPosting::findOrFail($validated['job_posting_id']);
 

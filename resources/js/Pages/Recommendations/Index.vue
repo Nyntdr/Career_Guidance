@@ -1,10 +1,17 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AiLoadingOverlay from '@/Components/AiLoadingOverlay.vue';
+import SpinnerIcon from '@/Components/SpinnerIcon.vue';
+import { useAsyncStatus } from '@/composables/useAsyncStatus';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 
 const props = defineProps({
     recommendations: Array,
+    hasAssessmentMap: {
+        type: Object,
+        default: () => ({}),
+    },
     llmEnabled: Boolean,
     stats: Object,
 });
@@ -14,6 +21,8 @@ const regenerating = ref(false);
 
 const autoGenerating = ref(false);
 const autoGenerateRan = ref(false);
+
+const asyncStatus = useAsyncStatus();
 
 onMounted(() => {
     if (props.recommendations.length || props.stats.skillsAssessed <= 0) return;
@@ -40,25 +49,59 @@ function scoreColor(score) {
 function regenerate() {
     if (regenerating.value || generatingId.value !== null || autoGenerating.value) return;
     regenerating.value = true;
-    router.post(route('recommendations.generate'), {}, {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => {
-            regenerating.value = false;
-        },
-    });
+    asyncStatus.run(
+        () => new Promise((resolve) => {
+            router.post(route('recommendations.generate'), {}, {
+                preserveScroll: true,
+                preserveState: true,
+                onFinish: () => {
+                    regenerating.value = false;
+                    resolve();
+                },
+            });
+        }),
+        {
+            label: 'Rebuilding your recommendations',
+            messages: [
+                'Ranking roles against your skills…',
+                'Scoring skill overlap…',
+                'Adding a career-path bonus…',
+                'Almost there…',
+            ],
+        }
+    );
 }
 
-function explain(id) {
+function explain(rec) {
+    const recId = typeof rec === 'object' ? rec.id : rec;
+    const recRole = typeof rec === 'object' ? rec.title : '';
+
     if (generatingId.value !== null || regenerating.value) return;
-    generatingId.value = id;
-    router.post(route('recommendations.rationale', id), {}, {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => {
-            generatingId.value = null;
-        },
-    });
+    generatingId.value = recId;
+
+    asyncStatus.run(
+        () => new Promise((resolve) => {
+            router.post(route('recommendations.rationale', recId), {}, {
+                preserveScroll: true,
+                preserveState: true,
+                onFinish: () => {
+                    generatingId.value = null;
+                    resolve();
+                },
+            });
+        }),
+        {
+            label: 'Generating your explanation',
+            role: recRole,
+            messages: [
+                'Sending your profile to the AI…',
+                'Reading your skills against {role}…',
+                'Writing your explanation…',
+                'Almost there — polishing the wording…',
+                'Taking longer than usual. This can take up to a minute.',
+            ],
+        }
+    );
 }
 
 function formatGenerated(value) {
@@ -87,15 +130,7 @@ function formatGenerated(value) {
                     :disabled="regenerating || generatingId !== null"
                     class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
                 >
-                    <svg
-                        class="h-4 w-4 animate-spin"
-                        v-if="regenerating"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
+                    <SpinnerIcon v-if="regenerating" size="h-4 w-4" />
                     <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
@@ -228,13 +263,11 @@ function formatGenerated(value) {
                             <button
                                 v-if="llmEnabled && rec.rationale_source !== 'llm'"
                                 type="button"
-                                @click="explain(rec.id)"
+                                @click="explain(rec)"
                                 :disabled="generatingId !== null || regenerating"
                                 class="mt-3 inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-white px-2.5 py-1 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-gray-700"
                             >
-                                <svg v-if="generatingId === rec.id" class="h-3.5 w-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
+                                <SpinnerIcon v-if="generatingId === rec.id" size="h-3.5 w-3.5" />
                                 <svg v-else class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                                 </svg>
@@ -264,13 +297,21 @@ function formatGenerated(value) {
                             <Link :href="route('careers.show', rec.role_id)" class="font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">
                                 View role →
                             </Link>
-                            <Link :href="route('roadmap.index')" class="font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">
-                                Build roadmap
+                            <Link :href="route('roadmap.index', { role: rec.role_id })" class="font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">
+                                {{ hasAssessmentMap?.[rec.role_id] ? 'View roadmap' : 'Build roadmap' }}
                             </Link>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <AiLoadingOverlay
+            :visible="asyncStatus.visible.value"
+            :messages="asyncStatus.messages.value"
+            :label="asyncStatus.label.value"
+            :role="asyncStatus.role.value"
+            @dismiss="asyncStatus.dismiss"
+        />
     </AuthenticatedLayout>
 </template>

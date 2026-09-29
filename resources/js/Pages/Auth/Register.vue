@@ -18,7 +18,11 @@ const form = useForm({
 
 const submit = () => {
     if (!validate(form, {
-        name: [rules.required(), rules.max(255)],
+        name: [
+            rules.required(),
+            rules.alphaSpaces('Name may only contain letters and spaces.'),
+            rules.max(255),
+        ],
         email: [rules.required(), rules.email(), rules.max(255)],
         password: [rules.required(), rules.min(8, 'Password must be at least 8 characters.')],
         password_confirmation: [rules.required(), rules.confirmed('password')],
@@ -48,6 +52,8 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="name"
+                    pattern="[a-zA-Z\s]+"
+                    title="Name may only contain letters and spaces"
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />

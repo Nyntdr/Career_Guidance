@@ -79,10 +79,18 @@ class RecommendationController extends Controller
             ];
         })->filter()->values();
 
-        $first = $items->first();
+        $assessedRoleIds = \App\Models\GapAssessment::where('profile_id', $profile->id)
+            ->pluck('target_role_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $hasAssessmentMap = array_fill_keys($assessedRoleIds, true);
 
         return Inertia::render('Recommendations/Index', [
             'recommendations' => $items,
+            'hasAssessmentMap' => $hasAssessmentMap,
             'llmEnabled' => app(RecommendationRationalizer::class)->isEnabled(),
             'stats' => [
                 'skillsAssessed' => $userSkillMap->count(),

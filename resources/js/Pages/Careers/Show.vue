@@ -1,7 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import { formatMoney } from '@/lib/format';
+import AiLoadingOverlay from '@/Components/AiLoadingOverlay.vue';
+import SpinnerIcon from '@/Components/SpinnerIcon.vue';
+import { useAsyncStatus } from '@/composables/useAsyncStatus';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { formatMoney, scoreColor } from '@/lib/format';
+import { ref } from 'vue';
 
 const settings = usePage().props.settings ?? {};
 
@@ -12,7 +16,37 @@ const props = defineProps({
     relatedRoles: Array,
     outgoingPaths: Array,
     incomingPaths: Array,
+    fit: Object,
 });
+
+const isRunningAssessment = ref(false);
+const asyncStatus = useAsyncStatus();
+
+function runAssessment() {
+    if (isRunningAssessment.value) return;
+    isRunningAssessment.value = true;
+    asyncStatus.run(
+        () => new Promise((resolve) => {
+            router.post(route('assessment.run'), { target_role_id: props.role.id }, {
+                preserveScroll: true,
+                onFinish: () => {
+                    isRunningAssessment.value = false;
+                    resolve();
+                },
+            });
+        }),
+        {
+            label: 'Running your skill-gap assessment',
+            messages: [
+                'Loading your skills…',
+                'Comparing against the role requirements…',
+                'Scoring each gap…',
+                'Finding learning resources…',
+                'Almost there…',
+            ],
+        }
+    );
+}
 
 const growthColors = {
     Growing: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -179,15 +213,83 @@ function proficiencyLabel(level) {
                     </div>
                 </div>
 
-                <div class="rounded-2xl border border-dashed border-indigo-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 p-6 text-center">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                        Assess your readiness for this role and build a learning roadmap.
-                    </p>
-                    <Link :href="route('assessment.run', { target_role_id: role.id })" class="mt-2 inline-block text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline" method="post" as="button">
-                        Run a skill-gap assessment for this role
-                    </Link>
+                <!-- Your fit for this role -->
+                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Your fit for this role</h3>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Personalized skill compatibility & assessment status</p>
+                        </div>
+                        <div v-if="fit?.hasSkills" class="flex items-center gap-3">
+                            <span
+                                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-bold"
+                                :class="scoreColor(fit?.matchScore ?? 0)"
+                            >
+                                {{ fit?.matchScore ?? 0 }}% Match
+                            </span>
+                            <span v-if="fit?.readiness !== null && fit?.readiness !== undefined" class="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-900/40 px-3 py-1 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+                                Readiness: {{ fit.readiness }}%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div v-if="!fit?.hasSkills" class="mt-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 p-4 text-sm text-amber-800 dark:text-amber-300 flex items-center justify-between gap-4">
+                        <span>You haven't added any skills to your profile yet. Add skills to see your compatibility score and build a tailored roadmap.</span>
+                        <Link :href="route('profile.edit')" class="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700 transition-colors">
+                            Add skills
+                        </Link>
+                    </div>
+
+                    <div v-else class="mt-4 space-y-4">
+                        <div v-if="fit?.matchedSkills?.length" class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-2">You match:</span>
+                            <span v-for="skill in fit.matchedSkills" :key="skill" class="rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 px-2.5 py-0.5 text-xs font-medium">
+                                {{ skill }}
+                            </span>
+                        </div>
+
+                        <div v-if="fit?.missingSkills?.length" class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-2">Growth areas:</span>
+                            <span v-for="skill in fit.missingSkills" :key="skill" class="rounded-full bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-2.5 py-0.5 text-xs font-medium">
+                                {{ skill }}
+                            </span>
+                        </div>
+
+                        <div class="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 dark:border-gray-700/60">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ fit?.hasAssessment ? 'You have an active roadmap assessment for this role.' : 'Build a step-by-step roadmap to bridge your skill gaps.' }}
+                            </span>
+                            <div class="flex items-center gap-3">
+                                <Link
+                                    v-if="fit?.hasAssessment"
+                                    :href="route('roadmap.index', { role: role.id })"
+                                    class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+                                >
+                                    View your roadmap for this role →
+                                </Link>
+                                <button
+                                    v-else
+                                    type="button"
+                                    @click="runAssessment"
+                                    :disabled="isRunningAssessment"
+                                    class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors disabled:opacity-60"
+                                >
+                                    <SpinnerIcon v-if="isRunningAssessment" size="h-4 w-4" />
+                                    Build a roadmap for this role
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <AiLoadingOverlay
+            :visible="asyncStatus.visible.value"
+            :messages="asyncStatus.messages.value"
+            :label="asyncStatus.label.value"
+            :role="asyncStatus.role.value"
+            @dismiss="asyncStatus.dismiss"
+        />
     </AuthenticatedLayout>
 </template>

@@ -11,11 +11,9 @@ use Illuminate\Http\Request;
 
 class GapAssessmentController extends Controller
 {
-    public function run(Request $request): RedirectResponse
+    public function run(\App\Http\Requests\StoreGapAssessmentRequest $request): RedirectResponse
     {
-        $request->validate([
-            'target_role_id' => ['nullable', 'exists:career_roles,id'],
-        ]);
+        $validated = $request->validated();
 
         $profile = $request->user()->profile()->firstOrCreate([]);
 
