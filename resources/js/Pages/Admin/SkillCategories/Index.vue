@@ -42,7 +42,7 @@ function openCreate() {
 }
 
 const categoryRules = {
-    name: [rules.required(), rules.max(255)],
+    name: [rules.required(), rules.max(50), rules.regex(/^[a-zA-Z0-9\s\-]+$/, 'The category name may only contain letters, numbers, spaces, and hyphens.')],
 };
 
 function submitCreate() {
@@ -166,8 +166,8 @@ function destroyCategory() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Create Category</h3>
                 <form @submit.prevent="submitCreate" class="mt-4 space-y-6">
                     <div>
-                        <InputLabel for="create-name" value="Category Name" />
-                        <TextInput id="create-name" v-model="createForm.name" type="text" class="mt-1 block w-full" autofocus />
+                        <InputLabel for="create-name" value="Category Name" required />
+                        <TextInput id="create-name" v-model="createForm.name" type="text" class="mt-1 block w-full" autofocus required />
                         <InputError :message="createForm.errors.name" />
                     </div>
                     <div class="flex justify-end gap-3">
@@ -184,8 +184,8 @@ function destroyCategory() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Edit Category</h3>
                 <form @submit.prevent="submitEdit" class="mt-4 space-y-6">
                     <div>
-                        <InputLabel for="edit-name" value="Category Name" />
-                        <TextInput id="edit-name" v-model="editForm.name" type="text" class="mt-1 block w-full" />
+                        <InputLabel for="edit-name" value="Category Name" required />
+                        <TextInput id="edit-name" v-model="editForm.name" type="text" class="mt-1 block w-full" required />
                         <InputError :message="editForm.errors.name" />
                     </div>
                     <div class="flex justify-end gap-3">

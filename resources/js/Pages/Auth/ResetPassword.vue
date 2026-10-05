@@ -30,7 +30,7 @@ const form = useForm({
 const submit = () => {
     if (!validate(form, {
         email: [rules.required(), rules.email()],
-        password: [rules.required(), rules.min(8, 'Password must be at least 8 characters.')],
+        password: [rules.required(), rules.strongPassword()],
         password_confirmation: [rules.required(), rules.confirmed('password')],
     })) {
         return;

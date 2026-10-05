@@ -21,10 +21,10 @@ const submit = () => {
         name: [
             rules.required(),
             rules.alphaSpaces('Name may only contain letters and spaces.'),
-            rules.max(255),
+            rules.max(50),
         ],
         email: [rules.required(), rules.email(), rules.max(255)],
-        password: [rules.required(), rules.min(8, 'Password must be at least 8 characters.')],
+        password: [rules.required(), rules.strongPassword()],
         password_confirmation: [rules.required(), rules.confirmed('password')],
     })) {
         return;

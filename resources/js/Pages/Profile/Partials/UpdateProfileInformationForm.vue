@@ -26,7 +26,11 @@ const form = useForm({
 
 const updateProfile = () => {
     if (!validate(form, {
-        name: [rules.required(), rules.max(255)],
+        name: [
+            rules.required(),
+            rules.alphaSpaces('Name may only contain letters and spaces.'),
+            rules.max(50),
+        ],
         email: [rules.required(), rules.email(), rules.max(255)],
     })) {
         return;

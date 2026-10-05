@@ -21,7 +21,7 @@ const form = useForm({
 const updatePassword = () => {
     if (!validate(form, {
         current_password: [rules.required()],
-        password: [rules.required(), rules.min(8, 'New password must be at least 8 characters.')],
+        password: [rules.required(), rules.strongPassword()],
         password_confirmation: [rules.required(), rules.confirmed('password')],
     })) {
         return;

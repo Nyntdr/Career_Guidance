@@ -85,29 +85,35 @@ function openCreate() {
 
 function validateCareerRole(form) {
     const valid = validate(form, {
-        title: [rules.required(), rules.max(255)],
-        description: [rules.required()],
+        title: [
+            rules.required(),
+            rules.alphaSpaces('Title may only contain letters and spaces.'),
+            rules.max(50)
+        ],
+        description: [rules.required(), rules.maxWords(250)],
         typical_seniority: [rules.required()],
-        growth_outlook: [rules.required(), rules.max(255)],
+        growth_outlook: [rules.required(), rules.maxWords(250)],
+        salary_min: [rules.required()],
+        salary_max: [rules.required()],
     });
 
     const minRaw = form.salary_min;
     const maxRaw = form.salary_max;
-    const min = minRaw === '' ? null : Number(minRaw);
-    const max = maxRaw === '' ? null : Number(maxRaw);
+    const min = (minRaw === '' || minRaw == null) ? null : Number(minRaw);
+    const max = (maxRaw === '' || maxRaw == null) ? null : Number(maxRaw);
 
     let salaryOk = true;
 
     if (min !== null && (Number.isNaN(min) || !Number.isInteger(min) || min < 0)) {
-        form.setError('avg_salary_range.min', 'Minimum salary must be a whole number of at least 0.');
+        form.setError('salary_min', 'Minimum salary must be a whole number of at least 0.');
         salaryOk = false;
     }
     if (max !== null && (Number.isNaN(max) || !Number.isInteger(max) || max < 0)) {
-        form.setError('avg_salary_range.max', 'Maximum salary must be a whole number of at least 0.');
+        form.setError('salary_max', 'Maximum salary must be a whole number of at least 0.');
         salaryOk = false;
     }
     if (salaryOk && min !== null && max !== null && max < min) {
-        form.setError('avg_salary_range.max', 'Maximum salary must be at least the minimum.');
+        form.setError('salary_max', 'Maximum salary must be at least the minimum.');
         salaryOk = false;
     }
 
@@ -119,9 +125,11 @@ function submitCreate() {
         return;
     }
 
-    createForm.avg_salary_range = { min: parseInt(createForm.salary_min) || 0, max: parseInt(createForm.salary_max) || 0 };
-    createForm.skills = createSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
-    createForm.post(route('admin.career-roles.store'), {
+    createForm.transform((data) => ({
+        ...data,
+        avg_salary_range: { min: parseInt(data.salary_min) || 0, max: parseInt(data.salary_max) || 0 },
+        skills: createSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }))
+    })).post(route('admin.career-roles.store'), {
         onSuccess: () => { showCreateModal.value = false; createForm.reset(); },
     });
 }
@@ -150,9 +158,11 @@ function submitEdit() {
         return;
     }
 
-    editForm.avg_salary_range = { min: parseInt(editForm.salary_min) || 0, max: parseInt(editForm.salary_max) || 0 };
-    editForm.skills = editSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }));
-    editForm.put(route('admin.career-roles.update', editingRole.value.id), {
+    editForm.transform((data) => ({
+        ...data,
+        avg_salary_range: { min: parseInt(data.salary_min) || 0, max: parseInt(data.salary_max) || 0 },
+        skills: editSelectedSkills.value.map(s => ({ id: s.id, importance: s.importance, min_proficiency: s.min_proficiency }))
+    })).put(route('admin.career-roles.update', editingRole.value.id), {
         onSuccess: () => { showEditModal.value = false; editingRole.value = null; },
     });
 }
@@ -245,19 +255,19 @@ function destroyRole() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Create Career Role</h3>
                 <form @submit.prevent="submitCreate" class="mt-4 space-y-4">
                     <div>
-                        <InputLabel for="c-title" value="Title" />
-                        <TextInput id="c-title" v-model="createForm.title" type="text" class="mt-1 block w-full" autofocus />
+                        <InputLabel for="c-title" value="Title" required />
+                        <TextInput id="c-title" v-model="createForm.title" type="text" class="mt-1 block w-full" autofocus required />
                         <InputError :message="createForm.errors.title" />
                     </div>
                     <div>
-                        <InputLabel for="c-desc" value="Description" />
-                        <textarea id="c-desc" v-model="createForm.description" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
+                        <InputLabel for="c-desc" value="Description" required />
+                        <textarea id="c-desc" v-model="createForm.description" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required />
                         <InputError :message="createForm.errors.description" />
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <InputLabel for="c-seniority" value="Typical Seniority" />
-                            <select id="c-seniority" v-model="createForm.typical_seniority" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <InputLabel for="c-seniority" value="Typical Seniority" required />
+                            <select id="c-seniority" v-model="createForm.typical_seniority" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 <option value="">Select...</option>
                                 <option value="Entry">Entry</option>
                                 <option value="Mid">Mid</option>
@@ -269,19 +279,19 @@ function destroyRole() {
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div>
                                 <InputLabel for="c-salary-min" :value="`Min Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
-                                <TextInput id="c-salary-min" v-model="createForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />
-                                <InputError :message="createForm.errors['avg_salary_range.min']" />
+                                <TextInput id="c-salary-min" v-model="createForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" required />
+                                <InputError :message="createForm.errors.salary_min || createForm.errors['avg_salary_range.min']" />
                             </div>
                             <div>
                                 <InputLabel for="c-salary-max" :value="`Max Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
-                                <TextInput id="c-salary-max" v-model="createForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" />
-                                <InputError :message="createForm.errors['avg_salary_range.max']" />
+                                <TextInput id="c-salary-max" v-model="createForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" required />
+                                <InputError :message="createForm.errors.salary_max || createForm.errors['avg_salary_range.max']" />
                             </div>
                         </div>
                     </div>
                     <div>
-                        <InputLabel for="c-outlook" value="Growth Outlook" />
-                        <TextInput id="c-outlook" v-model="createForm.growth_outlook" type="text" class="mt-1 block w-full" />
+                        <InputLabel for="c-outlook" value="Growth Outlook" required />
+                        <TextInput id="c-outlook" v-model="createForm.growth_outlook" type="text" class="mt-1 block w-full" required />
                         <InputError :message="createForm.errors.growth_outlook" />
                     </div>
 
@@ -326,19 +336,19 @@ function destroyRole() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Edit Career Role</h3>
                 <form @submit.prevent="submitEdit" class="mt-4 space-y-4">
                     <div>
-                        <InputLabel for="e-title" value="Title" />
-                        <TextInput id="e-title" v-model="editForm.title" type="text" class="mt-1 block w-full" />
+                        <InputLabel for="e-title" value="Title" required />
+                        <TextInput id="e-title" v-model="editForm.title" type="text" class="mt-1 block w-full" required />
                         <InputError :message="editForm.errors.title" />
                     </div>
                     <div>
-                        <InputLabel for="e-desc" value="Description" />
-                        <textarea id="e-desc" v-model="editForm.description" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
+                        <InputLabel for="e-desc" value="Description" required />
+                        <textarea id="e-desc" v-model="editForm.description" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required />
                         <InputError :message="editForm.errors.description" />
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <InputLabel for="e-seniority" value="Typical Seniority" />
-                            <select id="e-seniority" v-model="editForm.typical_seniority" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <InputLabel for="e-seniority" value="Typical Seniority" required />
+                            <select id="e-seniority" v-model="editForm.typical_seniority" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 <option value="">Select...</option>
                                 <option value="Entry">Entry</option>
                                 <option value="Mid">Mid</option>
@@ -350,19 +360,19 @@ function destroyRole() {
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div>
                                 <InputLabel for="e-salary-min" :value="`Min Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
-                                <TextInput id="e-salary-min" v-model="editForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" />
-                                <InputError :message="editForm.errors['avg_salary_range.min']" />
+                                <TextInput id="e-salary-min" v-model="editForm.salary_min" type="number" min="0" placeholder="50000" class="mt-1 block w-full" required />
+                                <InputError :message="editForm.errors.salary_min || editForm.errors['avg_salary_range.min']" />
                             </div>
                             <div>
                                 <InputLabel for="e-salary-max" :value="`Max Salary (${$page.props.settings?.currency_symbol ?? '$'})`" />
-                                <TextInput id="e-salary-max" v-model="editForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" />
-                                <InputError :message="editForm.errors['avg_salary_range.max']" />
+                                <TextInput id="e-salary-max" v-model="editForm.salary_max" type="number" min="0" placeholder="80000" class="mt-1 block w-full" required />
+                                <InputError :message="editForm.errors.salary_max || editForm.errors['avg_salary_range.max']" />
                             </div>
                         </div>
                     </div>
                     <div>
-                        <InputLabel for="e-outlook" value="Growth Outlook" />
-                        <TextInput id="e-outlook" v-model="editForm.growth_outlook" type="text" class="mt-1 block w-full" />
+                        <InputLabel for="e-outlook" value="Growth Outlook" required />
+                        <TextInput id="e-outlook" v-model="editForm.growth_outlook" type="text" class="mt-1 block w-full" required />
                         <InputError :message="editForm.errors.growth_outlook" />
                     </div>
 
