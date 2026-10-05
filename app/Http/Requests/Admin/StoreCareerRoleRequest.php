@@ -14,7 +14,7 @@ class StoreCareerRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:career_roles,title'],
+            'title' => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/', 'max:50', 'unique:career_roles,title'],
             'description' => ['required', 'string'],
             'typical_seniority' => ['required', 'string', 'max:255'],
             'avg_salary_range' => ['required', 'array'],
@@ -25,6 +25,13 @@ class StoreCareerRoleRequest extends FormRequest
             'skills.*.id' => ['required', 'exists:skills,id'],
             'skills.*.importance' => ['required', 'in:essential,preferred'],
             'skills.*.min_proficiency' => ['required', 'integer', 'min:1', 'max:5'],
+        ];
+    }
+    
+    public function messages(): array
+    {
+        return [
+            'title.regex' => 'The title may only contain letters and spaces.',
         ];
     }
 }

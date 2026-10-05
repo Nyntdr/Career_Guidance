@@ -141,6 +141,29 @@ export const validation = {
             return null;
         };
     },
+
+    strongPassword(message = 'Password must be 8-15 characters with at least one uppercase letter, one lowercase letter, and one special character.') {
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9\s]).{8,15}$/;
+        return (value) => {
+            if (isEmpty(value)) return null;
+            return regex.test(String(value)) ? null : message;
+        };
+    },
+
+    maxWords(max, message = `Must not exceed ${max} words.`) {
+        return (value) => {
+            if (isEmpty(value)) return null;
+            const words = String(value).trim().split(/\s+/);
+            return words.length > max ? message : null;
+        };
+    },
+
+    regex(pattern, message = 'Invalid format.') {
+        return (value) => {
+            if (isEmpty(value)) return null;
+            return pattern.test(String(value)) ? null : message;
+        };
+    },
 };
 
 export function useFormValidation() {

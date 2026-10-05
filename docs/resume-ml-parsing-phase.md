@@ -99,9 +99,8 @@ Result: full suite green (38 tests → now 40).
    `TECHNICAL SKILL-SET:`, `Work History`, and short title-case *content* negatives such as
    `Customer Service`, `Critical Thinking`, `Methodologies`) rather than section bodies.
 2. **De-duplicate the heading-shape logic.** `ml:diagnose`'s global `isHeadingLikeStandalone()` should call the segmenter's gate so the tool can't drift from production; then keep or delete the command (it's phase tooling).
-3. **Optional — admin ML settings UI.** The `ML` settings group (`ml_min_confidence`, `ml_cluster_purity`) is read at parse time but not exposed on the Admin → Settings page or in `UpdateSettingsRequest` rules; wiring it lets admins tune without config deploys. Same for the new drift reporting in `ml:status` (`ml_drift_window`, `ml_min_cluster_size`).
-4. **Optional — eval script.** Track a miscategorization rate over the fixtures (`ml:diagnose --json`) to spot RF regressions on retrains. This matters more now that training is deterministic: the model changes only when the corpus or seed changes, so regressions will be reproducible rather than intermittent.
-5. **Deploy/watch-outs.** Container `composer.json`/`composer.lock` are baked images, not bind-mounted — to change deps: edit on host → `docker compose cp` → `composer install` (preserves dev deps). `phpunit.xml` is now mounted. Tests use `RefreshDatabase` against the container MySQL, so the dev DB schema is recreated per test run.
+3. **Optional — eval script.** Track a miscategorization rate over the fixtures (`ml:diagnose --json`) to spot RF regressions on retrains. This matters more now that training is deterministic: the model changes only when the corpus or seed changes, so regressions will be reproducible rather than intermittent.
+4. **Deploy/watch-outs.** Container `composer.json`/`composer.lock` are baked images, not bind-mounted — to change deps: edit on host → `docker compose cp` → `composer install` (preserves dev deps). `phpunit.xml` is now mounted. Tests use `RefreshDatabase` against the container MySQL, so the dev DB schema is recreated per test run.
 
 ## How to run
 

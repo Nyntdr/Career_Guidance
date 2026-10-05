@@ -87,12 +87,13 @@ function openCreate() {
 }
 
 const postingRules = {
-    title: [rules.required(), rules.max(255)],
-    company: [rules.max(255)],
-    location: [rules.max(255)],
-    seniority_level: [rules.max(255)],
+    title: [rules.required(), rules.max(100), rules.regex(/^[a-zA-Z0-9\s\-\.\+,&()]+$/, 'The title contains invalid characters.')],
+    company: [rules.max(100), rules.regex(/^[a-zA-Z0-9\s\-\.\+,&()]+$/, 'The company name contains invalid characters.')],
+    location: [rules.max(100), rules.regex(/^[a-zA-Z0-9\s\-\.,]+$/, 'The location contains invalid characters.')],
+    seniority_level: [rules.max(50), rules.regex(/^[a-zA-Z0-9\s\-]+$/, 'The seniority level contains invalid characters.')],
     source: [rules.max(255)],
     posted_at: [rules.date('Please enter a valid posting date.')],
+    raw_description: [rules.maxWords(500)],
 };
 
 function submitCreate() {
@@ -229,8 +230,8 @@ function destroyPosting() {
                 <form @submit.prevent="submitCreate" class="mt-4 space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <InputLabel for="c-title" value="Title" />
-                            <TextInput id="c-title" v-model="createForm.title" type="text" class="mt-1 block w-full" autofocus />
+                            <InputLabel for="c-title" value="Title" required />
+                            <TextInput id="c-title" v-model="createForm.title" type="text" class="mt-1 block w-full" autofocus required />
                             <InputError :message="createForm.errors.title" />
                         </div>
                         <div>
@@ -322,8 +323,8 @@ function destroyPosting() {
                 <form @submit.prevent="submitEdit" class="mt-4 space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <InputLabel for="e-title" value="Title" />
-                            <TextInput id="e-title" v-model="editForm.title" type="text" class="mt-1 block w-full" />
+                            <InputLabel for="e-title" value="Title" required />
+                            <TextInput id="e-title" v-model="editForm.title" type="text" class="mt-1 block w-full" required />
                             <InputError :message="editForm.errors.title" />
                         </div>
                         <div>

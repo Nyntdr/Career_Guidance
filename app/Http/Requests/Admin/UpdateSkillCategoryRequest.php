@@ -16,7 +16,14 @@ class UpdateSkillCategoryRequest extends FormRequest
         $id = $this->route('skill_category');
 
         return [
-            'name' => ['required', 'string', 'max:255', "unique:skill_categories,name,{$id}"],
+            'name' => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9\s\-]+$/', "unique:skill_categories,name,{$id}"],
+        ];
+    }
+    
+    public function messages(): array
+    {
+        return [
+            'name.regex' => 'The category name may only contain letters, numbers, spaces, and hyphens.',
         ];
     }
 }

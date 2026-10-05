@@ -53,7 +53,11 @@ function openCreate() {
 }
 
 const baseUserRules = {
-    name: [rules.required(), rules.max(255)],
+    name: [
+        rules.required(),
+        rules.alphaSpaces('Name may only contain letters and spaces.'),
+        rules.max(50),
+    ],
     email: [rules.required(), rules.email(), rules.max(255)],
     role: [rules.oneOf(['user', 'admin'])],
 };
@@ -61,7 +65,7 @@ const baseUserRules = {
 function submitCreate() {
     if (!validate(createForm, {
         ...baseUserRules,
-        password: [rules.required(), rules.min(8, 'Password must be at least 8 characters.')],
+        password: [rules.required(), rules.strongPassword()],
         password_confirmation: [rules.required(), rules.confirmed('password')],
     })) {
         return;
@@ -88,7 +92,7 @@ function openEdit(user) {
 function submitEdit() {
     if (!validate(editForm, {
         ...baseUserRules,
-        password: [rules.min(8, 'Password must be at least 8 characters.')],
+        password: [rules.strongPassword()],
         password_confirmation: [rules.confirmed('password')],
     })) {
         return;
@@ -216,23 +220,23 @@ function destroyUser() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Create User</h3>
                 <form @submit.prevent="submitCreate" class="mt-4 space-y-6">
                     <div>
-                        <InputLabel for="create-name" value="Name" />
-                        <TextInput id="create-name" v-model="createForm.name" type="text" class="mt-1 block w-full" autofocus />
+                        <InputLabel for="create-name" value="Name" required />
+                        <TextInput id="create-name" v-model="createForm.name" type="text" class="mt-1 block w-full" autofocus required />
                         <InputError :message="createForm.errors.name" />
                     </div>
                     <div>
-                        <InputLabel for="create-email" value="Email" />
-                        <TextInput id="create-email" v-model="createForm.email" type="email" class="mt-1 block w-full" />
+                        <InputLabel for="create-email" value="Email" required />
+                        <TextInput id="create-email" v-model="createForm.email" type="email" class="mt-1 block w-full" required />
                         <InputError :message="createForm.errors.email" />
                     </div>
                     <div>
-                        <InputLabel for="create-password" value="Password" />
-                        <TextInput id="create-password" v-model="createForm.password" type="password" class="mt-1 block w-full" />
+                        <InputLabel for="create-password" value="Password" required />
+                        <TextInput id="create-password" v-model="createForm.password" type="password" class="mt-1 block w-full" required />
                         <InputError :message="createForm.errors.password" />
                     </div>
                     <div>
-                        <InputLabel for="create-password-confirmation" value="Confirm Password" />
-                        <TextInput id="create-password-confirmation" v-model="createForm.password_confirmation" type="password" class="mt-1 block w-full" />
+                        <InputLabel for="create-password-confirmation" value="Confirm Password" required />
+                        <TextInput id="create-password-confirmation" v-model="createForm.password_confirmation" type="password" class="mt-1 block w-full" required />
                         <InputError :message="createForm.errors.password_confirmation" />
                     </div>
                     <div>
@@ -257,13 +261,13 @@ function destroyUser() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Edit User</h3>
                 <form @submit.prevent="submitEdit" class="mt-4 space-y-6">
                     <div>
-                        <InputLabel for="edit-name" value="Name" />
-                        <TextInput id="edit-name" v-model="editForm.name" type="text" class="mt-1 block w-full" />
+                        <InputLabel for="edit-name" value="Name" required />
+                        <TextInput id="edit-name" v-model="editForm.name" type="text" class="mt-1 block w-full" required />
                         <InputError :message="editForm.errors.name" />
                     </div>
                     <div>
-                        <InputLabel for="edit-email" value="Email" />
-                        <TextInput id="edit-email" v-model="editForm.email" type="email" class="mt-1 block w-full" />
+                        <InputLabel for="edit-email" value="Email" required />
+                        <TextInput id="edit-email" v-model="editForm.email" type="email" class="mt-1 block w-full" required />
                         <InputError :message="editForm.errors.email" />
                     </div>
                     <div>

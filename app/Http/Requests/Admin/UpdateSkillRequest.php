@@ -16,8 +16,15 @@ class UpdateSkillRequest extends FormRequest
         $skillId = $this->route('skill');
 
         return [
-            'name' => ['required', 'string', 'max:255', "unique:skills,name,{$skillId}"],
+            'name' => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9\s\-\.\+#]+$/', "unique:skills,name,{$skillId}"],
             'category_id' => ['required', 'string', 'exists:skill_categories,id'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.regex' => 'The skill name contains invalid characters.',
         ];
     }
 }

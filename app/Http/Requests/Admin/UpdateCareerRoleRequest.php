@@ -16,7 +16,7 @@ class UpdateCareerRoleRequest extends FormRequest
         $roleId = $this->route('career_role');
 
         return [
-            'title' => ['required', 'string', 'max:255', "unique:career_roles,title,{$roleId}"],
+            'title' => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/', 'max:50', "unique:career_roles,title,{$roleId}"],
             'description' => ['required', 'string'],
             'typical_seniority' => ['required', 'string', 'max:255'],
             'avg_salary_range' => ['required', 'array'],
@@ -27,6 +27,13 @@ class UpdateCareerRoleRequest extends FormRequest
             'skills.*.id' => ['required_with:skills', 'exists:skills,id'],
             'skills.*.importance' => ['required_with:skills', 'in:essential,preferred'],
             'skills.*.min_proficiency' => ['required_with:skills', 'integer', 'min:1', 'max:5'],
+        ];
+    }
+    
+    public function messages(): array
+    {
+        return [
+            'title.regex' => 'The title may only contain letters and spaces.',
         ];
     }
 }

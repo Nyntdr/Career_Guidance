@@ -76,23 +76,11 @@ return [
                 'disabled' => 'Disabled',
             ],
             'group' => 'ML',
+            // Hidden from the Admin settings page: this is a CLI/test-only kill
+            // switch, driven by `ml:diagnose` and `ml:train`. It must stay
+            // defined here so Settings::save() keeps persisting it.
+            'hidden' => true,
             'default' => 'enabled',
-        ],
-        'ml_min_confidence' => [
-            'label' => 'ML confidence threshold',
-            'type' => 'number',
-            'min' => 0.05,
-            'max' => 0.99,
-            'group' => 'ML',
-            'default' => 0.3,
-        ],
-        'ml_cluster_purity' => [
-            'label' => 'ML cluster purity',
-            'type' => 'number',
-            'min' => 0.5,
-            'max' => 1,
-            'group' => 'ML',
-            'default' => 0.7,
         ],
         'recommendation_weights' => [
             'label' => 'Recommendation score weights',
@@ -122,7 +110,7 @@ return [
                 'enabled' => 'Enabled',
                 'disabled' => 'Disabled',
             ],
-            'group' => 'ML',
+            'group' => 'AI',
             'default' => 'disabled',
         ],
         'llm_provider' => [
@@ -132,7 +120,7 @@ return [
                 'gemini' => 'Gemini (Google)',
                 'groq' => 'Groq (GPT-OSS)',
             ],
-            'group' => 'ML',
+            'group' => 'AI',
             'default' => 'gemini',
         ],
         'llm_prompt_version' => [
@@ -142,7 +130,7 @@ return [
                 'concise' => 'Concise (current)',
                 'detailed' => 'Detailed (enhanced)',
             ],
-            'group' => 'ML',
+            'group' => 'AI',
             'default' => 'concise',
         ],
     ],

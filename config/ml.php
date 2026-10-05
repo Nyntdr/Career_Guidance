@@ -7,8 +7,11 @@ return [
     |--------------------------------------------------------------------------
     |
     | Paths and default hyper-parameters for the resume-parsing models.
-    | Runtime toggles (ml_enabled, ml_min_confidence, ml_cluster_purity)
-    | are driven by the admin Settings under the "ML" group.
+    | default_confidence, cluster_purity and min_cluster_size below are the
+    | live values — they are deliberately kept off the Admin settings page.
+    | ml_enabled (config/settings.php) is hidden there for the same reason and
+    | is driven from the CLI: `php artisan ml:diagnose` toggles it to compare
+    | the ML path against dictionary-only parsing.
     */
 
     'model_path' => storage_path('app/models'),

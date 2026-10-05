@@ -85,7 +85,7 @@ watch(
                 :class="styles[toast.type].ring"
                 role="status"
             >
-                <span class="absolute inset-y-0 left-0 w-1" :class="styles[toast.type].bar" />
+
                 <svg class="mt-0.5 h-5 w-5 shrink-0" :class="styles[toast.type].icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="icons[toast.type]" />
                 </svg>

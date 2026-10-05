@@ -47,7 +47,7 @@ function openCreate() {
 }
 
 const skillRules = {
-    name: [rules.required(), rules.max(255)],
+    name: [rules.required(), rules.max(50), rules.regex(/^[a-zA-Z0-9\s\-\.\+#]+$/, 'The skill name contains invalid characters.')],
     category_id: [rules.required('Please select a category.')],
 };
 
@@ -198,13 +198,13 @@ function destroySkill() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Create Skill</h3>
                 <form @submit.prevent="submitCreate" class="mt-4 space-y-6">
                     <div>
-                        <InputLabel for="create-name" value="Skill Name" />
-                        <TextInput id="create-name" v-model="createForm.name" type="text" class="mt-1 block w-full" autofocus />
+                        <InputLabel for="create-name" value="Skill Name" required />
+                        <TextInput id="create-name" v-model="createForm.name" type="text" class="mt-1 block w-full" autofocus required />
                         <InputError :message="createForm.errors.name" />
                     </div>
                     <div>
-                        <InputLabel for="create-category" value="Category" />
-                        <select id="create-category" v-model="createForm.category_id" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <InputLabel for="create-category" value="Category" required />
+                        <select id="create-category" v-model="createForm.category_id" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                             <option value="">Select category</option>
                             <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                         </select>
@@ -224,13 +224,13 @@ function destroySkill() {
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Edit Skill</h3>
                 <form @submit.prevent="submitEdit" class="mt-4 space-y-6">
                     <div>
-                        <InputLabel for="edit-name" value="Skill Name" />
-                        <TextInput id="edit-name" v-model="editForm.name" type="text" class="mt-1 block w-full" />
+                        <InputLabel for="edit-name" value="Skill Name" required />
+                        <TextInput id="edit-name" v-model="editForm.name" type="text" class="mt-1 block w-full" required />
                         <InputError :message="editForm.errors.name" />
                     </div>
                     <div>
-                        <InputLabel for="edit-category" value="Category" />
-                        <select id="edit-category" v-model="editForm.category_id" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <InputLabel for="edit-category" value="Category" required />
+                        <select id="edit-category" v-model="editForm.category_id" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                             <option value="">Select category</option>
                             <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                         </select>

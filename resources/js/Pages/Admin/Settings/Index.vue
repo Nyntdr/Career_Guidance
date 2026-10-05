@@ -35,11 +35,12 @@ const form = useForm({
     llm_prompt_version: props.settings.llm_prompt_version ?? 'concise',
 });
 
-const groups = ['Branding', 'Currency', 'Scoring', 'Limits', 'ML'];
+const groups = ['Branding', 'Currency', 'Scoring', 'Limits', 'AI'];
 
 function keysFor(group) {
     return Object.keys(props.definitions ?? {}).filter(
-        (key) => (props.definitions[key]?.group ?? '') === group,
+        (key) => (props.definitions[key]?.group ?? '') === group
+            && !props.definitions[key]?.hidden,
     );
 }
 
